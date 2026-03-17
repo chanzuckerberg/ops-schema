@@ -458,7 +458,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>HGNC-approved gene symbol for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>.</td>
+<td>Ensembl gene ID for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -466,7 +466,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be a valid HGNC gene symbol or <code>"non-targeting"</code>.</td>
+<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1930,7 +1930,7 @@ This file is an AnnData object where rows represent **genes** (perturbations) an
 <td><code>gene_symbol</code></td>
 <td><code>String</code></td>
 <td>REQUIRED</td>
-<td>HGNC gene symbol</td>
+<td>Ensembl gene ID (version-stripped, e.g., <code>"ENSG00000186092"</code>)</td>
 </tr>
 <tr>
 <td><code>barcode</code></td>
@@ -2190,7 +2190,7 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td><code>gene_symbol</code></td>
 <td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>Gene symbol derived from the assigned perturbation. MUST match the <code>gene_symbol</code> in the corresponding perturbation library entry.</td>
+<td>Ensembl gene ID derived from the assigned perturbation. MUST match the <code>gene_symbol</code> in the corresponding perturbation library entry.</td>
 </tr>
 </tbody>
 </table>
