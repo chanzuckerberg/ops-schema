@@ -2700,7 +2700,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>codecs</code></td>
 <td>REQUIRED</td>
-<td>MUST use <code>sharding_indexed</code>. Inner codec SHOULD be <code>zstd</code>. <code>blosc/zstd</code> is accepted where the Zarr writer does not support <code>zstd</code> directly. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it.</td>
+<td>MUST use <code>sharding_indexed</code>. Inner codec SHOULD be <code>zstd</code>. <code>blosc/zstd</code> is accepted where the Zarr writer does not support <code>zstd</code> directly. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it. See <a href="https://friendly-adventure-7j9rgl2.pages.github.io/v0.2/array-standard.html#compression">array standard compression reference</a>.</td>
 </tr>
 <tr>
 <td><code>index_codecs</code></td>
