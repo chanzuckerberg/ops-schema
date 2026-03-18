@@ -201,11 +201,11 @@ The following ontology versions are pinned for this schema version. Submissions 
 
 ## Data Model Overview
 
-OPS datasets are organized in a three-level hierarchy:
+OPS datasets are organized in a four-level hierarchy:
 
 ```
-Publication
-└── Experiment (Screen)         [1 or more per publication]
+Collection                      [1 per submission; groups experiments from a single publication]
+└── Experiment (Screen)         [1 or more per collection]
     └── Visualization (Subset)  [1 or more per experiment]
 ```
 
@@ -220,6 +220,11 @@ Publication
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><a href="#collection-metadata">Collection Metadata</a></td>
+<td>Per collection</td>
+<td>REQUIRED</td>
+</tr>
 <tr>
 <td><a href="#perturbation-library">Perturbation Library</a></td>
 <td>Per experiment</td>
@@ -279,27 +284,30 @@ Publication
 A complete, valid OPS submission MUST conform to the following directory structure. All paths are relative to the submission root.
 
 ```
-{submission_root}/
+{collection_root}/
 │
-├── metadata/
-│   ├── experimental_metadata.yaml     # Required. Per experiment.
-│   ├── perturbation_library.csv       # Required. Per experiment.
-│   ├── cell_data.parquet              # Required. Per experiment.
-│   └── feature_definitions.json      # Optional. Per experiment.
+├── collection_metadata.yaml           # Required. Per collection.
 │
-├── visualizations/
-│   └── {visualization_id}/            # One directory per visualization.
-│       ├── aggregated_data.h5ad       # Required. Per visualization.
-│       └── examples.zarr             # Required. Per visualization.
-│
-└── {screen_name}.zarr                 # Required. Per experiment.
+└── {screen_name}/                     # One directory per experiment.
+    ├── metadata/
+    │   ├── experimental_metadata.yaml # Required. Per experiment.
+    │   ├── perturbation_library.csv   # Required. Per experiment.
+    │   ├── cell_data.parquet          # Required. Per experiment.
+    │   └── feature_definitions.json  # Optional. Per experiment.
+    │
+    ├── visualizations/
+    │   └── {visualization_id}/        # One directory per visualization.
+    │       ├── aggregated_data.h5ad   # Required. Per visualization.
+    │       └── examples.zarr         # Required. Per visualization.
+    │
+    └── {screen_name}.zarr             # Required. Per experiment.
 ```
 
 ### Notes
 
 - `{visualization_id}` MUST be a unique identifier within the submission. Format TBD (see Pending Item #2).
 - `{screen_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
-- Submissions with multiple experiments (screens) under a single publication MUST replicate the above structure once per experiment, with a distinct `{screen_name}` for each.
+- Collections with multiple experiments MUST include one `{screen_name}/` directory per experiment, each with a distinct `{screen_name}`.
 
 ---
 
@@ -354,8 +362,8 @@ The following conditional requirements apply across fields. These are in additio
 </tr>
 <tr>
 <td>V-8</td>
-<td><code>experiment.publication_doi</code> is <code>null</code></td>
-<td>Dataset is considered unpublished. <code>experiment.publication_reference</code> SHOULD also be <code>null</code>.</td>
+<td><code>collection.publication_doi</code> is <code>null</code></td>
+<td>Collection is considered unpublished. <code>collection.publication_reference</code> SHOULD also be <code>null</code>.</td>
 </tr>
 <tr>
 <td>V-9</td>
@@ -760,11 +768,108 @@ examples.zarr/
 
 ---
 
+## Collection Metadata
+
+**Scope:** Per collection
+**File format:** YAML
+**File path:** `collection_metadata.yaml`
+
+This file captures publication and provenance metadata shared across all experiments in the collection.
+
+#### collection.title
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>collection.title</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Free-text title for the collection</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter MUST annotate.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>.</td>
+</tr>
+</tbody>
+</table>
+
+#### collection.publication_doi
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>collection.publication_doi</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>DOI of the associated publication. Applies to all experiments in the collection.</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter MUST annotate if published. Otherwise MUST be <code>null</code>.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>. MUST be a valid DOI URI (e.g., <code>"https://doi.org/10.1016/j.cell.2022.12.009"</code>).</td>
+</tr>
+</tbody>
+</table>
+
+#### collection.publication_reference
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>collection.publication_reference</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Human-readable citation string for the associated publication</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter SHOULD annotate.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>. OPTIONAL. (e.g., <code>"Funk et al. 2022 (Cell)"</code>).</td>
+</tr>
+</tbody>
+</table>
+
+---
+
 ## Experimental Metadata
 
 **Scope:** Per experiment
 **File format:** YAML
-**File path:** `metadata/experimental_metadata.yaml`
+**File path:** `{screen_name}/metadata/experimental_metadata.yaml`
 
 This file captures the biological, experimental, and technical context of the screen.
 
@@ -795,64 +900,6 @@ This file captures the biological, experimental, and technical context of the sc
 <tr>
 <td><strong>Value</strong></td>
 <td><code>String</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### experiment.publication_doi
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>experiment.publication_doi</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>DOI of the associated publication</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate if published. Otherwise MUST be <code>null</code>.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. MUST be a valid DOI URI (e.g., <code>"https://doi.org/10.1016/j.cell.2022.12.009"</code>).</td>
-</tr>
-</tbody>
-</table>
-
-#### experiment.publication_reference
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>experiment.publication_reference</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Human-readable citation string for the associated publication</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter SHOULD annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. OPTIONAL. (e.g., <code>"Funk et al. 2022 (Cell)"</code>).</td>
 </tr>
 </tbody>
 </table>
