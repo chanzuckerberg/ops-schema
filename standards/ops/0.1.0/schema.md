@@ -35,7 +35,7 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </tr>
 <tr>
 <td>3</td>
-<td>Review <code>"cell line"</code> and <code>"organelle"</code> as valid <code>tissue_type</code> values — currently omitted to match cross-modality schema, but OPS use cases may require them. Note: CELLxGENE schema v7.0.0 added <code>"cell line"</code> as a valid <code>tissue_type</code>; consider adopting.</td>
+<td><del>Review <code>"cell line"</code> and <code>"organelle"</code> as valid <code>tissue_type</code> values — currently omitted to match cross-modality schema, but OPS use cases may require them. Note: CELLxGENE schema v7.0.0 added <code>"cell line"</code> as a valid <code>tissue_type</code>; consider adopting.</del> — <strong>Resolved. <code>"cell line"</code> adopted as a valid <code>tissue_type</code>, with Validation Rule V-1b requiring a Cellosaurus (<code>CVCL_XXXXX</code>) term for <code>tissue_ontology_term_id</code> and <code>development_stage_ontology_term_id</code> MUST be <code>"na"</code>. <code>"organelle"</code> remains out of scope for v0.1.0.</strong></td>
 <td>TBD</td>
 </tr>
 <tr>
@@ -147,6 +147,11 @@ The following ontology versions are pinned for this schema version. Submissions 
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><a href="https://www.cellosaurus.org">Cellosaurus</a></td>
+<td>CVCL</td>
+<td><em>[TBD before v1.0.0]</em></td>
+</tr>
 <tr>
 <td><a href="http://obofoundry.org/ontology/cl.html">Cell Ontology</a></td>
 <td>CL</td>
@@ -317,6 +322,11 @@ The following conditional requirements apply across fields. These are in additio
 <td><code>experiment.tissue_ontology_term_id</code> MUST be a <a href="https://www.ebi.ac.uk/ols4/ontologies/cl">Cell Ontology (CL)</a> term. The following CL terms MUST NOT be used: <code>CL:0000255</code> (eukaryotic cell), <code>CL:0000257</code> (Eumycetozoan cell), <code>CL:0000548</code> (animal cell).</td>
 </tr>
 <tr>
+<td>V-1b</td>
+<td><code>experiment.tissue_type</code> is <code>"cell line"</code></td>
+<td><code>experiment.tissue_ontology_term_id</code> MUST be a <a href="https://www.cellosaurus.org">Cellosaurus</a> term in the format <code>CVCL_XXXXX</code> (e.g., <code>"CVCL_0030"</code> for HeLa). <code>experiment.development_stage_ontology_term_id</code> MUST be <code>"na"</code> and <code>experiment.development_stage</code> MUST be <code>"na"</code>.</td>
+</tr>
+<tr>
 <td>V-2</td>
 <td><code>experiment.tissue_type</code> is <code>"tissue"</code> or <code>"organoid"</code></td>
 <td><code>experiment.tissue_ontology_term_id</code> MUST be the most accurate descendant of <a href="https://www.ebi.ac.uk/ols4/ontologies/uberon/classes?obo_id=UBERON:0001062"><code>UBERON:0001062</code></a> for <em>anatomical entity</em>.</td>
@@ -332,10 +342,6 @@ The following conditional requirements apply across fields. These are in additio
 <td><code>experiment.development_stage_ontology_term_id</code> MUST be the most accurate descendant of <a href="https://www.ebi.ac.uk/ols4/ontologies/mmusdv/classes?obo_id=MmusDv:0000001"><code>MmusDv:0000001</code></a> for <em>life cycle</em>, unless <code>tissue_type</code> indicates a cell line, in which case it MUST be <code>"na"</code>.</td>
 </tr>
 <tr>
-<td>V-5</td>
-<td><code>experiment.tissue_type</code> is <code>"cell line"</code> or sample is a cell line</td>
-<td><code>experiment.development_stage_ontology_term_id</code> MUST be <code>"na"</code> and <code>experiment.development_stage</code> MUST be <code>"na"</code>.</td>
-</tr>
 <tr>
 <td>V-6</td>
 <td><code>phenotype.z_slices</code> &gt; 1</td>
@@ -950,7 +956,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>The tissue or cell line from which the assayed cells were derived. Validation rules depend on <code>tissue_type</code> — see Validation Rules V-1 and V-2.</td>
+<td>The tissue or cell line from which the assayed cells were derived. Validation rules depend on <code>tissue_type</code> — see Validation Rules V-1, V-1b, and V-2.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -1012,7 +1018,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be one of <code>"tissue"</code>, <code>"organoid"</code>, or <code>"cell culture"</code>. See Pending Item #3 regarding <code>"cell line"</code> and <code>"organelle"</code>.</td>
+<td><code>String</code>. MUST be one of <code>"tissue"</code>, <code>"organoid"</code>, <code>"cell culture"</code>, or <code>"cell line"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1087,7 +1093,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Development stage of the organism. For cell lines, MUST be <code>"na"</code>. See Validation Rules V-3, V-4, V-5 for organism- and tissue-type-specific requirements.</td>
+<td>Development stage of the organism. For cell lines, MUST be <code>"na"</code>. See Validation Rules V-1b, V-3, V-4 for organism- and tissue-type-specific requirements.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -1095,7 +1101,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. See Validation Rules <a href="#validation-rules">V-3</a>, <a href="#validation-rules">V-4</a>, and <a href="#validation-rules">V-5</a>.</td>
+<td><code>String</code>. See Validation Rules <a href="#validation-rules">V-1b</a>, <a href="#validation-rules">V-3</a>, and <a href="#validation-rules">V-4</a>.</td>
 </tr>
 </tbody>
 </table>
