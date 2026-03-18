@@ -352,8 +352,8 @@ The following conditional requirements apply across fields. These are in additio
 <tr>
 <tr>
 <td>V-6</td>
-<td><code>phenotype.z_slices</code> &gt; 1</td>
-<td><code>phenotype.z_interval</code> MUST be annotated and MUST include a unit.</td>
+<td>The z-axis of the Zarr multiscales array has more than one slice</td>
+<td>The z-axis <code>coordinateTransformations[].scale</code> in <code>ome.multiscales</code> MUST be annotated with a non-zero value and the z-axis <code>unit</code> MUST be present (e.g., <code>"micrometer"</code>).</td>
 </tr>
 <tr>
 <td>V-7</td>
@@ -757,7 +757,7 @@ examples.zarr/
 </tr>
 <tr>
 <td><strong>Channel order</strong></td>
-<td>Image arrays MUST follow the same channel order as the phenotype imaging channels defined in <code>experimental_metadata.yaml</code>.</td>
+<td>Image arrays MUST follow the same channel order as <code>channels_metadata[]</code> in the Zarr plate root.</td>
 </tr>
 <tr>
 <td><strong>Root metadata</strong></td>
@@ -1772,7 +1772,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tbody>
 </table>
 
-#### phenotype.z_slices
+#### phenotype.exposure_time_ms
 
 <table>
 <thead>
@@ -1784,11 +1784,11 @@ This file captures the biological, experimental, and technical context of the sc
 <tbody>
 <tr>
 <td><strong>Key</strong></td>
-<td><code>phenotype.z_slices</code></td>
+<td><code>phenotype.exposure_time_ms</code></td>
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Number of z-planes acquired per field of view</td>
+<td>List of per-channel exposure times in milliseconds, in the same channel order as <code>channels_metadata[]</code> in the Zarr plate root.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -1796,65 +1796,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### phenotype.z_interval
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>phenotype.z_interval</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Distance between z-planes. See Validation Rule V-6.</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate if <code>z_slices &gt; 1</code>.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. MUST include unit (e.g., <code>"1.5 um"</code>).</td>
-</tr>
-</tbody>
-</table>
-
-#### phenotype.channels
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>phenotype.channels</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>List of imaging channels used for phenotype imaging</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>List[Object]</code>. Each object MUST include <code>name</code> (<code>String</code>), <code>marker_of</code> (<code>String</code>), <code>laser_wavelength_nm</code> (<code>Integer</code>), and <code>exposure_time_ms</code> (<code>Integer</code>). The following fields are OPTIONAL but SHOULD be included for antibody-based channels: <code>antibody</code> (<code>String</code>, primary antibody name, catalog ID, and dilution) and <code>secondary</code> (<code>String</code>, secondary antibody name, catalog ID, and dilution).</td>
+<td><code>List[Integer]</code>. Length MUST equal the number of channels in <code>channels_metadata[]</code>.</td>
 </tr>
 </tbody>
 </table>
