@@ -1236,35 +1236,6 @@ This file captures the biological, experimental, and technical context of the sc
 
 ### Cell Line Information
 
-#### cellular.cell_line
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>cellular.cell_line</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Free-text name and clone identifier of the cell line used</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. (e.g., <code>"HeLa-TetR-Cas9 (A7)"</code>).</td>
-</tr>
-</tbody>
-</table>
-
 #### cellular.growth_conditions
 
 <table>
