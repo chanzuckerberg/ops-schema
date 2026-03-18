@@ -209,6 +209,33 @@ Collection                      [1 per submission; groups experiments from a sin
     └── Visualization (Subset)  [1 or more per experiment]
 ```
 
+### Cross-File Linkage
+
+The following diagram shows how the key identifier fields connect all artifacts:
+
+```
+collection_metadata.yaml
+│
+└── experimental_metadata.yaml  (per experiment)
+        │
+        └── perturbation_library.csv
+                │  barcode           ← per-sgRNA primary key (unique within experiment)
+                │  perturbation_id   ← composite FK: {gene_id}__{role}
+                │                      shared by all sgRNAs targeting the same gene
+                │
+                ├──────────────────────────────────────────┐
+                ▼                                          ▼
+        cell_data.parquet                     aggregated_data.h5ad
+        (one row per cell)                    obs index = perturbation_id
+          cell_uid  ← globally unique         (one row per perturbation group)
+          perturbation_id FK
+                │
+                ▼
+        examples.zarr/
+        └── {perturbation_id}/
+            └── {cell_uid}/     ← image crop traceable back to cell_data.parquet
+```
+
 ### Level 0 — Visualization Artifacts (required for data visualization)
 
 <table>
@@ -397,6 +424,8 @@ The following conditional requirements apply across fields. These are in additio
 **File path:** `metadata/perturbation_library.csv`
 
 This file contains metadata about the specific perturbations applied in the OPS experiment and any corresponding CRISPRseq experiments. Each row represents one perturbation (one sgRNA). This schema is aligned with the `uns['genetic_perturbations']` structure in the [CELLxGENE Schema v7.1.0](https://github.com/chanzuckerberg/single-cell-curation/blob/main/schema/7.1.0/schema.md).
+
+**Primary key:** `barcode` is the unique identifier for each row (one sgRNA). Multiple rows may share the same `perturbation_id` when multiple sgRNAs target the same gene.
 
 ### perturbation_id
 
@@ -2714,9 +2743,54 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 
 ## Appendix A: Changelog
 
-### v0.1.0
+### v0.1.0 (current draft)
 
-- Initial draft schema covering all seven OPS data artifacts
-- Pending: Aggregated Data full field specification (awaiting CELLxGENE schema team alignment)
-- Pending: Additional Perturbation Library fields (awaiting Perturb-seq schema team alignment)
-- Out of scope for v0.1.0: 3D imaging, time-series data, chemical perturbations
+**Cross-file linkage**
+- Replaced opaque `id` field in Perturbation Library with `perturbation_id`, a composite key `{gene_id}__{role}` (e.g., `"ENSG00000186092__targeting"`). Multiple sgRNAs targeting the same gene share the same `perturbation_id`. `barcode` is now the explicit per-sgRNA primary key.
+- Renamed `gene_symbol` → `gene_id` in Perturbation Library (it stored Ensembl IDs); added `gene_symbol` for human-readable symbols (e.g., `"BRCA2"`)
+- Promoted `unique_cell_uid` → `cell_uid` as REQUIRED in scFeature Table; globally unique cell identifier across experiments
+- Renamed `genetic_perturbation_id` → `perturbation_id` in scFeature Table
+- Added cross-file linkage diagram to Data Model Overview
+
+**Collection tier**
+- Introduced Collection as the top-level submission tier (Collection → Experiment → Visualization)
+- Added `collection_metadata.yaml` with `collection.title`, `collection.publication_doi`, `collection.publication_reference`
+- Removed `experiment.publication_doi` and `experiment.publication_reference` from experimental metadata
+
+**Aggregated Data (h5ad)**
+- Corrected AnnData structure to match CELLxGENE conventions: `obs` index is `perturbation_id`; `X` matrix is `Float32 (n_perturbations × n_features)`; `p_values` moved to `layers`; `uns` section added with `schema_version`, `default_embedding`, `title`
+
+**Example Images**
+- Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{cell_uid}/`
+
+**Validation rules**
+- Added V-1b: `tissue_type = "cell line"` requires Cellosaurus (`CVCL_XXXXX`) term for `tissue_ontology_term_id` and `development_stage_ontology_term_id` MUST be `"na"`
+- Removed V-5 (consolidated into V-1b)
+- Updated V-6 to reference Zarr multiscales z-axis coordinate transformations instead of removed `phenotype.z_slices` / `phenotype.z_interval`
+- Updated V-9 to reference `perturbation_id`
+
+**Metadata deduplication**
+- Removed `cellular.cell_line` (covered by `tissue_ontology_term_id` Cellosaurus term)
+- Removed `phenotype.channels`, `phenotype.z_slices`, `phenotype.z_interval` (all covered by OME-NGFF Zarr metadata)
+- Added `phenotype.exposure_time_ms` as a standalone list field (not in OME-NGFF v0.5)
+- Added Cellosaurus (CVCL) to ontology dependencies table
+
+**Zarr Images**
+- Resolved Pending Item #3: `"cell line"` adopted as a valid `tissue_type` value
+- Relaxed codec requirement: `zstd` recommended; `blosc/zstd` accepted for writers lacking native `zstd` support; `lz4` permitted where performance requires it
+- Added compression reference link for Level 7 array spec
+
+**Pending items resolved**
+- Item #1: Perturbation Library fields aligned to CELLxGENE schema v7.1.0
+- Item #3: `"cell line"` adopted as valid `tissue_type`; `"organelle"` remains out of scope
+- Item #4: `barcode` and `protospacer_sequence` character and length constraints defined
+
+**Still pending before v1.0.0**
+- Item #2: Aggregated Data full field specification (awaiting CELLxGENE schema team alignment)
+- Item #5: `cell_seq_id` uniqueness scope
+- Item #6: Example Images array shape/dtype requirements
+- Item #7: Exhaustive enum for `channels_metadata[].channel_type`
+- Item #8: Exhaustive enum for `segmentation_metadata.annotation_type`
+- Item #9: Specimen-level metadata (cell line authentication, passage number, mycoplasma testing)
+
+**Out of scope for v0.1.0:** 3D imaging, time-series data, chemical perturbations
