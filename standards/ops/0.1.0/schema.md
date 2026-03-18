@@ -45,7 +45,7 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </tr>
 <tr>
 <td>5</td>
-<td>Clarify <code>cell_seq_id</code> uniqueness scope — unique within a well, or within a <code>(plate, well_row, well_col)</code> tuple?</td>
+<td><del>Clarify <code>cell_seq_id</code> uniqueness scope — unique within a well, or within a <code>(plate, well_row, well_col)</code> tuple?</del> — <strong>Resolved. <code>cell_seq_id</code> MUST be unique within a <code>(plate, well_row, well_col)</code> tuple.</strong></td>
 <td>TBD</td>
 </tr>
 <tr>
@@ -60,7 +60,7 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </tr>
 <tr>
 <td>8</td>
-<td>Define exhaustive enum values for <code>segmentation_metadata.annotation_type</code> (currently examples only: <code>"cell"</code>, <code>"nucleus"</code>)</td>
+<td>Define exhaustive enum values for <code>segmentation_metadata.annotation_type</code>. Current examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code>. Needs follow-up on whether event-based annotations (e.g., <code>"apoptosis"</code>, <code>"mitosis"</code>) should be included.</td>
 <td>TBD</td>
 </tr>
 <tr>
@@ -2255,7 +2255,7 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td><code>cell_seq_id</code></td>
 <td><code>Integer</code></td>
 <td>System MUST annotate.</td>
-<td>Unique integer identifier for a cell within a well. See Pending Item #5 for uniqueness scope.</td>
+<td>Unique integer identifier for a cell. MUST be unique within a <code>(plate, well_row, well_col)</code> tuple.</td>
 </tr>
 <tr>
 <td><code>barcode</code></td>
@@ -2623,7 +2623,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>segmentation_metadata.annotation_type</code></td>
 <td>REQUIRED</td>
-<td>Type of annotation. See Pending Item #8 for exhaustive enum definition. Current examples: <code>"cell"</code>, <code>"nucleus"</code></td>
+<td>Type of biological structure annotated. See Pending Item #8 for exhaustive enum definition. Current examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code></td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.is_ome_label</code></td>
@@ -2631,19 +2631,9 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <td>Boolean. MUST be <code>true</code> for OME-NGFF compliant label arrays</td>
 </tr>
 <tr>
-<td><code>segmentation_metadata.source_channel.name</code></td>
-<td>REQUIRED</td>
-<td>Name of the channel used for segmentation</td>
-</tr>
-<tr>
 <td><code>segmentation_metadata.source_channel.index</code></td>
 <td>REQUIRED</td>
-<td>0-based index of the source channel</td>
-</tr>
-<tr>
-<td><code>segmentation_metadata.source_channel.type</code></td>
-<td>REQUIRED</td>
-<td>Channel type (matching Level 0 <code>channel_type</code>)</td>
+<td>0-based index of the channel used for segmentation. MUST match the corresponding <code>channels_metadata[].index</code> at the Zarr plate root.</td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.biological_annotation.organelle</code></td>
@@ -2787,10 +2777,13 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 
 **Still pending before v1.0.0**
 - Item #2: Aggregated Data full field specification (awaiting CELLxGENE schema team alignment)
-- Item #5: `cell_seq_id` uniqueness scope
 - Item #6: Example Images array shape/dtype requirements
 - Item #7: Exhaustive enum for `channels_metadata[].channel_type`
-- Item #8: Exhaustive enum for `segmentation_metadata.annotation_type`
+- Item #8: Exhaustive enum for `segmentation_metadata.annotation_type` (examples expanded; needs follow-up on event-based annotations e.g. apoptosis, mitosis)
 - Item #9: Specimen-level metadata (cell line authentication, passage number, mycoplasma testing)
+
+**Pending items resolved (continued)**
+- Item #5: `cell_seq_id` MUST be unique within a `(plate, well_row, well_col)` tuple
+- Removed `segmentation_metadata.source_channel.name` and `source_channel.type` — redundant with `channels_metadata[]` at the Zarr plate root; `source_channel.index` alone is the FK
 
 **Out of scope for v0.1.0:** 3D imaging, time-series data, chemical perturbations
