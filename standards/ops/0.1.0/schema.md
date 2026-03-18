@@ -353,7 +353,7 @@ The following conditional requirements apply across fields. These are in additio
 </tr>
 <tr>
 <td>V-9</td>
-<td><code>genetic_perturbation_id</code> is present in <code>cell_data.parquet</code></td>
+<td><code>perturbation_id</code> is present in <code>cell_data.parquet</code></td>
 <td><code>experiment.organism_ontology_term_id</code> MUST be one of <code>"NCBITaxon:9606"</code> (<em>Homo sapiens</em>), <code>"NCBITaxon:10090"</code> (<em>Mus musculus</em>), or <code>"NCBITaxon:7955"</code> (<em>Danio rerio</em>). Perturbation data for all other organisms is out of scope for v0.1.0.</td>
 </tr>
 <tr>
@@ -384,7 +384,7 @@ The following conditional requirements apply across fields. These are in additio
 
 This file contains metadata about the specific perturbations applied in the OPS experiment and any corresponding CRISPRseq experiments. Each row represents one perturbation (one sgRNA). This schema is aligned with the `uns['genetic_perturbations']` structure in the [CELLxGENE Schema v7.1.0](https://github.com/chanzuckerberg/single-cell-curation/blob/main/schema/7.1.0/schema.md).
 
-### id
+### perturbation_id
 
 <table>
 <thead>
@@ -396,19 +396,19 @@ This file contains metadata about the specific perturbations applied in the OPS 
 <tbody>
 <tr>
 <td><strong>Key</strong></td>
-<td><code>id</code></td>
+<td><code>perturbation_id</code></td>
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Unique identifier for this perturbation entry. Used to link this record to cell-level data in <code>cell_data.parquet</code> via the <code>genetic_perturbation_id</code> field.</td>
+<td>Composite identifier that groups all sgRNAs targeting the same gene and role. Constructed as <code>{gene_id}__{role}</code> (e.g., <code>"ENSG00000186092__targeting"</code>, <code>"non-targeting__control"</code>). Serves as the cross-table foreign key linking this library to <code>aggregated_data.h5ad</code>, <code>cell_data.parquet</code>, and <code>examples.zarr</code>. Multiple sgRNAs in the library WILL share the same <code>perturbation_id</code>.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
+<td>System MUST annotate. Derived from <code>gene_id</code> and <code>role</code>.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be unique within the perturbation library. MUST be an ASCII string excluding whitespace, slashes, quotes, and commas. MUST NOT be <code>"na"</code>.</td>
+<td><code>String</code>. Format: <code>{gene_id}__{role}</code>. MUST NOT be <code>"na"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -442,6 +442,35 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tbody>
 </table>
 
+### gene_id
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>gene_id</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Ensembl gene ID for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>. Used as the first component of <code>perturbation_id</code>.</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter MUST annotate.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>.</td>
+</tr>
+</tbody>
+</table>
+
 ### gene_symbol
 
 <table>
@@ -458,7 +487,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Ensembl gene ID for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>.</td>
+<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). For control guides, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -466,7 +495,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>.</td>
+<td><code>String</code>. MUST be the HGNC-approved gene symbol or <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -684,15 +713,14 @@ This file contains metadata about the specific perturbations applied in the OPS 
 
 > **[PENDING — Item #6]** This section requires further specification. The structure below reflects current understanding.
 
-This file contains representative single-cell image crops used for visualization, organized hierarchically by gene and barcode.
+This file contains representative single-cell image crops used for visualization, organized hierarchically by perturbation and cell.
 
 ### File Structure
 
 ```
 examples.zarr/
-└── {gene_symbol}/          # One group per targeted gene
-    └── {barcode}/          # One group per sgRNA barcode
-        └── {1..N}/         # Up to 30 single-cell image crops per barcode
+└── {perturbation_id}/      # One group per perturbation (e.g., "ENSG00000186092__targeting")
+    └── {cell_uid}/         # Up to 30 example cells per perturbation; MUST match cell_uid in cell_data.parquet
 ```
 
 ### Constraints
@@ -706,7 +734,7 @@ examples.zarr/
 </thead>
 <tbody>
 <tr>
-<td><strong>Crops per barcode</strong></td>
+<td><strong>Crops per perturbation</strong></td>
 <td>SHOULD NOT exceed 30.</td>
 </tr>
 <tr>
@@ -719,7 +747,7 @@ examples.zarr/
 </tr>
 <tr>
 <td><strong>Root metadata</strong></td>
-<td>Zarr metadata at the root MUST include <code>gene_symbol</code> and <code>barcode</code> keys.</td>
+<td>Zarr metadata at the root MUST include a <code>perturbation_id</code> key. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1927,16 +1955,22 @@ This file is an AnnData object where rows represent **genes** (perturbations) an
 </thead>
 <tbody>
 <tr>
+<td><code>perturbation_id</code></td>
+<td><code>String</code></td>
+<td>REQUIRED</td>
+<td>Cross-table linker. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>. Format: <code>{gene_id}__{role}</code> (e.g., <code>"ENSG00000186092__targeting"</code>). Each row in this table represents one perturbation group.</td>
+</tr>
+<tr>
+<td><code>gene_id</code></td>
+<td><code>String</code></td>
+<td>REQUIRED</td>
+<td>Ensembl gene ID (version-stripped, e.g., <code>"ENSG00000186092"</code>). MUST be <code>"non-targeting"</code> for control rows.</td>
+</tr>
+<tr>
 <td><code>gene_symbol</code></td>
 <td><code>String</code></td>
 <td>REQUIRED</td>
-<td>Ensembl gene ID (version-stripped, e.g., <code>"ENSG00000186092"</code>)</td>
-</tr>
-<tr>
-<td><code>barcode</code></td>
-<td><code>String</code></td>
-<td>REQUIRED</td>
-<td>Representative barcode for the gene</td>
+<td>Human-readable gene symbol (e.g., <code>"BRCA2"</code>). MUST be <code>"non-targeting"</code> for control rows.</td>
 </tr>
 <tr>
 <td><code>role</code></td>
@@ -2163,6 +2197,12 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td>Y centroid coordinate of the cell within the tile, in pixels</td>
 </tr>
 <tr>
+<td><code>cell_uid</code></td>
+<td><code>Integer</code></td>
+<td>System MUST annotate.</td>
+<td>Globally unique cell identifier across experiments. Used as the primary cross-experiment cell-level linker.</td>
+</tr>
+<tr>
 <td><code>cell_seq_id</code></td>
 <td><code>Integer</code></td>
 <td>System MUST annotate.</td>
@@ -2175,10 +2215,10 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td>Perturbation barcode assigned to this cell via in situ sequencing. MUST match a <code>barcode</code> value in <code>perturbation_library.csv</code>.</td>
 </tr>
 <tr>
-<td><code>genetic_perturbation_id</code></td>
+<td><code>perturbation_id</code></td>
 <td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>The <code>id</code> value from <code>perturbation_library.csv</code> for the perturbation assigned to this cell. MUST match a valid <code>id</code> in the perturbation library. Equivalent to <code>obs['genetic_perturbation_id']</code> in CELLxGENE schema v7.1.0. Multiple perturbations MUST be separated by <code>" || "</code> in ascending lexical order with no duplication. The corresponding <code>experiment.organism_ontology_term_id</code> MUST be one of <code>"NCBITaxon:9606"</code> for <em>Homo sapiens</em>, <code>"NCBITaxon:10090"</code> for <em>Mus musculus</em>, or <code>"NCBITaxon:7955"</code> for <em>Danio rerio</em>.</td>
+<td>The <code>perturbation_id</code> value from <code>perturbation_library.csv</code> for the perturbation assigned to this cell. MUST match a valid <code>perturbation_id</code> in the perturbation library. Format: <code>{gene_id}__{role}</code>. Equivalent to <code>obs['genetic_perturbation_id']</code> in CELLxGENE schema v7.1.0. Multiple perturbations MUST be separated by <code>" || "</code> in ascending lexical order with no duplication. The corresponding <code>experiment.organism_ontology_term_id</code> MUST be one of <code>"NCBITaxon:9606"</code> for <em>Homo sapiens</em>, <code>"NCBITaxon:10090"</code> for <em>Mus musculus</em>, or <code>"NCBITaxon:7955"</code> for <em>Danio rerio</em>.</td>
 </tr>
 <tr>
 <td><code>genetic_perturbation_strategy</code></td>
@@ -2187,10 +2227,16 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td>The CRISPR strategy used. MUST be one of <code>"CRISPR knockout screen"</code>, <code>"CRISPR activation screen"</code>, <code>"CRISPR interference screen"</code>, <code>"CRISPR knockout mutant"</code>, <code>"control"</code>, or <code>"no perturbations"</code>. Equivalent to <code>obs['genetic_perturbation_strategy']</code> in CELLxGENE schema v7.1.0.</td>
 </tr>
 <tr>
+<td><code>gene_id</code></td>
+<td><code>String</code></td>
+<td>System MUST annotate.</td>
+<td>Ensembl gene ID derived from the assigned perturbation. MUST match the <code>gene_id</code> in the corresponding perturbation library entry.</td>
+</tr>
+<tr>
 <td><code>gene_symbol</code></td>
 <td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>Ensembl gene ID derived from the assigned perturbation. MUST match the <code>gene_symbol</code> in the corresponding perturbation library entry.</td>
+<td>Human-readable gene symbol derived from the assigned perturbation. MUST match the <code>gene_symbol</code> in the corresponding perturbation library entry.</td>
 </tr>
 </tbody>
 </table>
@@ -2206,11 +2252,6 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>unique_cell_uid</code></td>
-<td><code>Integer</code></td>
-<td>User-imported globally unique cell identifier across experiments</td>
-</tr>
 <tr>
 <td><code>bounding_box</code></td>
 <td><code>String</code> or <code>Array</code></td>
