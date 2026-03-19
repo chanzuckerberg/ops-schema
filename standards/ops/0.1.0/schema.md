@@ -233,7 +233,7 @@ collection_metadata.yaml
                 ▼
         examples.zarr/
         └── {perturbation_id}/
-            └── {cell_uid}/     ← image crop traceable back to cell_data.parquet
+            └── {barcode}/      ← image crop indexed by barcode (1–10 per perturbation)
 ```
 
 ### Level 0 — Visualization Artifacts (required for data visualization)
@@ -319,8 +319,9 @@ A complete, valid OPS submission MUST conform to the following directory structu
     ├── metadata/
     │   ├── experimental_metadata.yaml # Required. Per experiment.
     │   ├── perturbation_library.csv   # Required. Per experiment.
-    │   ├── cell_data.parquet          # Required. Per experiment.
     │   └── feature_definitions.json  # Optional. Per experiment.
+    │
+    ├── cell_data.parquet              # Required. Per experiment.
     │
     ├── visualizations/
     │   └── {visualization_id}/        # One directory per visualization.
@@ -335,6 +336,14 @@ A complete, valid OPS submission MUST conform to the following directory structu
 - `{visualization_id}` MUST be a unique identifier within the submission. Format TBD (see Pending Item #2).
 - `{screen_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
 - Collections with multiple experiments MUST include one `{screen_name}/` directory per experiment, each with a distinct `{screen_name}`.
+
+### Multimodal Experiments (e.g., CROP-seq)
+
+For experiments that include both OPS imaging data and a paired CROP-seq (or other sequencing-based) readout:
+
+- The CROP-seq AnnData object (`.h5ad`) MUST be included in `{screen_name}/metadata/` as `crop_seq.h5ad`.
+- The submission MUST include a visualization entry for the CROP-seq data. This visualization MUST contain `aggregated_data.h5ad` but MUST NOT include `examples.zarr` (no image crops are required for sequencing-only readouts).
+- `experiment.pseudobulk` in `experimental_metadata.yaml` SHOULD include `"crop_seq"` as a cell state label when CROP-seq groupings are used.
 
 ---
 
@@ -386,11 +395,6 @@ The following conditional requirements apply across fields. These are in additio
 <td>V-7</td>
 <td>Two or more visualizations reference the same <code>cell_data.parquet</code></td>
 <td><code>cell_class</code> MUST be populated for all rows in that <code>cell_data.parquet</code> to disambiguate which cells belong to which visualization.</td>
-</tr>
-<tr>
-<td>V-8</td>
-<td><code>collection.publication_doi</code> is <code>null</code></td>
-<td>Collection is considered unpublished. <code>collection.publication_reference</code> SHOULD also be <code>null</code>.</td>
 </tr>
 <tr>
 <td>V-9</td>
@@ -452,35 +456,6 @@ This file contains metadata about the specific perturbations applied in the OPS 
 <tr>
 <td><strong>Value</strong></td>
 <td><code>String</code>. Format: <code>{gene_id}__{role}</code>. MUST NOT be <code>"na"</code>.</td>
-</tr>
-</tbody>
-</table>
-
-### role
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>role</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Indicates whether this perturbation is a targeting guide or a control</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. MUST be one of <code>"targeting"</code> or <code>"control"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -567,7 +542,36 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be unique within the perturbation library. MUST be composed only of the characters <code>A</code>, <code>C</code>, <code>G</code>, or <code>T</code>. Length MUST match <code>library.barcode_length</code> in <code>experimental_metadata.yaml</code>.</td>
+<td><code>String</code>. MUST be unique within the perturbation library. MUST be composed only of the characters <code>A</code>, <code>C</code>, <code>G</code>, or <code>T</code>.</td>
+</tr>
+</tbody>
+</table>
+
+### role
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>role</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Indicates whether this perturbation is a targeting guide or a control</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter MUST annotate.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>. MUST be one of <code>"targeting"</code> or <code>"control"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -763,7 +767,7 @@ This file contains representative single-cell image crops used for visualization
 ```
 examples.zarr/
 └── {perturbation_id}/      # One group per perturbation (e.g., "ENSG00000186092__targeting")
-    └── {cell_uid}/         # Up to 30 example cells per perturbation; MUST match cell_uid in cell_data.parquet
+    └── {barcode}/          # One group per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
 ```
 
 ### Constraints
@@ -777,8 +781,8 @@ examples.zarr/
 </thead>
 <tbody>
 <tr>
-<td><strong>Crops per perturbation</strong></td>
-<td>SHOULD NOT exceed 30.</td>
+<td><strong>Barcodes per perturbation</strong></td>
+<td>Each perturbation MUST have between 1 and 10 barcodes. Each barcode group MUST contain at least one cell image crop.</td>
 </tr>
 <tr>
 <td><strong>Array content</strong></td>
@@ -863,35 +867,6 @@ This file captures publication and provenance metadata shared across all experim
 </tbody>
 </table>
 
-#### collection.publication_reference
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>collection.publication_reference</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Human-readable citation string for the associated publication</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter SHOULD annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>String</code>. OPTIONAL. (e.g., <code>"Funk et al. 2022 (Cell)"</code>).</td>
-</tr>
-</tbody>
-</table>
-
 ---
 
 ## Experimental Metadata
@@ -949,7 +924,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>List of cell state labels used for pseudobulk groupings in this experiment</td>
+<td>List of cell state labels used for pseudobulk groupings in this experiment. MAY include a CROP-seq cell state label (e.g., <code>"crop_seq"</code>); if a CROP-seq label is present, a corresponding CROP-seq AnnData object MUST be included in the submission (see Multimodal Experiments).</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -1414,151 +1389,6 @@ This file captures the biological, experimental, and technical context of the sc
 </tbody>
 </table>
 
-#### library.total_guides
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>library.total_guides</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Total number of unique sgRNAs in the library</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### library.guides_per_gene
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>library.guides_per_gene</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Number of distinct sgRNAs targeting each gene</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### library.number_of_genes
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>library.number_of_genes</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Total number of genes targeted in the library</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### library.nontargeting_controls
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>library.nontargeting_controls</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Number of non-targeting control sgRNAs in the library</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
-#### library.barcode_length
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Key</strong></td>
-<td><code>library.barcode_length</code></td>
-</tr>
-<tr>
-<td><strong>Description</strong></td>
-<td>Length of the barcode sequence in nucleotides</td>
-</tr>
-<tr>
-<td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
-</tr>
-<tr>
-<td><strong>Value</strong></td>
-<td><code>Integer</code>.</td>
-</tr>
-</tbody>
-</table>
-
 #### library.gene_selection
 
 <table>
@@ -1954,30 +1784,6 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 </thead>
 <tbody>
 <tr>
-<td><code>gene_id</code></td>
-<td><code>String</code></td>
-<td>REQUIRED</td>
-<td>Ensembl gene ID (version-stripped, e.g., <code>"ENSG00000186092"</code>). MUST be <code>"non-targeting"</code> for control rows.</td>
-</tr>
-<tr>
-<td><code>gene_symbol</code></td>
-<td><code>String</code></td>
-<td>REQUIRED</td>
-<td>Human-readable gene symbol (e.g., <code>"BRCA2"</code>). MUST be <code>"non-targeting"</code> for control rows.</td>
-</tr>
-<tr>
-<td><code>role</code></td>
-<td><code>String</code></td>
-<td>REQUIRED</td>
-<td>Whether this observation is a targeting perturbation or control. MUST be one of <code>"targeting"</code> or <code>"control"</code>. Derived from the corresponding <code>role</code> field in <code>perturbation_library.csv</code>.</td>
-</tr>
-<tr>
-<td><code>control_type</code></td>
-<td><code>String</code></td>
-<td>REQUIRED if <code>role</code> is <code>"control"</code></td>
-<td>Type of control guide. MUST be one of <code>"non-targeting"</code> or <code>"intergenic"</code>. MUST NOT be present if <code>role</code> is <code>"targeting"</code>.</td>
-</tr>
-<tr>
 <td><code>cluster_group_{N}</code></td>
 <td><code>Integer</code></td>
 <td>OPTIONAL</td>
@@ -1985,6 +1791,8 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 </tr>
 </tbody>
 </table>
+
+> **Note:** The UI will display only the subset of aggregated features designated as key features (typically 10–30 standard CellProfiler features plus up to ~10 custom features per submission). The full feature set (all columns) is present in the data matrix.
 
 ### var index
 
@@ -2107,83 +1915,21 @@ The `var` index MUST be `feature_id` — a unique identifier for each morphologi
 ## Feature Definitions
 
 **Scope:** Per experiment
-**File format:** JSON
-**File path:** `metadata/feature_definitions.json`
+**File format:** CSV
+**File path:** `metadata/feature_definitions.csv`
 
 This file is OPTIONAL. It SHOULD be included when datasets use non-standard feature names or novel feature extraction methods, to enable cross-dataset comparability.
 
-### Morphology Features
+Each row defines one feature. The file MUST include the following six columns:
 
-```json
-"morphology": {
-  "{feature_name}": {
-    "description": "String. Human-readable description of the feature.",
-    "unit": "String. Unit of measurement (e.g., 'pixels', 'um^2').",
-    "method": "String. Algorithm or approach used to compute the feature.",
-    "software": "String. Software package used.",
-    "version": "String. Version of the software."
-  }
-}
-```
-
-### Intensity Features
-
-```json
-"intensity": {
-  "{feature_name}": {
-    "description": "String.",
-    "unit": "String.",
-    "method": "String.",
-    "software": "String.",
-    "version": "String.",
-    "channel_index": "Integer. 0-based index of the channel in the phenotype imaging stack.",
-    "channel_name": "String. Name matching a channel in phenotype.channels.",
-    "marker": "String. Biological marker measured."
-  }
-}
-```
-
-### Texture Features
-
-```json
-"texture": {
-  "{feature_name}": {
-    "description": "String.",
-    "unit": "String.",
-    "method": "String.",
-    "software": "String.",
-    "version": "String."
-  }
-}
-```
-
-### Granularity Features
-
-```json
-"granularity": {
-  "{feature_name}": {
-    "description": "String.",
-    "unit": "String.",
-    "method": "String.",
-    "software": "String.",
-    "version": "String."
-  }
-}
-```
-
-### Categorical Features
-
-```json
-"categorical_features": [
-  {
-    "feature_name": "String.",
-    "description": "String.",
-    "type": "categorical",
-    "values": ["String", "..."],
-    "method": "String."
-  }
-]
-```
+| Column | Type | Required | Description |
+|---|---|---|---|
+| `feature_id` | `String` | REQUIRED | Unique identifier for the feature (e.g., `"CellProfiler__AreaShape_Area__nucleus"`). MUST match the `var` index in `aggregated_data.h5ad`. |
+| `feature_name` | `String` | REQUIRED | Human-readable name of the feature (e.g., `"Nucleus Area"`). |
+| `feature_type` | `String` | REQUIRED | Category of feature. MUST be one of `"morphology"`, `"intensity"`, `"texture"`, `"granularity"`, or `"categorical"`. |
+| `unit` | `String` | OPTIONAL | Unit of measurement (e.g., `"pixels"`, `"um^2"`). Leave blank if not applicable. |
+| `software` | `String` | OPTIONAL | Software package used to compute the feature (e.g., `"CellProfiler"`, `"vision_model"`). |
+| `version` | `String` | OPTIONAL | Version of the software (e.g., `"4.2.1"`). |
 
 ---
 
@@ -2191,7 +1937,7 @@ This file is OPTIONAL. It SHOULD be included when datasets use non-standard feat
 
 **Scope:** Per experiment
 **File format:** Parquet
-**File path:** `metadata/cell_data.parquet`
+**File path:** `{screen_name}/cell_data.parquet`
 
 > **Scope limitations:** This table does NOT support 3D imaging, time-series data, or chemical perturbations. These use cases are out of scope for v0.1.0.
 
@@ -2267,25 +2013,7 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td><code>perturbation_id</code></td>
 <td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>The <code>perturbation_id</code> value from <code>perturbation_library.csv</code> for the perturbation assigned to this cell. MUST match a valid <code>perturbation_id</code> in the perturbation library. Format: <code>{gene_id}__{role}</code>. Equivalent to <code>obs['genetic_perturbation_id']</code> in CELLxGENE schema v7.1.0. Multiple perturbations MUST be separated by <code>" || "</code> in ascending lexical order with no duplication. The corresponding <code>experiment.organism_ontology_term_id</code> MUST be one of <code>"NCBITaxon:9606"</code> for <em>Homo sapiens</em>, <code>"NCBITaxon:10090"</code> for <em>Mus musculus</em>, or <code>"NCBITaxon:7955"</code> for <em>Danio rerio</em>.</td>
-</tr>
-<tr>
-<td><code>genetic_perturbation_strategy</code></td>
-<td><code>String</code></td>
-<td>System MUST annotate.</td>
-<td>The CRISPR strategy used. MUST be one of <code>"CRISPR knockout screen"</code>, <code>"CRISPR activation screen"</code>, <code>"CRISPR interference screen"</code>, <code>"CRISPR knockout mutant"</code>, <code>"control"</code>, or <code>"no perturbations"</code>. Equivalent to <code>obs['genetic_perturbation_strategy']</code> in CELLxGENE schema v7.1.0.</td>
-</tr>
-<tr>
-<td><code>gene_id</code></td>
-<td><code>String</code></td>
-<td>System MUST annotate.</td>
-<td>Ensembl gene ID derived from the assigned perturbation. MUST match the <code>gene_id</code> in the corresponding perturbation library entry.</td>
-</tr>
-<tr>
-<td><code>gene_symbol</code></td>
-<td><code>String</code></td>
-<td>System MUST annotate.</td>
-<td>Human-readable gene symbol derived from the assigned perturbation. MUST match the <code>gene_symbol</code> in the corresponding perturbation library entry.</td>
+<td>Unique identifier for this perturbation entry. Used to link this record to cell-level data in <code>cell_data.parquet</code> via the <code>genetic_perturbation_id</code> field. This field is intended as a stable join key and MUST NOT change after data submission, even if gene annotations are updated.</td>
 </tr>
 </tbody>
 </table>
