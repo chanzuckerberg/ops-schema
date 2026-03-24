@@ -1,6 +1,6 @@
-# OPS Schema v0.1.0 — Zarr Example: `phenotyping_v3.zarr`
+# OPS Schema v0.1.0 — Zarr Example: `example_screen.zarr`
 
-**Source path:** `/hpc/projects/icd.fast.ops/ops0031_20250424/3-assembly/phenotyping_v3.zarr`
+**Source path:** `/path/to/example_screen.zarr`
 
 Zarr v3 OME-NGFF (v0.5) HCS plate store with 7 hierarchy levels. See [zarr-images.md](zarr-images.md) for the full field specification.
 
@@ -8,7 +8,7 @@ Zarr v3 OME-NGFF (v0.5) HCS plate store with 7 hierarchy levels. See [zarr-image
 
 ## Level 0 — Plate Root
 
-**File:** `phenotyping_v3.zarr/zarr.json`
+**File:** `example_screen.zarr/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -19,7 +19,7 @@ attributes:
     version: "0.5"
     plate:
       version: "0.5"
-      name: "ops0031_20250424"
+      name: "example_screen"
       field_count: 1
       acquisitions:
         - id: 0
@@ -114,7 +114,7 @@ attributes:
 
 ## Level 1 — Row Group
 
-**File:** `phenotyping_v3.zarr/A/zarr.json`
+**File:** `example_screen.zarr/A/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -127,7 +127,7 @@ attributes: {}
 
 ## Level 2 — Column of Row A (Well Group)
 
-**File:** `phenotyping_v3.zarr/A/1/zarr.json`
+**File:** `example_screen.zarr/A/1/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -233,7 +233,7 @@ attributes:
       co2_percentage: null
     cell_product_lot_id: null
     passage_number: null
-  acquisition_uid: null                  # e.g., "acq_ops0031_20250424_000"
+  acquisition_uid: null                  # e.g., "acq_example_screen_000"
   acquisition_timestamp: null            # e.g., "2025-04-24T00:00:00Z" (ISO 8601)
 ```
 
@@ -241,7 +241,7 @@ attributes:
 
 ## Level 3 — Image Group (Multiscales)
 
-**File:** `phenotyping_v3.zarr/A/1/0/zarr.json`
+**File:** `example_screen.zarr/A/1/0/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -370,115 +370,115 @@ attributes:
     normalization:
       Phase2D:
         dataset_statistics:
-          mean: -5.50e-05
-          std: 0.2159
+          mean: 0.0
+          std: 0.20
           median: 0.0
-          iqr: 0.1363
+          iqr: 0.13
         fov_statistics:
-          mean: -7.55e-05
-          std: 0.1987
+          mean: 0.0
+          std: 0.20
           median: 0.0
-          iqr: 0.1290
+          iqr: 0.13
       Focus3D:
         dataset_statistics:
-          mean: -7.79e-05
-          std: 0.2660
+          mean: 0.0
+          std: 0.25
           median: 0.0
-          iqr: 0.1993
+          iqr: 0.19
         fov_statistics:
-          mean: -1.66e-04
-          std: 0.2558
+          mean: 0.0
+          std: 0.25
           median: 0.0
-          iqr: 0.1898
+          iqr: 0.19
       GFP:
         dataset_statistics:
-          mean: 88.32
-          std: 48.72
-          median: 112.25
-          iqr: 9.007
+          mean: 90.0
+          std: 50.0
+          median: 110.0
+          iqr: 9.0
         fov_statistics:
-          mean: 87.75
-          std: 48.63
-          median: 111.90
-          iqr: 9.043
+          mean: 90.0
+          std: 50.0
+          median: 110.0
+          iqr: 9.0
       mCherry:
         dataset_statistics:
-          mean: 127.14
-          std: 90.55
-          median: 126.0
-          iqr: 57.43
-        fov_statistics:
-          mean: 124.68
-          std: 88.83
+          mean: 125.0
+          std: 90.0
           median: 125.0
-          iqr: 54.72
+          iqr: 55.0
+        fov_statistics:
+          mean: 125.0
+          std: 90.0
+          median: 125.0
+          iqr: 55.0
       nuclei_prediction:
         dataset_statistics:
-          mean: 2.530
-          std: 6.717
-          median: 0.372
-          iqr: 0.738
+          mean: 2.5
+          std: 7.0
+          median: 0.37
+          iqr: 0.72
         fov_statistics:
-          mean: 2.594
-          std: 7.046
-          median: 0.367
-          iqr: 0.697
+          mean: 2.5
+          std: 7.0
+          median: 0.37
+          iqr: 0.72
       membrane_prediction:
         dataset_statistics:
-          mean: 0.314
-          std: 0.499
-          median: 0.177
-          iqr: 0.472
+          mean: 0.30
+          std: 0.50
+          median: 0.18
+          iqr: 0.47
         fov_statistics:
-          mean: 0.339
-          std: 0.502
-          median: 0.210
-          iqr: 0.506
+          mean: 0.30
+          std: 0.50
+          median: 0.18
+          iqr: 0.47
     clims_per_level:
       # method: "p0.1-99.5-coarsest+scale2^steps"
       "1":
-        contrast_limits: [-6.672, 7.406]
+        contrast_limits: [-6.5, 7.5]
         contrast_limits_per_channel:
-          Phase2D: [-6.672, 7.406]
-          Focus3D: [-0.842, 0.776]
-          GFP: [150.0, 4383.96]
-          mCherry: [150.0, 12745.29]
-          nuclei_prediction: [0.0, 413.27]
-          membrane_prediction: [-0.2, 20.24]
+          Phase2D: [-6.5, 7.5]
+          Focus3D: [-0.8, 0.8]
+          GFP: [150.0, 4400.0]
+          mCherry: [150.0, 12800.0]
+          nuclei_prediction: [0.0, 415.0]
+          membrane_prediction: [-0.2, 20.0]
       "2":
-        contrast_limits: [-3.153, 3.886]
+        contrast_limits: [-3.0, 4.0]
         contrast_limits_per_channel:
-          Phase2D: [-3.153, 3.886]
-          Focus3D: [-0.438, 0.371]
-          GFP: [150.0, 2702.20]
-          mCherry: [150.0, 7347.38]
-          nuclei_prediction: [0.0, 229.59]
-          membrane_prediction: [-0.2, 11.24]
+          Phase2D: [-3.0, 4.0]
+          Focus3D: [-0.4, 0.4]
+          GFP: [150.0, 2700.0]
+          mCherry: [150.0, 7400.0]
+          nuclei_prediction: [0.0, 230.0]
+          membrane_prediction: [-0.2, 11.0]
       "3":
-        contrast_limits: [-1.393, 2.126]
+        contrast_limits: [-1.4, 2.1]
         contrast_limits_per_channel:
-          Phase2D: [-1.393, 2.126]
-          Focus3D: [-0.236, 0.169]
-          GFP: [150.0, 1861.32]
-          mCherry: [150.0, 4648.43]
-          nuclei_prediction: [0.0, 137.76]
-          membrane_prediction: [-0.2, 6.746]
+          Phase2D: [-1.4, 2.1]
+          Focus3D: [-0.24, 0.17]
+          GFP: [150.0, 1860.0]
+          mCherry: [150.0, 4650.0]
+          nuclei_prediction: [0.0, 138.0]
+          membrane_prediction: [-0.2, 6.8]
       "4":
-        contrast_limits: [-0.513, 1.247]
+        contrast_limits: [-0.5, 1.2]
         contrast_limits_per_channel:
-          Phase2D: [-0.513, 1.247]
-          Focus3D: [-0.134, 0.068]
-          GFP: [150.0, 1440.88]
-          mCherry: [150.0, 3298.95]
-          nuclei_prediction: [0.0, 91.84]
-          membrane_prediction: [0.0, 4.497]
+          Phase2D: [-0.5, 1.2]
+          Focus3D: [-0.13, 0.07]
+          GFP: [150.0, 1440.0]
+          mCherry: [150.0, 3300.0]
+          nuclei_prediction: [0.0, 92.0]
+          membrane_prediction: [0.0, 4.5]
 ```
 
 ---
 
 ## Level 4 — Resolution Array
 
-**File:** `phenotyping_v3.zarr/A/1/0/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
+**File:** `example_screen.zarr/A/1/0/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
 
 ```yaml
 zarr_format: 3
@@ -524,7 +524,7 @@ codecs:
 
 ## Level 5 — Labels Container
 
-**File:** `phenotyping_v3.zarr/A/1/0/labels/zarr.json`
+**File:** `example_screen.zarr/A/1/0/labels/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -554,7 +554,7 @@ attributes:
 
 ## Level 6 — Label Group (per segmentation)
 
-**File:** `phenotyping_v3.zarr/A/1/0/labels/cell_seg/zarr.json`
+**File:** `example_screen.zarr/A/1/0/labels/cell_seg/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -594,7 +594,7 @@ attributes:
 
 ## Level 7 — Label Resolution Array
 
-**File:** `phenotyping_v3.zarr/A/1/0/labels/cell_seg/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
+**File:** `example_screen.zarr/A/1/0/labels/cell_seg/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
 
 ```yaml
 zarr_format: 3
