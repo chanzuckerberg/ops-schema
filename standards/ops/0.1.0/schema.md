@@ -24,29 +24,9 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td><del>Additional Perturbation Library fields for alignment with Perturb-seq schema</del> — <strong>Resolved in v0.1.0. Aligned to CELLxGENE schema v7.1.0 <code>genetic_perturbations</code> structure.</strong></td>
-<td>—</td>
-</tr>
-<tr>
 <td>2</td>
 <td>Aggregated Data full field specification</td>
 <td>Jason / CELLxGENE schema team</td>
-</tr>
-<tr>
-<td>3</td>
-<td><del>Review <code>"cell line"</code> and <code>"organelle"</code> as valid <code>tissue_type</code> values — currently omitted to match cross-modality schema, but OPS use cases may require them. Note: CELLxGENE schema v7.0.0 added <code>"cell line"</code> as a valid <code>tissue_type</code>; consider adopting.</del> — <strong>Resolved. <code>"cell line"</code> adopted as a valid <code>tissue_type</code>, with Validation Rule V-1b requiring a Cellosaurus (<code>CVCL_XXXXX</code>) term for <code>tissue_ontology_term_id</code> and <code>development_stage_ontology_term_id</code> MUST be <code>"na"</code>. <code>"organelle"</code> remains out of scope for v0.1.0.</strong></td>
-<td>TBD</td>
-</tr>
-<tr>
-<td>4</td>
-<td><del>Define valid alphabet and length constraints for <code>barcode</code> and <code>sgrna_sequence</code></del> — <strong>Resolved. <code>barcode</code> and <code>protospacer_sequence</code>: ACGT only; <code>protospacer_sequence</code> length 14–22 chars per CELLxGENE v7.1.0.</strong></td>
-<td>—</td>
-</tr>
-<tr>
-<td>5</td>
-<td><del>Clarify <code>cell_seq_id</code> uniqueness scope — unique within a well, or within a <code>(plate, well_row, well_col)</code> tuple?</del> — <strong>Resolved. <code>cell_seq_id</code> MUST be unique within a <code>(plate, well_row, well_col)</code> tuple.</strong></td>
-<td>TBD</td>
 </tr>
 <tr>
 <td>6</td>
@@ -55,7 +35,7 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </tr>
 <tr>
 <td>7</td>
-<td>Define exhaustive enum values for <code>channels_metadata[].channel_type</code> (currently: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code> — are phase contrast, transmitted light, etc. valid?)</td>
+<td>Define exhaustive enum values for <code>channels_metadata[].channel_type</code>. Proposed alignment with the <a href="https://github.com/chanzuckerberg/dynamic-cell-atlas-specs/blob/main/docs/v0.2/channel-metadata.rst#guidance-on-channel-type">DCA spec</a> categories: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>. Needs decision on whether to adopt DCA values directly or maintain OPS-specific set (current: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code>).</td>
 <td>TBD</td>
 </tr>
 <tr>
@@ -67,6 +47,11 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 <td>9</td>
 <td>Add specimen-level metadata fields for cell line authentication, passage number, and mycoplasma testing status</td>
 <td>TBD</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Define the list of 30 CZI-standard interpretable features (CellProfiler-derived) that will be displayed in the UI. Submitters may include up to 10 additional custom features. This list must be finalized before v1.0.0.</td>
+<td>CZI / cathystoli</td>
 </tr>
 </tbody>
 </table>
@@ -341,7 +326,9 @@ A complete, valid OPS submission MUST conform to the following directory structu
 
 For experiments that include both OPS imaging data and a paired CROP-seq (or other sequencing-based) readout:
 
-- The CROP-seq AnnData object (`.h5ad`) MUST be included in `{screen_name}/metadata/` as `crop_seq.h5ad`.
+> **Note:** No separate YAML file is created for CROP-seq data. All CROP-seq metadata is added directly to the existing `experimental_metadata.yaml` using the fields below.
+
+- The CROP-seq AnnData file (`crop_seq.h5ad`) MUST be declared in the **existing** `experimental_metadata.yaml` under the `experiment.crop_seq_anndata` field (see [experiment.crop_seq_anndata](#experimentcrop_seq_anndata)).
 - The submission MUST include a visualization entry for the CROP-seq data. This visualization MUST contain `aggregated_data.h5ad` but MUST NOT include `examples.zarr` (no image crops are required for sequencing-only readouts).
 - `experiment.pseudobulk` in `experimental_metadata.yaml` SHOULD include `"crop_seq"` as a cell state label when CROP-seq groupings are used.
 
@@ -388,7 +375,7 @@ The following conditional requirements apply across fields. These are in additio
 <tr>
 <tr>
 <td>V-6</td>
-<td>The z-axis of the Zarr multiscales array has more than one slice</td>
+<td>The z-axis of the Zarr multiscales array has more than one slice (note: this rule is unrelated to <a href="https://ngff.openmicroscopy.org/rfc/6/index.html">NGFF RFC 6</a>)</td>
 <td>The z-axis <code>coordinateTransformations[].scale</code> in <code>ome.multiscales</code> MUST be annotated with a non-zero value and the z-axis <code>unit</code> MUST be present (e.g., <code>"micrometer"</code>).</td>
 </tr>
 <tr>
@@ -447,15 +434,15 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Composite identifier that groups all sgRNAs targeting the same gene and role. Constructed as <code>{gene_id}__{role}</code> (e.g., <code>"ENSG00000186092__targeting"</code>, <code>"non-targeting__control"</code>). Serves as the cross-table foreign key linking this library to <code>aggregated_data.h5ad</code>, <code>cell_data.parquet</code>, and <code>examples.zarr</code>. Multiple sgRNAs in the library WILL share the same <code>perturbation_id</code>.</td>
+<td>Stable unique identifier for this perturbation entry, used as the cross-table foreign key linking this library to <code>aggregated_data.h5ad</code>, <code>cell_data.parquet</code>, and <code>examples.zarr</code>. SHOULD be based on <code>gene_id</code> or <code>gene_symbol</code>. Multiple sgRNAs targeting the same gene WILL share the same <code>perturbation_id</code>. This field MUST NOT change after data submission, even if gene annotations (e.g., Ensembl IDs or gene symbols) are later updated.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>System MUST annotate. Derived from <code>gene_id</code> and <code>role</code>.</td>
+<td>Submitter MUST annotate.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. Format: <code>{gene_id}__{role}</code>. MUST NOT be <code>"na"</code>.</td>
+<td><code>String</code>. MUST NOT be <code>"na"</code>. MUST remain stable after submission.</td>
 </tr>
 </tbody>
 </table>
@@ -760,6 +747,10 @@ This file contains metadata about the specific perturbations applied in the OPS 
 
 > **[PENDING — Item #6]** This section requires further specification. The structure below reflects current understanding.
 
+**What is an "example image"?** An example image is a representative single-cell image crop selected for visualization purposes — it is a small, lightweight preview of what a perturbation looks like phenotypically. Example images are NOT a complete record of all cells; they are a curated subset (1–30 per barcode) chosen to illustrate the perturbation effect.
+
+**Why doesn't this follow full OME-NGFF HCS plate conventions?** The `examples.zarr` store is a visualization artifact, not the primary image data. It uses a simple Zarr group hierarchy keyed by `perturbation_id` and `barcode`, without the full OME-NGFF HCS plate/row/well/image nesting. Validators MUST NOT apply OME-NGFF HCS compliance checks to this artifact.
+
 This file contains representative single-cell image crops used for visualization, organized hierarchically by perturbation and cell.
 
 ### File Structure
@@ -768,6 +759,7 @@ This file contains representative single-cell image crops used for visualization
 examples.zarr/
 └── {perturbation_id}/      # One group per perturbation (e.g., "ENSG00000186092__targeting")
     └── {barcode}/          # One group per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
+        └── 0/ ... N/       # 1–30 images in standard Zarr format; each array is one single-cell crop
 ```
 
 ### Constraints
@@ -933,6 +925,35 @@ This file captures the biological, experimental, and technical context of the sc
 <tr>
 <td><strong>Value</strong></td>
 <td><code>List[String]</code>. Each element is a free-text label (e.g., <code>["interphase", "mitotic"]</code>). OPTIONAL.</td>
+</tr>
+</tbody>
+</table>
+
+#### experiment.crop_seq_anndata
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Key</strong></td>
+<td><code>experiment.crop_seq_anndata</code></td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>Path to the CROP-seq AnnData file, relative to <code>{screen_name}/metadata/</code>. MUST be present when the experiment includes a paired CROP-seq readout (see Multimodal Experiments).</td>
+</tr>
+<tr>
+<td><strong>Annotator</strong></td>
+<td>Submitter MUST annotate if CROP-seq data is included.</td>
+</tr>
+<tr>
+<td><strong>Value</strong></td>
+<td><code>String</code>. OPTIONAL. (e.g., <code>"crop_seq.h5ad"</code>).</td>
 </tr>
 </tbody>
 </table>
@@ -1792,7 +1813,7 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 </tbody>
 </table>
 
-> **Note:** The UI will display only the subset of aggregated features designated as key features (typically 10–30 standard CellProfiler features plus up to ~10 custom features per submission). The full feature set (all columns) is present in the data matrix.
+> **Note:** The UI will display only a designated subset of features: up to 30 interpretable features as defined by CZI (standard CellProfiler-derived features; see Pending Item #10), plus up to 10 additional features defined by the submitter. The full feature set (all columns) is present in the data matrix.
 
 ### var index
 
@@ -2069,7 +2090,7 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 ```
 {screen_name}.zarr/                     Level 0: Plate root
 ├── A/                                  Level 1: Row group
-│   └── 1/                              Level 2: Well group
+│   └── 1/                              Level 2: Column of Row A (Well group)
 │       └── 0/                          Level 3: Image group (multiscales)
 │           ├── 0/ ... 4/               Level 4: Resolution arrays (full res → 16x)
 │           └── labels/                 Level 5: Labels container
@@ -2148,7 +2169,7 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 <tr>
 <td><code>channels_metadata[].channel_type</code></td>
 <td>REQUIRED</td>
-<td>See Pending Item #7 for exhaustive enum definition. Current valid values: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code></td>
+<td>See Pending Item #7 for final enum definition. Current valid values: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code>. Proposed DCA-aligned values: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>.</td>
 </tr>
 <tr>
 <td><code>channels_metadata[].description</code></td>
@@ -2263,6 +2284,11 @@ No required metadata beyond OME-NGFF row group conventions.
 <td>REQUIRED</td>
 <td>Scale factors per axis</td>
 </tr>
+<tr>
+<td><code>ome.multiscales[].downsamplingMethod</code></td>
+<td>RECOMMENDED</td>
+<td>Method used to generate downsampled resolution levels (e.g., <code>"gaussian"</code>, <code>"average"</code>, <code>"subsample"</code>). Stored as a custom metadata key alongside <code>ome.multiscales</code>.</td>
+</tr>
 </tbody>
 </table>
 
@@ -2364,9 +2390,9 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <td>0-based index of the channel used for segmentation. MUST match the corresponding <code>channels_metadata[].index</code> at the Zarr plate root.</td>
 </tr>
 <tr>
-<td><code>segmentation_metadata.biological_annotation.organelle</code></td>
+<td><code>segmentation_metadata.biological_annotation.biological_target</code></td>
 <td>REQUIRED</td>
-<td>Biological structure segmented (e.g., <code>"cell"</code>, <code>"nucleus"</code>)</td>
+<td>Biological target, organelle, or structure segmented (e.g., <code>"cell"</code>, <code>"nucleus"</code>, <code>"actin filament"</code>). Free text. Aligned with DCA <code>biological_target</code> field.</td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.biological_annotation.marker</code></td>
@@ -2464,7 +2490,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 ### v0.1.0 (current draft)
 
 **Cross-file linkage**
-- Replaced opaque `id` field in Perturbation Library with `perturbation_id`, a composite key `{gene_id}__{role}` (e.g., `"ENSG00000186092__targeting"`). Multiple sgRNAs targeting the same gene share the same `perturbation_id`. `barcode` is now the explicit per-sgRNA primary key.
+- Replaced opaque `id` field in Perturbation Library with `perturbation_id`, a submitter-defined stable identifier (SHOULD be based on `gene_id` or `gene_symbol`). Multiple sgRNAs targeting the same gene share the same `perturbation_id`. `barcode` is now the explicit per-sgRNA primary key. `perturbation_id` MUST NOT change after submission.
 - Renamed `gene_symbol` → `gene_id` in Perturbation Library (it stored Ensembl IDs); added `gene_symbol` for human-readable symbols (e.g., `"BRCA2"`)
 - Promoted `unique_cell_uid` → `cell_uid` as REQUIRED in scFeature Table; globally unique cell identifier across experiments
 - Renamed `genetic_perturbation_id` → `perturbation_id` in scFeature Table
@@ -2472,7 +2498,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 
 **Collection tier**
 - Introduced Collection as the top-level submission tier (Collection → Experiment → Visualization)
-- Added `collection_metadata.yaml` with `collection.title`, `collection.publication_doi`, `collection.publication_reference`
+- Added `collection_metadata.yaml` with `collection.title`, `collection.publication_doi`
 - Removed `experiment.publication_doi` and `experiment.publication_reference` from experimental metadata
 
 **Aggregated Data (h5ad)**
