@@ -484,7 +484,7 @@ attributes:
 zarr_format: 3
 node_type: array
 data_type: float32
-shape: [1, 6, 1, 104688, 105281]   # [T, C, Z, Y, X]
+shape: [1, 6, 1, 65536, 65536]   # [T, C, Z, Y, X]
 dimension_names: [T, C, Z, Y, X]
 fill_value: 0.0
 attributes: {}
@@ -492,7 +492,7 @@ storage_transformers: []
 chunk_grid:
   name: regular
   configuration:
-    chunk_shape: [1, 6, 1, 13312, 13312]   # outer shard shape
+    chunk_shape: [1, 6, 1, 8192, 8192]   # outer shard shape
 chunk_key_encoding:
   name: default
   configuration:
@@ -536,18 +536,17 @@ attributes:
     labels:
       - nuclear_seg
       - cell_seg
-      - phase2d_vesicular_seg
-      - phase2d_vesicular_dark_seg
-      - focus3d_tubular_seg
+      - mitochondria_seg
+      - er_seg
+      - golgi_seg
       - gfp_seg
-      - phase2d_tubular_seg
-      - focus3d_vesicular_dark_seg
-      - nucleoli_phase2d_seg
-      - nucleoli_focus3d_seg
+      - lysosome_seg
+      - lipid_droplet_seg
+      - nucleoli_seg
+      - nucleoli_seg_2
       - mcherry_seg
-      - focus3d_vesicular_seg
-# Note: iss_gene_image, iss_guide_image, and grid_overlay subdirectories
-# also exist on disk but are not listed in the OME labels index.
+      - organelle_seg
+# Note: additional subdirectories may exist on disk but are not listed in the OME labels index.
 ```
 
 ---
@@ -584,7 +583,7 @@ attributes:
         tile_size: 4096
         tile_overlap: 512
     statistics:
-      n_cells: 44724776
+      n_cells: 12000000
     description: >
       Cell segmentation from membrane virtual stain using Cellpose-SAM
       with hybrid IoU-based stitching (IoU > 0.1)
@@ -600,7 +599,7 @@ attributes:
 zarr_format: 3
 node_type: array
 data_type: int32
-shape: [1, 1, 1, 104688, 105281]   # [T, C, Z, Y, X]
+shape: [1, 1, 1, 65536, 65536]   # [T, C, Z, Y, X]
 fill_value: 0
 attributes: {}
 storage_transformers: []
