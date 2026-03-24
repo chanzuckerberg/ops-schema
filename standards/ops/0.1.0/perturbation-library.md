@@ -59,7 +59,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Ensembl gene ID for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>. Used as the first component of <code>perturbation_id</code>.</td>
+<td>Ensembl gene ID for the gene targeted by this perturbation. For control guides, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
