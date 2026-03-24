@@ -49,8 +49,8 @@ The following items are unresolved and MUST be addressed before v1.0.0:
 </tr>
 <tr>
 <td>7</td>
-<td>Define exhaustive enum values for <code>channels_metadata[].channel_type</code>. Proposed alignment with the <a href="https://github.com/chanzuckerberg/dynamic-cell-atlas-specs/blob/main/docs/v0.2/channel-metadata.rst#guidance-on-channel-type">DCA spec</a> categories: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>. Needs decision on whether to adopt DCA values directly or maintain OPS-specific set (current: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code>).</td>
-<td>TBD</td>
+<td><del>Define exhaustive enum values for <code>channels_metadata[].channel_type</code></del> — <strong>Resolved. DCA-aligned values adopted: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>.</strong></td>
+<td>—</td>
 </tr>
 <tr>
 <td>8</td>

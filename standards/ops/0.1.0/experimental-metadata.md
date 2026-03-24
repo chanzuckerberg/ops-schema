@@ -10,6 +10,8 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 **File format:** YAML
 **File path:** `{screen_name}/metadata/experimental_metadata.yaml`
 
+> **Scope limitations (v0.1.0):** Structured chemical/drug perturbation metadata is out of scope for this version. Experiments that multiplex genetic perturbations with chemical treatments (e.g., compound dosing, FFA treatment) SHOULD document the chemical context in `cellular.growth_conditions` as free text.
+
 This file captures the biological, experimental, and technical context of the screen.
 
 ### Screen Information

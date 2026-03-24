@@ -96,7 +96,7 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 <tr>
 <td><code>channels_metadata[].channel_type</code></td>
 <td>REQUIRED</td>
-<td>See Pending Item #7 for final enum definition. Current valid values: <code>"fluorescent"</code>, <code>"brightfield"</code>, <code>"virtual_stain"</code>. Proposed DCA-aligned values: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>.</td>
+<td>Type of imaging channel. Aligned with the <a href="https://github.com/chanzuckerberg/dynamic-cell-atlas-specs/blob/main/docs/v0.2/channel-metadata.rst#guidance-on-channel-type">DCA spec</a>. MUST be one of: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>.</td>
 </tr>
 <tr>
 <td><code>channels_metadata[].description</code></td>
@@ -105,7 +105,7 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 </tr>
 <tr>
 <td><code>channels_metadata[].biological_annotation</code></td>
-<td>REQUIRED for <code>fluorescent</code> and <code>virtual_stain</code></td>
+<td>REQUIRED for <code>fluorescence</code> and <code>predicted</code></td>
 <td>Biological target being imaged</td>
 </tr>
 <tr>
