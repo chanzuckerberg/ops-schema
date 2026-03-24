@@ -43,16 +43,7 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 
 ### var index
 
-The `var` index MUST be `feature_id` — a unique identifier for each morphological feature. `feature_id` values MUST be stable across submissions to enable cross-dataset concatenation.
-
-**Naming pattern:** `feature_id` MUST follow one of these formats:
-
-| Feature origin | Pattern | Example |
-|---|---|---|
-| Tool-derived (e.g. CellProfiler) | `{feature_source}__{feature_name}__{roi}` | `"CellProfiler__AreaShape_Area__nucleus"` |
-| ML-derived (e.g. vision model) | `{model_name}__{dimension_id}` | `"vision_model__dim_042"` |
-
-Double underscores (`__`) are used as delimiters. `feature_source`, `feature_name`, `model_name`, and `dimension_id` MUST NOT themselves contain `__`.
+The `var` index MUST be `feature_id` — a unique identifier for each morphological feature (e.g., `"CellProfiler__AreaShape_Area__nucleus"`).
 
 ### var (columns — features)
 
