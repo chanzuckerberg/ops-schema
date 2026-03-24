@@ -205,7 +205,7 @@ collection_metadata.yaml
         │
         └── perturbation_library.csv
                 │  barcode           ← per-sgRNA primary key (unique within experiment)
-                │  perturbation_id   ← composite FK: {gene_id}__{role}
+                │  perturbation_id   ← stable join key (submitter-defined)
                 │                      shared by all sgRNAs targeting the same gene
                 │
                 ├──────────────────────────────────────────┐
@@ -757,7 +757,7 @@ This file contains representative single-cell image crops used for visualization
 
 ```
 examples.zarr/
-└── {perturbation_id}/      # One group per perturbation (e.g., "ENSG00000186092__targeting")
+└── {perturbation_id}/      # One group per perturbation; MUST match a perturbation_id in perturbation_library.csv
     └── {barcode}/          # One group per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
         └── 0/ ... N/       # 1–30 images in standard Zarr format; each array is one single-cell crop
 ```
@@ -2034,7 +2034,7 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 <td><code>perturbation_id</code></td>
 <td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>Unique identifier for this perturbation entry. Used to link this record to cell-level data in <code>cell_data.parquet</code> via the <code>genetic_perturbation_id</code> field. This field is intended as a stable join key and MUST NOT change after data submission, even if gene annotations are updated.</td>
+<td>The <code>perturbation_id</code> value from <code>perturbation_library.csv</code> assigned to this cell. MUST match a valid <code>perturbation_id</code> in <code>perturbation_library.csv</code>. Serves as the foreign key linking each cell to its perturbation group. MUST NOT change after submission.</td>
 </tr>
 </tbody>
 </table>
@@ -2505,7 +2505,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 - Corrected AnnData structure to match CELLxGENE conventions: `obs` index is `perturbation_id`; `X` matrix is `Float32 (n_perturbations × n_features)`; `p_values` moved to `layers`; `uns` section added with `schema_version`, `default_embedding`, `title`
 
 **Example Images**
-- Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{cell_uid}/`
+- Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{barcode}/{1..N}/`
 
 **Validation rules**
 - Added V-1b: `tissue_type = "cell line"` requires Cellosaurus (`CVCL_XXXXX`) term for `tissue_ontology_term_id` and `development_stage_ontology_term_id` MUST be `"na"`
