@@ -94,6 +94,12 @@ The `var` index MUST be `feature_id` — a unique identifier for each morphologi
 <td>OPTIONAL</td>
 <td>Per-feature p-values for each perturbation. Same shape as <code>X</code>.</td>
 </tr>
+<tr>
+<td><code>neg_log10_fdr</code></td>
+<td><code>Float32, shape=(n_perturbations, n_features)</code></td>
+<td>OPTIONAL</td>
+<td>−log₁₀(FDR-adjusted p-value) per feature per perturbation. Same shape as <code>X</code>. This is the primary value used for visualization in the CZI app. RECOMMENDED when <code>p_values</code> is present.</td>
+</tr>
 </tbody>
 </table>
 
