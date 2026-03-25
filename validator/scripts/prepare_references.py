@@ -83,14 +83,41 @@ def download_ensembl_gene_table(dest: Path, force: bool = False) -> None:
         print("  pandas required — pip install pandas pyarrow")
         sys.exit(1)
 
-    print("  Downloading Ensembl 110 gene table from BioMart ...")
-    resp = requests.get(ENSEMBL_REST_URL, timeout=120)
+    # Use HGNC complete set: the authoritative source for HGNC-approved symbols
+    # mapped to Ensembl gene IDs. This is the right reference since the OPS schema
+    # requires gene_symbol to be an HGNC-approved symbol.
+    url = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"
+
+    print(f"  Downloading HGNC complete set (Ensembl gene ID → approved symbol) ...")
+    resp = requests.get(url, stream=True, timeout=120)
     resp.raise_for_status()
 
-    lines = resp.text.strip().split("\n")
-    rows = [line.split("\t") for line in lines[1:] if line]  # skip header
-    df = pd.DataFrame(rows, columns=["gene_id", "gene_name"])
-    df = df[df["gene_id"].str.startswith("ENSG")].drop_duplicates("gene_id").reset_index(drop=True)
+    raw = b""
+    for chunk in resp.iter_content(chunk_size=1024 * 1024):
+        raw += chunk
+
+    df_full = pd.read_csv(io.BytesIO(raw), sep="\t", dtype=str, low_memory=False)
+
+    required = {"ensembl_gene_id", "symbol"}
+    if not required.issubset(df_full.columns):
+        raise ValueError(
+            f"Unexpected columns in HGNC file. Expected {required}, got: {list(df_full.columns)[:10]}"
+        )
+
+    df = (
+        df_full[["ensembl_gene_id", "symbol"]]
+        .rename(columns={"ensembl_gene_id": "gene_id", "symbol": "gene_name"})
+        .dropna(subset=["gene_id"])
+        .drop_duplicates("gene_id")
+        .reset_index(drop=True)
+    )
+    df = df[df["gene_id"].str.startswith("ENSG", na=False)]
+
+    if len(df) < 10_000:
+        raise ValueError(
+            f"HGNC download returned only {len(df)} entries — expected ~20,000+."
+        )
+
     df.to_parquet(dest, index=False)
     print(f"  Saved: {dest} ({len(df):,} genes)")
 
