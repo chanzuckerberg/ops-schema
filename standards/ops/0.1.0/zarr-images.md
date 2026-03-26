@@ -184,7 +184,7 @@ No required metadata beyond OME-NGFF row group conventions.
 <tr>
 <td><code>ome.multiscales[].axes[].name</code></td>
 <td>REQUIRED</td>
-<td>Axis name (e.g., <code>"t"</code>, <code>"c"</code>, <code>"z"</code>, <code>"y"</code>, <code>"x"</code>)</td>
+<td>Axis name. MUST be <code>"T"</code>, <code>"C"</code>, <code>"Z"</code>, <code>"Y"</code>, <code>"X"</code> (uppercase, per OME-NGFF v0.5 convention)</td>
 </tr>
 <tr>
 <td><code>ome.multiscales[].axes[].type</code></td>
@@ -193,8 +193,8 @@ No required metadata beyond OME-NGFF row group conventions.
 </tr>
 <tr>
 <td><code>ome.multiscales[].axes[].unit</code></td>
-<td>REQUIRED</td>
-<td>Axis unit (e.g., <code>"micrometer"</code>)</td>
+<td>REQUIRED for space and time axes</td>
+<td>Axis unit (e.g., <code>"micrometer"</code>, <code>"second"</code>). MUST NOT be present for channel axes, which have no physical unit.</td>
 </tr>
 <tr>
 <td><code>ome.multiscales[].datasets[].path</code></td>
@@ -278,7 +278,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>ome.labels</code></td>
 <td>REQUIRED</td>
-<td>List of all label group names present under this container</td>
+<td>Exhaustive list of all label group names present under this container. Every subdirectory that is a valid OME-NGFF label group MUST be listed here. Subdirectories not listed are not considered part of the standard and will be ignored by readers.</td>
 </tr>
 </tbody>
 </table>
@@ -349,7 +349,7 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>segmentation_metadata.segmentation.stitching</code></td>
 <td>REQUIRED</td>
-<td>Boolean. Whether stitching was applied</td>
+<td>Whether stitching was applied and how. MUST be <code>false</code> if no stitching was applied, or a descriptive string identifying the stitching method (e.g., <code>"hybrid_iou"</code>).</td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.segmentation.parameters</code></td>

@@ -546,7 +546,7 @@ attributes:
       - nucleoli_seg_2
       - mcherry_seg
       - organelle_seg
-# Note: additional subdirectories may exist on disk but are not listed in the OME labels index.
+# ome.labels is exhaustive: every label group MUST be listed here.
 ```
 
 ---
@@ -562,7 +562,7 @@ consolidated_metadata: null
 attributes:
   segmentation_metadata:
     label_name: "cell_seg"
-    annotation_type: "cell_segmentation"
+    annotation_type: "cell"
     is_ome_label: true
     source_channel:
       index: 5                            # FK to channels_metadata[].index at plate root
