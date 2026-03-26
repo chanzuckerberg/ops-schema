@@ -174,10 +174,26 @@ class MultiscaleEntry(BaseModel):
     @model_validator(mode="after")
     def axes_tcxyz(self) -> MultiscaleEntry:
         names = [ax.name for ax in self.axes]
-        if names != ["t", "c", "z", "y", "x"]:
+        if names != ["T", "C", "Z", "Y", "X"]:
             raise ValueError(
-                f"multiscales axes must be ['t', 'c', 'z', 'y', 'x']. Got: {names}"
+                f"multiscales axes must be ['T', 'C', 'Z', 'Y', 'X'] "
+                f"(uppercase, per OME-NGFF v0.5). Got: {names}"
             )
+        return self
+
+    @model_validator(mode="after")
+    def axis_unit_rules(self) -> MultiscaleEntry:
+        """Unit is required for space/time axes; must be absent for channel axes."""
+        for ax in self.axes:
+            if ax.type == "channel" and ax.unit is not None:
+                raise ValueError(
+                    f"Channel axis '{ax.name}' must not have a unit (no physical unit). "
+                    f"Got: {ax.unit!r}"
+                )
+            if ax.type in ("space", "time") and ax.unit is None:
+                raise ValueError(
+                    f"Axis '{ax.name}' (type='{ax.type}') must have a unit."
+                )
         return self
 
 
@@ -287,7 +303,7 @@ class SourceChannel(BaseModel):
 class SegmentationParams(BaseModel):
     method: str
     version: str
-    stitching: bool
+    stitching: bool | str  # False = no stitching; string = method name (e.g. "hybrid_iou")
     parameters: dict[str, Any] | None = None
 
 
