@@ -216,6 +216,11 @@ No required metadata beyond OME-NGFF row group conventions.
 <td>RECOMMENDED</td>
 <td>Method used to generate downsampled resolution levels (e.g., <code>"gaussian"</code>, <code>"average"</code>, <code>"subsample"</code>). Stored as a custom metadata key alongside <code>ome.multiscales</code>.</td>
 </tr>
+<tr>
+<td><code>custom_metadata</code></td>
+<td>OPTIONAL</td>
+<td>Per-channel normalization statistics (mean, std, median, IQR) and contrast limits. Most applicable to merged-well stores where statistics describe a single image; for per-tile stores these statistics may not be meaningful without defining an aggregation strategy across fields of view.</td>
+</tr>
 </tbody>
 </table>
 
