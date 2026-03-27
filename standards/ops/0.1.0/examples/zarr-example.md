@@ -366,7 +366,7 @@ attributes:
         defaultZ: 0
         model: "color"
         projection: "normal"
-  custom_metadata:
+  custom_metadata:                            # OPTIONAL — dataset/FOV-level statistics
     normalization:
       Phase2D:
         dataset_statistics:
