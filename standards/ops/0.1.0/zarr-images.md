@@ -247,20 +247,22 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>chunk_grid</code></td>
 <td>REQUIRED</td>
-<td>Outer shard shape</td>
+<td>Chunk or outer shard shape</td>
 </tr>
 <tr>
 <td><code>codecs</code></td>
 <td>REQUIRED</td>
-<td>MUST use <code>sharding_indexed</code>. Inner codec SHOULD be <code>zstd</code>. <code>blosc/zstd</code> is accepted where the Zarr writer does not support <code>zstd</code> directly. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it.</td>
+<td><code>sharding_indexed</code> is RECOMMENDED for merged-well stores where tiles have been stitched into a single large array (reduces file count). For per-tile stores where each field of view is a separate small array, flat chunking with <code>bytes</code> + <code>zstd</code> (or <code>blosc/zstd</code>) is acceptable. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it.</td>
 </tr>
 <tr>
 <td><code>index_codecs</code></td>
-<td>REQUIRED</td>
+<td>REQUIRED when using <code>sharding_indexed</code></td>
 <td>MUST use <code>bytes</code> + <code>crc32c</code></td>
 </tr>
 </tbody>
 </table>
+
+> **Note — Merged-well vs. per-tile stores:** Some pipelines merge all fields of view into a single well image before writing to Zarr, producing large arrays that benefit from sharding. Other pipelines (e.g., Brieflow) store each tile as a separate small array under the HCS hierarchy (`{row}/{col}/{tile}/`). The sharding requirement is designed for the merged-well case; per-tile stores already have manageable file counts and flat chunking is sufficient.
 
 ### Level 5 — Labels Container
 
@@ -395,16 +397,16 @@ Five resolution levels are REQUIRED: full resolution through 16x downsampled.
 <tr>
 <td><code>chunk_grid</code></td>
 <td>REQUIRED</td>
-<td>Outer shard shape</td>
+<td>Chunk or outer shard shape</td>
 </tr>
 <tr>
 <td><code>codecs</code></td>
 <td>REQUIRED</td>
-<td>MUST use <code>sharding_indexed</code>. Inner codec SHOULD be <code>zstd</code>. <code>blosc/zstd</code> is accepted where the Zarr writer does not support <code>zstd</code> directly. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it. See <a href="https://friendly-adventure-7j9rgl2.pages.github.io/v0.2/array-standard.html#compression">array standard compression reference</a>.</td>
+<td><code>sharding_indexed</code> is RECOMMENDED for merged-well stores. For per-tile stores, flat chunking with <code>bytes</code> + <code>zstd</code> (or <code>blosc/zstd</code>) is acceptable. Other codecs (e.g., <code>lz4</code>) MAY be used where performance requirements justify it. See <a href="https://friendly-adventure-7j9rgl2.pages.github.io/v0.2/array-standard.html#compression">array standard compression reference</a>.</td>
 </tr>
 <tr>
 <td><code>index_codecs</code></td>
-<td>REQUIRED</td>
+<td>REQUIRED when using <code>sharding_indexed</code></td>
 <td>MUST use <code>bytes</code> + <code>crc32c</code></td>
 </tr>
 </tbody>
