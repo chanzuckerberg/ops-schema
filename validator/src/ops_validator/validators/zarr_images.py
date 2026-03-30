@@ -178,10 +178,12 @@ class ZarrImagesValidator(BaseValidator):
                 self._error("L5", f"{labels_path} :: {field_path}", err["msg"])
             return
 
-        # Walk each label group
+        # Walk each label group (handle .zarr suffix on directory names)
         label_names = labels_meta.ome.get("labels", [])
         for label_name in label_names:
             label_path = f"{labels_path}/{label_name}"
+            if label_path not in store:
+                label_path = f"{labels_path}/{label_name}.zarr"
             self._validate_label_group(store, label_path, channel_indices)
 
     # ------------------------------------------------------------------

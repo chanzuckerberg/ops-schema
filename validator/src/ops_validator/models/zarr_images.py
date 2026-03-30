@@ -240,37 +240,47 @@ class OPSResolutionArray(ArraySpec):
 
     @field_validator("codecs", mode="after")
     @classmethod
-    def validate_sharding(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
-        found_sharding = any(c["name"] == "sharding_indexed" for c in codecs)
-        if not found_sharding:
-            raise ValueError(
-                "Level 4 array MUST use sharding_indexed codec. No sharding codec found."
-            )
-        return codecs
+    def validate_codecs(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
+        """Validate codec chain.
 
-    @field_validator("codecs", mode="after")
-    @classmethod
-    def validate_compression(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
-        for codec in codecs:
-            if codec["name"] == "sharding_indexed":
-                chunk_codecs = codec.get("configuration", {}).get("codecs", [])
-                codec_names = [c["name"] for c in chunk_codecs]
-                final = codec_names[-1] if codec_names else ""
-                if not any(
-                    final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
-                    for allowed in ("blosc", "zstd", "lz4")
-                ):
-                    raise ValueError(
-                        f"Level 4 array inner codec SHOULD be zstd (blosc/zstd and lz4 accepted). "
-                        f"Got: {final!r}"
-                    )
-                # index_codecs must include crc32c
-                index_codecs = codec.get("configuration", {}).get("index_codecs", [])
-                index_names = [c["name"] for c in index_codecs]
-                if "crc32c" not in index_names:
-                    raise ValueError(
-                        f"Level 4 array index_codecs must include 'crc32c'. Got: {index_names}"
-                    )
+        Sharding is RECOMMENDED for merged-well stores but not required for
+        per-tile stores. Compression codec must be zstd, blosc/zstd, or lz4.
+        """
+        codec_names = [c["name"] for c in codecs]
+        has_sharding = "sharding_indexed" in codec_names
+
+        if has_sharding:
+            # Validate inner codecs and index_codecs within sharding
+            for codec in codecs:
+                if codec["name"] == "sharding_indexed":
+                    chunk_codecs = codec.get("configuration", {}).get("codecs", [])
+                    inner_names = [c["name"] for c in chunk_codecs]
+                    final = inner_names[-1] if inner_names else ""
+                    if not any(
+                        final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
+                        for allowed in ("blosc", "zstd", "lz4")
+                    ):
+                        raise ValueError(
+                            f"Inner codec SHOULD be zstd (blosc/zstd and lz4 accepted). "
+                            f"Got: {final!r}"
+                        )
+                    index_codecs = codec.get("configuration", {}).get("index_codecs", [])
+                    index_names = [c["name"] for c in index_codecs]
+                    if "crc32c" not in index_names:
+                        raise ValueError(
+                            f"index_codecs must include 'crc32c'. Got: {index_names}"
+                        )
+        else:
+            # Flat chunking: final codec must be an accepted compressor
+            final = codec_names[-1] if codec_names else ""
+            if not any(
+                final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
+                for allowed in ("blosc", "zstd", "lz4")
+            ):
+                raise ValueError(
+                    f"Compression codec SHOULD be zstd (blosc/zstd and lz4 accepted). "
+                    f"Got: {final!r}"
+                )
         return codecs
 
 
@@ -302,8 +312,8 @@ class SourceChannel(BaseModel):
 
 class SegmentationParams(BaseModel):
     method: str
-    version: str
-    stitching: bool | str  # False = no stitching; string = method name (e.g. "hybrid_iou")
+    version: str | None = None
+    stitching: bool | str  # False/"none" = no stitching; string = method name (e.g. "hybrid_iou")
     parameters: dict[str, Any] | None = None
 
 
@@ -346,10 +356,19 @@ class OPSLabelArray(ArraySpec):
 
     @field_validator("codecs", mode="after")
     @classmethod
-    def validate_sharding(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
-        found_sharding = any(c["name"] == "sharding_indexed" for c in codecs)
-        if not found_sharding:
-            raise ValueError(
-                "Level 7 label array MUST use sharding_indexed codec."
-            )
+    def validate_codecs(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
+        """Validate codec chain (same rules as Level 4)."""
+        codec_names = [c["name"] for c in codecs]
+        final = codec_names[-1] if codec_names else ""
+        has_sharding = "sharding_indexed" in codec_names
+
+        if not has_sharding:
+            if not any(
+                final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
+                for allowed in ("blosc", "zstd", "lz4")
+            ):
+                raise ValueError(
+                    f"Compression codec SHOULD be zstd (blosc/zstd and lz4 accepted). "
+                    f"Got: {final!r}"
+                )
         return codecs
