@@ -318,7 +318,7 @@ A complete, valid OPS submission MUST conform to the following directory structu
     ├── metadata/
     │   ├── experimental_metadata.yaml # Required. Per experiment.
     │   ├── perturbation_library.csv   # Required. Per experiment.
-    │   └── feature_definitions.json  # Optional. Per experiment.
+    │   └── feature_definitions.csv   # Optional. Per experiment.
     │
     ├── cell_data.parquet              # Required. Per experiment.
     │
