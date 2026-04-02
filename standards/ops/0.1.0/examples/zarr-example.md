@@ -536,17 +536,18 @@ attributes:
     labels:
       - nuclear_seg
       - cell_seg
-      - mitochondria_seg
-      - er_seg
-      - golgi_seg
+      - phase2d_vesicular_seg
+      - phase2d_vesicular_dark_seg
+      - focus3d_tubular_seg
       - gfp_seg
-      - lysosome_seg
-      - lipid_droplet_seg
-      - nucleoli_seg
-      - nucleoli_seg_2
+      - phase2d_tubular_seg
+      - focus3d_vesicular_dark_seg
+      - nucleoli_phase2d_seg
+      - nucleoli_focus3d_seg
       - mcherry_seg
-      - organelle_seg
-# ome.labels is exhaustive: every label group MUST be listed here.
+      - focus3d_vesicular_seg
+# Note: additional subdirectories (e.g. iss_gene_image, grid_overlay) may exist
+# on disk but are not required to appear in ome.labels.
 ```
 
 ---
@@ -562,7 +563,7 @@ consolidated_metadata: null
 attributes:
   segmentation_metadata:
     label_name: "cell_seg"
-    annotation_type: "cell"
+    annotation_type: "cell_segmentation"
     is_ome_label: true
     source_channel:
       index: 5                            # FK to channels_metadata[].index at plate root
