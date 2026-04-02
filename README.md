@@ -27,8 +27,8 @@ To use this schema for your OPS data:
 
 1. Review the [schema specification](standards/ops/0.1.0/schema.md)
 2. Organize your data according to the specified directory structure
-3. Validate your data against the schema requirements
-4. Submit your data following the submission guidelines
+3. Validate your data against the schema requirements using the [validator](validator/)
+4. Open an issue or reach out if you have questions about submitting data
 
 ## Contributing
 
@@ -52,10 +52,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Support
 
-For questions or support:
-
-- Open an issue in this repository
-- Contact the development team at [TBD]@chanzuckerberg.com
+For questions or support, open an issue in this repository.
 
 ## Acknowledgments
 

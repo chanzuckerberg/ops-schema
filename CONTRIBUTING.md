@@ -24,7 +24,7 @@ The schema is the core of this project, so changes should be carefully considere
 1. Open an issue describing the proposed change and why it's needed
 2. Discuss the change with maintainers and community members
 3. Once there's consensus, create a pull request with the changes
-4. Include updates to documentation and examples as needed
+4. Include updates to documentation, examples, and the validator as needed
 
 ### Pull Request Process
 
@@ -38,12 +38,24 @@ The schema is the core of this project, so changes should be carefully considere
 
 ### Development Setup
 
-This is a documentation repository, so there's minimal setup required:
+The repository contains both schema documentation and a Python validator package.
+
+**Schema documentation:**
 
 1. Clone the repository
 2. Create a new branch for your changes
 3. Edit markdown files as needed
 4. Preview your changes locally before submitting
+
+**Validator (`validator/`):**
+
+```bash
+cd validator
+pip install -e ".[dev]"
+python -m pytest tests/
+```
+
+> Schema field changes (adding, removing, or renaming fields) will typically require a corresponding update to the validator. See `validator/src/ops_validator/` for the relevant model and validator files.
 
 ### Schema Versioning
 
