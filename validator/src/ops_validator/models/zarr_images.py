@@ -359,10 +359,30 @@ class OPSLabelArray(ArraySpec):
     def validate_codecs(cls, codecs: list[NamedConfig], info: ValidationInfo) -> list[NamedConfig]:
         """Validate codec chain (same rules as Level 4)."""
         codec_names = [c["name"] for c in codecs]
-        final = codec_names[-1] if codec_names else ""
         has_sharding = "sharding_indexed" in codec_names
 
-        if not has_sharding:
+        if has_sharding:
+            for codec in codecs:
+                if codec["name"] == "sharding_indexed":
+                    chunk_codecs = codec.get("configuration", {}).get("codecs", [])
+                    inner_names = [c["name"] for c in chunk_codecs]
+                    final = inner_names[-1] if inner_names else ""
+                    if not any(
+                        final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
+                        for allowed in ("blosc", "zstd", "lz4")
+                    ):
+                        raise ValueError(
+                            f"Inner codec SHOULD be zstd (blosc/zstd and lz4 accepted). "
+                            f"Got: {final!r}"
+                        )
+                    index_codecs = codec.get("configuration", {}).get("index_codecs", [])
+                    index_names = [c["name"] for c in index_codecs]
+                    if "crc32c" not in index_names:
+                        raise ValueError(
+                            f"index_codecs must include 'crc32c'. Got: {index_names}"
+                        )
+        else:
+            final = codec_names[-1] if codec_names else ""
             if not any(
                 final == allowed or final == f"numcodecs.{allowed.split('.')[-1]}"
                 for allowed in ("blosc", "zstd", "lz4")
