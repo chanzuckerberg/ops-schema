@@ -10,7 +10,9 @@ from pydantic import BaseModel, field_validator
 class FeatureDefinitionRow(BaseModel):
     feature_id: str
     feature_name: str
-    feature_type: Literal["morphology", "intensity", "texture", "granularity", "categorical"]
+    feature_type: Literal["shape", "intensity", "correlation", "texture", "granularity", "categorical"]
+    compartment: str | None = None
+    channel: str | None = None
     unit: str | None = None
     software: str | None = None
     version: str | None = None
@@ -27,4 +29,11 @@ class FeatureDefinitionRow(BaseModel):
     def feature_name_not_empty(cls, v: str) -> str:
         if not v.strip():
             raise ValueError("feature_name must not be empty")
+        return v
+
+    @field_validator("compartment")
+    @classmethod
+    def compartment_valid(cls, v: str | None) -> str | None:
+        if v is not None and v not in ("nucleus", "cell"):
+            raise ValueError(f"compartment must be 'nucleus' or 'cell'. Got: {v!r}")
         return v

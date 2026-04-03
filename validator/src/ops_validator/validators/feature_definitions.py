@@ -1,4 +1,4 @@
-"""Validator for feature_definitions.csv (OPTIONAL artifact)."""
+"""Validator for feature_definitions.csv (RECOMMENDED artifact)."""
 
 from __future__ import annotations
 
@@ -14,12 +14,13 @@ from ops_validator.validators.base import BaseValidator
 class FeatureDefinitionsValidator(BaseValidator):
     def validate(self) -> bool:
         if not self.path.exists():
-            # feature_definitions.csv is OPTIONAL
+            # feature_definitions.csv is RECOMMENDED
             self._warning(
-                "OPTIONAL_MISSING",
+                "RECOMMENDED_MISSING",
                 "feature_definitions.csv",
-                "feature_definitions.csv not found. This file is OPTIONAL but SHOULD be "
-                "included when using non-standard feature names.",
+                "feature_definitions.csv not found. This file is RECOMMENDED and SHOULD "
+                "document all features present in cell_data.parquet, including lab-specific "
+                "and extended features beyond the standardized visualization set.",
             )
             return True
 

@@ -167,24 +167,22 @@ class CrossArtifactValidator(BaseValidator):
     def _check_var_vs_feature_definitions(
         self, adata: ad.AnnData, h5ad_path: Path
     ) -> None:
-        """var index in aggregated_data must match feature_id in feature_definitions."""
+        """All feature_ids in aggregated_data var must be documented in feature_definitions.
+
+        feature_definitions.csv covers the full lab feature universe and will contain
+        many features not in aggregated_data var — that is expected and not flagged.
+        Only undocumented aggregated_data features (var IDs missing from feature_definitions)
+        are warned about.
+        """
         if self._feat_df is None or "feature_id" not in self._feat_df.columns:
             return
         feat_ids = set(self._feat_df["feature_id"].dropna())
         var_ids = set(adata.var.index.dropna().astype(str))
-        only_in_var = var_ids - feat_ids
-        only_in_feat = feat_ids - var_ids
-        if only_in_var:
+        undocumented = var_ids - feat_ids
+        if undocumented:
             self._warning(
                 "VAR_VS_FEATURES",
                 f"{h5ad_path} :: var.index",
-                f"{len(only_in_var)} feature_id(s) in aggregated_data var not in "
-                f"feature_definitions.csv. Sample: {sorted(only_in_var)[:5]}",
-            )
-        if only_in_feat:
-            self._warning(
-                "VAR_VS_FEATURES",
-                f"{h5ad_path} :: var.index",
-                f"{len(only_in_feat)} feature_id(s) in feature_definitions.csv not in "
-                f"aggregated_data var. Sample: {sorted(only_in_feat)[:5]}",
+                f"{len(undocumented)} feature_id(s) in aggregated_data var are not documented "
+                f"in feature_definitions.csv. Sample: {sorted(undocumented)[:5]}",
             )

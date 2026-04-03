@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+import re
 
 import numpy as np
 
@@ -10,6 +10,65 @@ from ops_validator.gencode import reference_present, validate_var_index
 from ops_validator.validators.base import BaseValidator
 
 OPS_SCHEMA_VERSION = "0.1.0"
+
+# ---------------------------------------------------------------------------
+# Standardized feature set (Vesuvius-derived)
+# Feature ID format: {compartment}__{channel_or_type}__{measurement}
+# ---------------------------------------------------------------------------
+
+VALID_COMPARTMENTS = {"nucleus", "cell"}
+
+SHAPE_MEASUREMENTS = {"area", "eccentricity", "form_factor", "solidity"}
+
+INTENSITY_MEASUREMENTS = {
+    "mean", "integrated", "mass_displacement",
+    "mean_edge", "std_edge", "mean_frac_0", "mean_frac_3",
+}
+
+# Feature IDs follow: {compartment}__{channel_or_type}__{measurement}
+_FEATURE_ID_RE = re.compile(r"^(?P<compartment>[^_][^_]*)__(?P<middle>[^_][^_]*)__(?P<measurement>.+)$")
+
+
+def _validate_feature_id_format(feature_id: str) -> str | None:
+    """Return an error string if the feature_id does not conform to the standardized format,
+    or None if it is valid."""
+    m = _FEATURE_ID_RE.match(feature_id)
+    if not m:
+        return (
+            f"feature_id {feature_id!r} does not match the required format "
+            f"'{{compartment}}__{{channel_or_type}}__{{measurement}}'."
+        )
+    compartment = m.group("compartment")
+    middle = m.group("middle")
+    measurement = m.group("measurement")
+
+    if compartment not in VALID_COMPARTMENTS:
+        return (
+            f"feature_id {feature_id!r}: compartment must be one of "
+            f"{sorted(VALID_COMPARTMENTS)}. Got: {compartment!r}."
+        )
+
+    if middle == "shape":
+        if measurement not in SHAPE_MEASUREMENTS:
+            return (
+                f"feature_id {feature_id!r}: shape measurement must be one of "
+                f"{sorted(SHAPE_MEASUREMENTS)}. Got: {measurement!r}."
+            )
+    elif middle == "correlation":
+        # channel pair: any two non-empty names separated by underscore are valid
+        if "_" not in measurement:
+            return (
+                f"feature_id {feature_id!r}: correlation feature must encode a channel pair "
+                f"as '{{channel_a}}_{{channel_b}}'. Got: {measurement!r}."
+            )
+    else:
+        # middle is a channel name; measurement must be a valid intensity measurement
+        if measurement not in INTENSITY_MEASUREMENTS:
+            return (
+                f"feature_id {feature_id!r}: intensity measurement must be one of "
+                f"{sorted(INTENSITY_MEASUREMENTS)}. Got: {measurement!r}."
+            )
+    return None
 
 
 class AggregatedDataValidator(BaseValidator):
@@ -35,7 +94,6 @@ class AggregatedDataValidator(BaseValidator):
         return self.is_valid
 
     def _validate_obs(self, adata) -> None:
-        # obs index must be perturbation_id
         if adata.obs.index.name not in (None, "perturbation_id"):
             self._warning(
                 "OBS_INDEX",
@@ -43,7 +101,6 @@ class AggregatedDataValidator(BaseValidator):
                 f"obs index name should be 'perturbation_id'. Got: {adata.obs.index.name!r}",
             )
 
-        # perturbation_id values must not be null
         if adata.obs.index.isnull().any():
             self._error(
                 "OBS_INDEX",
@@ -51,7 +108,6 @@ class AggregatedDataValidator(BaseValidator):
                 "obs index (perturbation_id) contains null values.",
             )
 
-        # perturbation_id values must be unique
         if adata.obs.index.duplicated().any():
             n = adata.obs.index.duplicated().sum()
             self._error(
@@ -60,36 +116,79 @@ class AggregatedDataValidator(BaseValidator):
                 f"obs index (perturbation_id) must be unique. Found {n} duplicate(s).",
             )
 
+        # cell_cycle_phase, if present, must be "interphase" or "mitotic"
+        if "cell_cycle_phase" in adata.obs.columns:
+            invalid = adata.obs["cell_cycle_phase"][
+                ~adata.obs["cell_cycle_phase"].isin({"interphase", "mitotic"})
+            ]
+            if len(invalid) > 0:
+                self._error(
+                    "OBS_CELL_CYCLE",
+                    "aggregated_data.h5ad :: obs.cell_cycle_phase",
+                    f"cell_cycle_phase must be 'interphase' or 'mitotic'. "
+                    f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
+                )
+
     def _validate_var(self, adata) -> None:
-        # var must have feature_name column
-        if "feature_name" not in adata.var.columns:
-            self._error(
-                "VAR",
-                "aggregated_data.h5ad :: var",
-                "var must have a 'feature_name' column.",
-            )
+        # Required var columns
+        for col in ("feature_name", "feature_type", "compartment"):
+            if col not in adata.var.columns:
+                self._error(
+                    "VAR_COLUMNS",
+                    f"aggregated_data.h5ad :: var",
+                    f"var must have a '{col}' column.",
+                )
 
         # var index uniqueness
         if adata.var.index.duplicated().any():
             n = adata.var.index.duplicated().sum()
             self._error(
-                "VAR",
+                "VAR_INDEX",
                 "aggregated_data.h5ad :: var.index",
                 f"var index (feature_id) must be unique. Found {n} duplicate(s).",
             )
+
+        # Validate each feature_id conforms to the standardized Vesuvius feature format
+        for feature_id in adata.var.index:
+            err = _validate_feature_id_format(str(feature_id))
+            if err:
+                self._error("VAR_FEATURE_ID", f"aggregated_data.h5ad :: var.index", err)
+
+        # feature_type values must be from the standardized set
+        if "feature_type" in adata.var.columns:
+            valid_types = {"shape", "intensity", "correlation"}
+            invalid = adata.var["feature_type"][
+                ~adata.var["feature_type"].isin(valid_types)
+            ]
+            if len(invalid) > 0:
+                self._error(
+                    "VAR_FEATURE_TYPE",
+                    "aggregated_data.h5ad :: var.feature_type",
+                    f"feature_type must be one of {sorted(valid_types)}. "
+                    f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
+                )
+
+        # compartment values must be valid
+        if "compartment" in adata.var.columns:
+            invalid = adata.var["compartment"][
+                ~adata.var["compartment"].isin(VALID_COMPARTMENTS)
+            ]
+            if len(invalid) > 0:
+                self._error(
+                    "VAR_COMPARTMENT",
+                    "aggregated_data.h5ad :: var.compartment",
+                    f"compartment must be one of {sorted(VALID_COMPARTMENTS)}. "
+                    f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
+                )
 
     def _validate_x(self, adata) -> None:
         if adata.X is None:
             self._error("X", "aggregated_data.h5ad :: X", "X matrix is missing.")
             return
 
-        # X must be Float32
         try:
             import scipy.sparse as sp
-            if sp.issparse(adata.X):
-                dtype = adata.X.dtype
-            else:
-                dtype = adata.X.dtype
+            dtype = adata.X.dtype
         except Exception:
             dtype = None
 
@@ -101,7 +200,6 @@ class AggregatedDataValidator(BaseValidator):
             )
 
     def _validate_layers(self, adata) -> None:
-        # p_values and neg_log10_fdr, if present, must match X shape
         for layer_name in ("p_values", "neg_log10_fdr"):
             if layer_name in adata.layers:
                 layer = adata.layers[layer_name]
@@ -112,7 +210,6 @@ class AggregatedDataValidator(BaseValidator):
                         f"Layer shape {layer.shape} must match X shape {adata.X.shape}.",
                     )
 
-        # Recommend neg_log10_fdr when p_values is present
         if "p_values" in adata.layers and "neg_log10_fdr" not in adata.layers:
             self._warning(
                 "NEG_LOG10_FDR",
@@ -142,7 +239,7 @@ class AggregatedDataValidator(BaseValidator):
             if key not in adata.uns:
                 self._error(
                     "UNS",
-                    f"aggregated_data.h5ad :: uns",
+                    "aggregated_data.h5ad :: uns",
                     f"uns must contain '{key}'.",
                 )
 
@@ -155,7 +252,7 @@ class AggregatedDataValidator(BaseValidator):
                     f"schema_version is {ver!r}; expected {OPS_SCHEMA_VERSION!r}.",
                 )
 
-        if "default_embedding" in adata.uns and "X_umap" in adata.obsm:
+        if "default_embedding" in adata.uns:
             default = adata.uns["default_embedding"]
             if default not in adata.obsm:
                 self._error(
