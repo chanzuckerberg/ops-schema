@@ -22,10 +22,13 @@ This file contains representative single-cell image crops used for visualization
 
 ```
 examples.zarr/
-└── {perturbation_id}/      # One group per perturbation; MUST match a perturbation_id in perturbation_library.csv
-    └── {barcode}/          # One group per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
-        └── 0/ ... N/       # 1–30 images in standard Zarr format; each array is one single-cell crop
+└── {channel_combo}/        # One group per channel combination (e.g., "DAPI_COXIV_CENPA_WGA")
+    └── {perturbation_id}/  # One group per perturbation; MUST match a perturbation_id in perturbation_library.csv
+        └── {barcode}/      # One group per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
+            └── 0/ ... N/   # 1–30 images in OME-Zarr format; each array is one single-cell crop
 ```
+
+> **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one group at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples.zarr` per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
 
 ### Constraints
 
@@ -43,7 +46,7 @@ examples.zarr/
 </tr>
 <tr>
 <td><strong>Array content</strong></td>
-<td>Each leaf node MUST contain a single-cell image crop as a Zarr array.</td>
+<td>Each leaf node MUST contain a single-cell image crop as an OME-Zarr store with its own channel metadata (axis names, channel labels, and rendering hints). This makes each crop self-describing — viewers can resolve channel names without needing to cross-reference the plate root.</td>
 </tr>
 <tr>
 <td><strong>Channel order</strong></td>

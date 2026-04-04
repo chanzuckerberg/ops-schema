@@ -53,7 +53,7 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 
 ### var index
 
-The `var` index MUST be `feature_id`. Feature IDs follow the pattern `{compartment}__{channel_or_type}__{measurement}` (e.g., `nucleus__dna__mean`, `cell__shape__area`).
+The `var` index MUST be `feature_id`. Feature IDs follow the pattern `{compartment}_{channel_or_measurement}_{measurement}` (e.g., `nucleus_DAPI_mean`, `nucleus_area`). Channel names in feature IDs MUST use the experiment's actual channel names as defined in `channels_metadata[]` (e.g., `DAPI`, `COXIV`), not generic biological names (e.g., `dna`, `tubulin`). Shape features omit the channel component (e.g., `nucleus_area`, not `nucleus_shape_area`).
 
 ### var (columns — standardized features)
 
@@ -98,36 +98,36 @@ Features are derived from the Vesuvius dataset and organized into three types ac
 
 #### Shape features
 
-Computed per compartment. Feature ID format: `{compartment}__shape__{measurement}`.
+Computed per compartment. Feature ID format: `{compartment}_{measurement}`.
 
 | feature_id (nucleus) | feature_id (cell) | Description |
 |---|---|---|
-| `nucleus__shape__area` | `cell__shape__area` | 2D surface area of the compartment |
-| `nucleus__shape__eccentricity` | `cell__shape__eccentricity` | Elongation (0 = circle, →1 = line) |
-| `nucleus__shape__form_factor` | `cell__shape__form_factor` | Perimeter-to-area ratio |
-| `nucleus__shape__solidity` | `cell__shape__solidity` | Convexity of the compartment boundary |
+| `nucleus_area` | `cell_area` | 2D surface area of the compartment |
+| `nucleus_eccentricity` | `cell_eccentricity` | Elongation (0 = circle, →1 = line) |
+| `nucleus_form_factor` | `cell_form_factor` | Perimeter-to-area ratio |
+| `nucleus_solidity` | `cell_solidity` | Convexity of the compartment boundary |
 
 #### Intensity features
 
-Computed per compartment × channel. Feature ID format: `{compartment}__{channel}__{measurement}`.
+Computed per compartment × channel. Feature ID format: `{compartment}_{channel}_{measurement}`.
 
 | Measurement | feature_id suffix | Description |
 |---|---|---|
-| `mean` | `__{channel}__mean` | Average pixel intensity within compartment |
-| `integrated` | `__{channel}__integrated` | Sum of pixel intensity values within compartment |
-| `mass_displacement` | `__{channel}__mass_displacement` | Distance between geometric and intensity-weighted centroids |
-| `mean_edge` | `__{channel}__mean_edge` | Average intensity at compartment border |
-| `std_edge` | `__{channel}__std_edge` | Standard deviation of border pixel intensity |
-| `mean_frac_0` | `__{channel}__mean_frac_0` | Mean intensity in innermost concentric ring |
-| `mean_frac_3` | `__{channel}__mean_frac_3` | Mean intensity in outermost concentric ring |
+| `mean` | `_{channel}_mean` | Average pixel intensity within compartment |
+| `integrated` | `_{channel}_integrated` | Sum of pixel intensity values within compartment |
+| `mass_displacement` | `_{channel}_mass_displacement` | Distance between geometric and intensity-weighted centroids |
+| `mean_edge` | `_{channel}_mean_edge` | Average intensity at compartment border |
+| `std_edge` | `_{channel}_std_edge` | Standard deviation of border pixel intensity |
+| `mean_frac_0` | `_{channel}_mean_frac_0` | Mean intensity in innermost concentric ring |
+| `mean_frac_3` | `_{channel}_mean_frac_3` | Mean intensity in outermost concentric ring |
 
-`{channel}` MUST be a channel name present in the experiment's Zarr `channels_metadata`. For example: `nucleus__dna__mean`, `cell__tubulin__integrated`.
+`{channel}` MUST be a channel name present in the experiment's Zarr `channels_metadata`, using the exact name as defined there. For example: `nucleus_DAPI_mean`, `cell_COXIV_integrated`.
 
 #### Correlation features
 
-Pearson correlation between pixel-level intensities of two channels, computed per compartment. Feature ID format: `{compartment}__correlation__{channel_a}_{channel_b}` (channels listed alphabetically).
+Pearson correlation between pixel-level intensities of two channels, computed per compartment. Feature ID format: `{compartment}_correlation_{channel_a}_{channel_b}` (channels listed alphabetically).
 
-All pairwise combinations of the experiment's channels are included. For example: `nucleus__correlation__dna_tubulin`, `cell__correlation__actin_gh2ax`.
+All pairwise combinations of the experiment's channels are included (channels listed alphabetically). For example: `nucleus_correlation_CENPA_DAPI`, `cell_correlation_COXIV_WGA`.
 
 ---
 
