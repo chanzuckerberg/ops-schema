@@ -22,7 +22,7 @@ LOCUS_PATTERN = re.compile(
 
 class PerturbationLibraryRow(BaseModel):
     perturbation_id: str
-    gene_id: str
+    gene_id: str | None = None
     gene_symbol: str
     barcode: Annotated[str, Field(pattern=r"^[ACGT]+$")]
     role: Literal["targeting", "control"]
@@ -44,13 +44,15 @@ class PerturbationLibraryRow(BaseModel):
 
     @field_validator("gene_id")
     @classmethod
-    def gene_id_format(cls, v: str) -> str:
+    def gene_id_format(cls, v: str | None) -> str | None:
+        if v is None or v == "":
+            return None
         if v == "non-targeting":
             return v
         if not ENSEMBL_PATTERN.match(v):
             raise ValueError(
                 f"gene_id must be a version-stripped Ensembl gene ID "
-                f"(e.g. 'ENSG00000186092') or 'non-targeting'. Got: {v!r}"
+                f"(e.g. 'ENSG00000186092'), 'non-targeting', or empty. Got: {v!r}"
             )
         return v
 
@@ -120,7 +122,7 @@ class PerturbationLibraryRow(BaseModel):
     @model_validator(mode="after")
     def control_gene_id(self) -> PerturbationLibraryRow:
         """Controls must have gene_id == 'non-targeting'."""
-        if self.role == "control" and self.gene_id != "non-targeting":
+        if self.role == "control" and self.gene_id not in ("non-targeting", None):
             raise ValueError(
                 f"gene_id must be 'non-targeting' for control guides. Got: {self.gene_id!r}"
             )
