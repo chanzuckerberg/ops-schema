@@ -85,7 +85,7 @@ The `var` axis MUST contain exactly the features enumerated in the **Standardize
 <td><code>compartment</code></td>
 <td><code>String</code></td>
 <td>REQUIRED</td>
-<td>Cellular compartment measured. MUST be one of <code>"nucleus"</code> or <code>"cell"</code>.</td>
+<td>Cellular compartment measured (e.g., <code>"nucleus"</code>, <code>"cell"</code>, <code>"cytoplasm"</code>). Any compartment name is valid.</td>
 </tr>
 </tbody>
 </table>
