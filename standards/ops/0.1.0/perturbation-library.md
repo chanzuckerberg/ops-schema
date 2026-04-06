@@ -67,7 +67,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>.</td>
+<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>. MAY be empty when a gene cannot be resolved against the reference Ensembl release, but more than 50% blank values among targeting rows is an error and more than 20% blank triggers a warning.</td>
 </tr>
 </tbody>
 </table>
