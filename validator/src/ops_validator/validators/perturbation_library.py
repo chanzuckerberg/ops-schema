@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 from pydantic import ValidationError
 
-from ops_validator.gencode import gene_id_exists, gene_symbol_matches, reference_present
+from ops_validator.gencode import gene_id_exists, gene_symbol_matches
 from ops_validator.models.perturbation_library import PerturbationLibraryRow
 from ops_validator.validators.base import BaseValidator
 
@@ -60,52 +60,35 @@ class PerturbationLibraryValidator(BaseValidator):
                     f"{dupes.unique()[:5].tolist()}",
                 )
 
-        # Check blank gene_id thresholds among targeting rows
+        # Strict gene_id requirement: every targeting row MUST have a gene_id
         targeting = df[df["role"] == "targeting"]
         if len(targeting) > 0:
             blank_gene_id = targeting["gene_id"].isin(["", "nan"]) | targeting["gene_id"].isna()
-            n_blank = blank_gene_id.sum()
-            pct_blank = n_blank / len(targeting)
-            if pct_blank > 0.5:
+            blank_rows = targeting.index[blank_gene_id].tolist()
+            for row_idx in blank_rows:
                 self._error(
                     "GENE_ID_BLANK",
-                    "perturbation_library.csv :: gene_id",
-                    f"{n_blank}/{len(targeting)} ({pct_blank:.0%}) targeting rows have blank "
-                    f"gene_id. More than 50% blank is not allowed.",
-                )
-            elif pct_blank > 0.2:
-                self._warning(
-                    "GENE_ID_BLANK",
-                    "perturbation_library.csv :: gene_id",
-                    f"{n_blank}/{len(targeting)} ({pct_blank:.0%}) targeting rows have blank "
-                    f"gene_id. Consider resolving more gene IDs against Ensembl 110.",
+                    f"perturbation_library.csv :: row {row_idx} :: gene_id",
+                    "gene_id MUST be a valid GENCODE v48 Ensembl gene ID for targeting rows.",
                 )
 
-        # Ensembl gene ID + symbol cross-check (if reference files present)
-        if reference_present():
-            for idx, row in targeting.iterrows():
-                gid = row.get("gene_id", "")
-                sym = row.get("gene_symbol", "")
-                if not gid or gid in ("", "non-targeting"):
-                    continue
-                if not gene_id_exists(gid):
-                    self._error(
-                        "ENSEMBL",
-                        f"perturbation_library.csv :: row {idx} :: gene_id",
-                        f"{gid!r} not found in Ensembl 110 reference.",
-                    )
-                elif sym and not gene_symbol_matches(gid, sym):
-                    self._warning(
-                        "SYMBOL_MISMATCH",
-                        f"perturbation_library.csv :: row {idx} :: gene_symbol",
-                        f"gene_symbol {sym!r} does not match Ensembl 110 name for {gid!r}.",
-                    )
-        else:
-            self._warning(
-                "ENSEMBL_REF_MISSING",
-                "perturbation_library.csv",
-                "Ensembl reference not found — gene_id and gene_symbol checks skipped. "
-                "Run `python scripts/prepare_references.py`.",
-            )
+        # GENCODE gene ID + symbol cross-check
+        for idx, row in targeting.iterrows():
+            gid = row.get("gene_id", "")
+            sym = row.get("gene_symbol", "")
+            if not gid or gid in ("", "non-targeting"):
+                continue
+            if not gene_id_exists(gid):
+                self._error(
+                    "GENCODE",
+                    f"perturbation_library.csv :: row {idx} :: gene_id",
+                    f"{gid!r} not found in GENCODE v48 reference.",
+                )
+            elif sym and not gene_symbol_matches(gid, sym):
+                self._warning(
+                    "SYMBOL_MISMATCH",
+                    f"perturbation_library.csv :: row {idx} :: gene_symbol",
+                    f"gene_symbol {sym!r} does not match GENCODE v48 name for {gid!r}.",
+                )
 
         return self.is_valid

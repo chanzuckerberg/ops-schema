@@ -41,7 +41,6 @@ def write_csv(tmp_path: Path, rows: list[dict]) -> Path:
 def test_valid_library(tmp_path):
     p = write_csv(tmp_path, [VALID_ROW, VALID_CONTROL_ROW])
     v = PerturbationLibraryValidator(p)
-    # Ensembl ref may not be present; that's OK — just warnings
     v.validate()
     assert v.is_valid, v.report()
 
@@ -110,3 +109,30 @@ def test_invalid_pam_format(tmp_path):
     v = PerturbationLibraryValidator(p)
     v.validate()
     assert not v.is_valid
+
+
+def test_blank_gene_id_targeting_row_is_error(tmp_path):
+    row = {**VALID_ROW, "gene_id": ""}
+    p = write_csv(tmp_path, [row, VALID_CONTROL_ROW])
+    v = PerturbationLibraryValidator(p)
+    v.validate()
+    assert not v.is_valid
+    assert any("GENE_ID_BLANK" in e.rule_id for e in v.errors)
+
+
+def test_gene_id_not_in_gencode_is_error(tmp_path):
+    row = {**VALID_ROW, "gene_id": "ENSG99999999999"}
+    p = write_csv(tmp_path, [row, VALID_CONTROL_ROW])
+    v = PerturbationLibraryValidator(p)
+    v.validate()
+    assert not v.is_valid
+    assert any("GENCODE" in e.rule_id for e in v.errors)
+
+
+def test_gene_symbol_mismatch_is_warning(tmp_path):
+    row = {**VALID_ROW, "gene_symbol": "NOT_BRCA2"}
+    p = write_csv(tmp_path, [row, VALID_CONTROL_ROW])
+    v = PerturbationLibraryValidator(p)
+    v.validate()
+    assert v.is_valid  # warnings don't fail validation
+    assert any("SYMBOL_MISMATCH" in w.rule_id for w in v.warnings)

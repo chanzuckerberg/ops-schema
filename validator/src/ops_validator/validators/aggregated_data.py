@@ -6,7 +6,6 @@ import re
 
 import numpy as np
 
-from ops_validator.gencode import reference_present, validate_var_index
 from ops_validator.validators.base import BaseValidator
 
 OPS_SCHEMA_VERSION = "0.1.0"

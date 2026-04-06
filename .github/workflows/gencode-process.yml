@@ -1,0 +1,33 @@
+name: Update GENCODE reference
+
+on:
+  push:
+    paths:
+      - 'validator/src/ops_validator/reference_files/gene_info.yml'
+    branches-ignore:
+      - main
+
+jobs:
+  gencode-processing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: pip install -e "validator/.[all]"
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Regenerate GENCODE reference
+        run: python validator/scripts/prepare_references.py --force
+      - name: Commit updated parquet
+        run: |
+          git add validator/src/ops_validator/reference_files/gencode_*.parquet
+          git diff --cached --quiet || (git commit -m "AUTO: update GENCODE reference" && git push)
