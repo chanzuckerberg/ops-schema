@@ -38,7 +38,7 @@ OBO_SOURCES: dict[str, str] = {
 
 def download_and_compress(url: str, dest: Path, force: bool = False) -> None:
     if dest.exists() and not force:
-        print(f"  Already exists: {dest.name} -- skipping")
+        print(f"  Already exists: {dest.name} - skipping")
         return
     print(f"  Downloading {dest.name} from {url} ...")
     resp = requests.get(url, stream=True, timeout=120)
@@ -51,11 +51,6 @@ def download_and_compress(url: str, dest: Path, force: bool = False) -> None:
 
 def _load_gene_info() -> dict:
     """Load gene_info.yml configuration."""
-    if not GENE_INFO_PATH.exists():
-        raise FileNotFoundError(
-            f"gene_info.yml not found at {GENE_INFO_PATH}. "
-            "This file should be checked into the repository."
-        )
     with open(GENE_INFO_PATH) as f:
         return yaml.safe_load(f)
 
@@ -66,12 +61,10 @@ def _parse_gtf_genes(gtf_bytes: bytes) -> list[dict[str, str]]:
     Filters out PAR_Y gene entries (same convention as CellxGene).
     Returns list of dicts with keys: gene_id, gene_name.
     """
-    import gzip as gz
-
     seen: set[str] = set()
     genes: list[dict[str, str]] = []
 
-    with gz.open(io.BytesIO(gtf_bytes), "rt") as fh:
+    with gzip.open(io.BytesIO(gtf_bytes), "rt") as fh:
         for line in fh:
             if line.startswith("#"):
                 continue
@@ -84,17 +77,16 @@ def _parse_gtf_genes(gtf_bytes: bytes) -> list[dict[str, str]]:
 
             attrs_str = parts[8]
 
-            # Skip PAR_Y genes (same as CxG)
-            if "tag" in attrs_str and "PAR" in attrs_str:
-                # Check specifically for the PAR tag
-                if 'tag "PAR"' in attrs_str:
-                    continue
-
             gene_id_raw = _extract_attr(attrs_str, "gene_id")
-            gene_name = _extract_attr(attrs_str, "gene_name")
 
             if not gene_id_raw:
                 continue
+
+            # Filter genes suffixed with "PAR_Y" (same as CxG)
+            if gene_id_raw.endswith("PAR_Y"):
+                continue
+
+            gene_name = _extract_attr(attrs_str, "gene_name")
 
             # Strip version suffix (e.g. ENSG00000186092.7 -> ENSG00000186092)
             gene_id = gene_id_raw.split(".")[0]
