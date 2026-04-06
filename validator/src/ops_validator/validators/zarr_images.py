@@ -118,8 +118,10 @@ class ZarrImagesValidator(BaseValidator):
                 field_path = ".".join(str(p) for p in err["loc"])
                 self._error("L3", f"{image_path} :: {field_path}", err["msg"])
 
-        # Level 4: resolution arrays (0 through 4)
-        for res_level in range(5):
+        # Level 4: resolution arrays (validate however many levels exist)
+        multiscales = attrs.get("ome", {}).get("multiscales", [{}])
+        n_levels = len(multiscales[0].get("datasets", [])) if multiscales else 1
+        for res_level in range(n_levels):
             array_path = f"{image_path}/{res_level}"
             self._validate_resolution_array(store, array_path)
 
@@ -135,7 +137,7 @@ class ZarrImagesValidator(BaseValidator):
         if array_path not in store:
             self._error(
                 "L4_MISSING", array_path,
-                f"Resolution array not found: {array_path} (all 5 levels required)"
+                f"Resolution array not found: {array_path}"
             )
             return
 
