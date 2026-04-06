@@ -9,10 +9,10 @@ import pytest
 from ops_validator.models.feature_definitions import FeatureDefinitionRow
 from ops_validator.validators.feature_definitions import FeatureDefinitionsValidator
 
-
 # ---------------------------------------------------------------------------
 # FeatureDefinitionRow model
 # ---------------------------------------------------------------------------
+
 
 class TestFeatureDefinitionRowModel:
     def test_valid_shape_row(self):
@@ -70,6 +70,7 @@ class TestFeatureDefinitionRowModel:
 
     def test_rejects_old_morphology_type(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError, match="feature_type"):
             FeatureDefinitionRow(
                 feature_id="some_feature",
@@ -79,6 +80,7 @@ class TestFeatureDefinitionRowModel:
 
     def test_rejects_invalid_compartment(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError, match="compartment"):
             FeatureDefinitionRow(
                 feature_id="bad__shape__area",
@@ -101,6 +103,7 @@ class TestFeatureDefinitionRowModel:
 
     def test_rejects_empty_feature_id(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError, match="feature_id must not be empty"):
             FeatureDefinitionRow(
                 feature_id="   ",
@@ -113,6 +116,7 @@ class TestFeatureDefinitionRowModel:
 # FeatureDefinitionsValidator
 # ---------------------------------------------------------------------------
 
+
 class TestFeatureDefinitionsValidator:
     def test_missing_file_emits_recommended_warning(self, tmp_path):
         v = FeatureDefinitionsValidator(tmp_path / "feature_definitions.csv")
@@ -123,12 +127,14 @@ class TestFeatureDefinitionsValidator:
 
     def test_valid_csv(self, tmp_path):
         csv = tmp_path / "feature_definitions.csv"
-        csv.write_text(textwrap.dedent("""\
+        csv.write_text(
+            textwrap.dedent("""\
             feature_id,feature_name,feature_type,compartment,channel
             nucleus__shape__area,Nucleus Area,shape,nucleus,
             cell__dna__mean,Cell DNA Mean,intensity,cell,dna
             nucleus__correlation__dna_tubulin,DNA-Tubulin Correlation,correlation,nucleus,
-        """))
+        """)
+        )
         v = FeatureDefinitionsValidator(csv)
         assert v.validate() is True
         assert len(v.errors) == 0
@@ -142,21 +148,25 @@ class TestFeatureDefinitionsValidator:
 
     def test_invalid_feature_type_rejected(self, tmp_path):
         csv = tmp_path / "feature_definitions.csv"
-        csv.write_text(textwrap.dedent("""\
+        csv.write_text(
+            textwrap.dedent("""\
             feature_id,feature_name,feature_type
             f1,Feature 1,morphology
-        """))
+        """)
+        )
         v = FeatureDefinitionsValidator(csv)
         v.validate()
         assert len(v.errors) > 0
 
     def test_duplicate_feature_id_rejected(self, tmp_path):
         csv = tmp_path / "feature_definitions.csv"
-        csv.write_text(textwrap.dedent("""\
+        csv.write_text(
+            textwrap.dedent("""\
             feature_id,feature_name,feature_type
             nucleus__shape__area,Nucleus Area,shape
             nucleus__shape__area,Nucleus Area Dup,shape
-        """))
+        """)
+        )
         v = FeatureDefinitionsValidator(csv)
         v.validate()
         assert any(i.rule_id == "PK" for i in v.errors)
@@ -164,13 +174,15 @@ class TestFeatureDefinitionsValidator:
     def test_lab_features_beyond_viz_set_are_valid(self, tmp_path):
         """feature_definitions.csv may contain features not in aggregated_data — that's expected."""
         csv = tmp_path / "feature_definitions.csv"
-        csv.write_text(textwrap.dedent("""\
+        csv.write_text(
+            textwrap.dedent("""\
             feature_id,feature_name,feature_type,compartment,channel,software
             nucleus__shape__area,Nucleus Area,shape,nucleus,,CellProfiler
             my_custom_texture_1,Custom Texture Feature,texture,,,CustomPipeline
             my_custom_texture_2,Another Custom Feature,granularity,,,CustomPipeline
             cell_class_label,Cell Class,categorical,,,ClassifierV2
-        """))
+        """)
+        )
         v = FeatureDefinitionsValidator(csv)
         assert v.validate() is True
         assert len(v.errors) == 0

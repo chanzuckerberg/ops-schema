@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
 from pydantic import ValidationError
 
@@ -26,13 +24,22 @@ class PerturbationLibraryValidator(BaseValidator):
 
         # Check required columns exist
         required_cols = {
-            "perturbation_id", "gene_id", "gene_symbol", "barcode",
-            "role", "protospacer_sequence", "protospacer_adjacent_motif",
+            "perturbation_id",
+            "gene_id",
+            "gene_symbol",
+            "barcode",
+            "role",
+            "protospacer_sequence",
+            "protospacer_adjacent_motif",
         }
         missing = required_cols - set(df.columns)
         if missing:
             for col in sorted(missing):
-                self._error("MISSING_COLUMN", "perturbation_library.csv", f"Missing required column: '{col}'")
+                self._error(
+                    "MISSING_COLUMN",
+                    "perturbation_library.csv",
+                    f"Missing required column: '{col}'",
+                )
             return False
 
         # Validate each row as a Pydantic model

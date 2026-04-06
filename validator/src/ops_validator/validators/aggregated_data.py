@@ -21,8 +21,13 @@ VALID_COMPARTMENTS = None
 SHAPE_MEASUREMENTS = {"area", "eccentricity", "form_factor", "solidity"}
 
 INTENSITY_MEASUREMENTS = {
-    "mean", "integrated", "mass_displacement",
-    "mean_edge", "std_edge", "mean_frac_0", "mean_frac_3",
+    "mean",
+    "integrated",
+    "mass_displacement",
+    "mean_edge",
+    "std_edge",
+    "mean_frac_0",
+    "mean_frac_3",
 }
 
 # Feature IDs follow: {compartment}_{measurement} or {compartment}_{channel}_{measurement}
@@ -51,6 +56,7 @@ class AggregatedDataValidator(BaseValidator):
 
         try:
             import anndata as ad
+
             adata = ad.read_h5ad(self.path)
         except Exception as e:
             self._error("PARSE", "aggregated_data.h5ad", f"Failed to read h5ad: {e}")
@@ -107,7 +113,7 @@ class AggregatedDataValidator(BaseValidator):
             if col not in adata.var.columns:
                 self._error(
                     "VAR_COLUMNS",
-                    f"aggregated_data.h5ad :: var",
+                    "aggregated_data.h5ad :: var",
                     f"var must have a '{col}' column.",
                 )
 
@@ -124,14 +130,12 @@ class AggregatedDataValidator(BaseValidator):
         for feature_id in adata.var.index:
             err = _validate_feature_id_format(str(feature_id))
             if err:
-                self._error("VAR_FEATURE_ID", f"aggregated_data.h5ad :: var.index", err)
+                self._error("VAR_FEATURE_ID", "aggregated_data.h5ad :: var.index", err)
 
         # feature_type values must be from the standardized set
         if "feature_type" in adata.var.columns:
             valid_types = {"shape", "intensity", "correlation"}
-            invalid = adata.var["feature_type"][
-                ~adata.var["feature_type"].isin(valid_types)
-            ]
+            invalid = adata.var["feature_type"][~adata.var["feature_type"].isin(valid_types)]
             if len(invalid) > 0:
                 self._error(
                     "VAR_FEATURE_TYPE",
@@ -156,7 +160,6 @@ class AggregatedDataValidator(BaseValidator):
             return
 
         try:
-            import scipy.sparse as sp
             dtype = adata.X.dtype
         except Exception:
             dtype = None

@@ -10,8 +10,6 @@ not errors.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import zarr
 from pydantic import ValidationError
 
@@ -45,8 +43,8 @@ class ZarrImagesValidator(BaseValidator):
             return False  # can't continue without plate metadata
 
         # Walk wells
-        rows = plate_meta.ome.get("plate", {}).get("rows", [])
-        cols = plate_meta.ome.get("plate", {}).get("columns", [])
+        plate_meta.ome.get("plate", {}).get("rows", [])
+        plate_meta.ome.get("plate", {}).get("columns", [])
         wells = plate_meta.ome.get("plate", {}).get("wells", [])
         channel_indices = {ch.index for ch in plate_meta.channels_metadata}
 
@@ -75,9 +73,7 @@ class ZarrImagesValidator(BaseValidator):
     # Level 2: Well group
     # ------------------------------------------------------------------
 
-    def _validate_well(
-        self, store: zarr.Group, well_path: str, channel_indices: set[int]
-    ) -> None:
+    def _validate_well(self, store: zarr.Group, well_path: str, channel_indices: set[int]) -> None:
         if well_path not in store:
             self._error("L2_MISSING", f"{well_path}", f"Well group not found: {well_path}")
             return
@@ -134,8 +130,9 @@ class ZarrImagesValidator(BaseValidator):
     def _validate_resolution_array(self, store: zarr.Group, array_path: str) -> None:
         if array_path not in store:
             self._error(
-                "L4_MISSING", array_path,
-                f"Resolution array not found: {array_path} (all 5 levels required)"
+                "L4_MISSING",
+                array_path,
+                f"Resolution array not found: {array_path} (all 5 levels required)",
             )
             return
 
@@ -162,10 +159,7 @@ class ZarrImagesValidator(BaseValidator):
     ) -> None:
         if labels_path not in store:
             # Labels are not required if there are no segmentations
-            self._warning(
-                "L5_MISSING", labels_path,
-                f"No labels container found at {labels_path}."
-            )
+            self._warning("L5_MISSING", labels_path, f"No labels container found at {labels_path}.")
             return
 
         labels_group = store[labels_path]
@@ -223,7 +217,8 @@ class ZarrImagesValidator(BaseValidator):
                 "SOURCE_CHANNEL",
                 f"{label_path} :: segmentation_metadata.source_channel.index",
                 f"source_channel.index {src_idx} does not match any "
-                f"channels_metadata[].index at plate root. Valid indices: {sorted(channel_indices)}",
+                f"channels_metadata[].index at plate root. "
+                f"Valid indices: {sorted(channel_indices)}",
             )
 
         # Level 7: label resolution array

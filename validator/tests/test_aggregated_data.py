@@ -8,46 +8,52 @@ import pytest
 from ops_validator.validators.aggregated_data import (
     AggregatedDataValidator,
     _validate_feature_id_format,
-    SHAPE_MEASUREMENTS,
-    INTENSITY_MEASUREMENTS,
-    VALID_COMPARTMENTS,
 )
-
 
 # ---------------------------------------------------------------------------
 # Unit tests for _validate_feature_id_format
 # ---------------------------------------------------------------------------
 
+
 class TestFeatureIdFormat:
     # Valid shape features
-    @pytest.mark.parametrize("feature_id", [
-        "nucleus__shape__area",
-        "cell__shape__eccentricity",
-        "nucleus__shape__form_factor",
-        "cell__shape__solidity",
-    ])
+    @pytest.mark.parametrize(
+        "feature_id",
+        [
+            "nucleus__shape__area",
+            "cell__shape__eccentricity",
+            "nucleus__shape__form_factor",
+            "cell__shape__solidity",
+        ],
+    )
     def test_valid_shape_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
     # Valid intensity features
-    @pytest.mark.parametrize("feature_id", [
-        "nucleus__dna__mean",
-        "cell__tubulin__integrated",
-        "nucleus__gh2ax__mass_displacement",
-        "cell__actin__mean_edge",
-        "nucleus__gfp__std_edge",
-        "cell__mcherry__mean_frac_0",
-        "nucleus__dna__mean_frac_3",
-    ])
+    @pytest.mark.parametrize(
+        "feature_id",
+        [
+            "nucleus__dna__mean",
+            "cell__tubulin__integrated",
+            "nucleus__gh2ax__mass_displacement",
+            "cell__actin__mean_edge",
+            "nucleus__gfp__std_edge",
+            "cell__mcherry__mean_frac_0",
+            "nucleus__dna__mean_frac_3",
+        ],
+    )
     def test_valid_intensity_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
     # Valid correlation features
-    @pytest.mark.parametrize("feature_id", [
-        "nucleus__correlation__dna_tubulin",
-        "cell__correlation__actin_gh2ax",
-        "nucleus__correlation__gfp_mcherry",
-    ])
+    @pytest.mark.parametrize(
+        "feature_id",
+        [
+            "nucleus__correlation__dna_tubulin",
+            "cell__correlation__actin_gh2ax",
+            "nucleus__correlation__gfp_mcherry",
+        ],
+    )
     def test_valid_correlation_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
@@ -85,7 +91,17 @@ class TestFeatureIdFormat:
 # Integration tests via AggregatedDataValidator
 # ---------------------------------------------------------------------------
 
-def _make_h5ad(tmp_path, obs_index, var_index, var_columns=None, obs_columns=None, layers=None, obsm=None, uns=None):
+
+def _make_h5ad(
+    tmp_path,
+    obs_index,
+    var_index,
+    var_columns=None,
+    obs_columns=None,
+    layers=None,
+    obsm=None,
+    uns=None,
+):
     """Helper to write a minimal valid AnnData file."""
     import anndata as ad
     import pandas as pd
@@ -101,7 +117,10 @@ def _make_h5ad(tmp_path, obs_index, var_index, var_columns=None, obs_columns=Non
             obs[col] = vals
 
     var_data = {"feature_name": [v.split("__")[-1] for v in var_index]}
-    var_data["feature_type"] = ["shape" if "__shape__" in v else "correlation" if "__correlation__" in v else "intensity" for v in var_index]
+    var_data["feature_type"] = [
+        "shape" if "__shape__" in v else "correlation" if "__correlation__" in v else "intensity"
+        for v in var_index
+    ]
     var_data["compartment"] = [v.split("__")[0] for v in var_index]
     if var_columns:
         var_data.update(var_columns)
@@ -193,16 +212,23 @@ class TestAggregatedDataValidator:
     def test_missing_required_var_columns_errors(self, tmp_path):
         import anndata as ad
         import pandas as pd
+
         n_obs, n_var = 3, 2
         X = np.zeros((n_obs, n_var), dtype=np.float32)
         obs = pd.DataFrame(index=["p1", "p2", "p3"])
         obs.index.name = "perturbation_id"
         # var with only feature_name — missing feature_type and compartment
-        var = pd.DataFrame({"feature_name": ["a", "b"]}, index=["nucleus__shape__area", "cell__dna__mean"])
+        var = pd.DataFrame(
+            {"feature_name": ["a", "b"]}, index=["nucleus__shape__area", "cell__dna__mean"]
+        )
         var.index.name = "feature_id"
-        adata = ad.AnnData(X=X, obs=obs, var=var,
-                           obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-                           uns={"schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"})
+        adata = ad.AnnData(
+            X=X,
+            obs=obs,
+            var=var,
+            obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
+            uns={"schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"},
+        )
         path = tmp_path / "aggregated_data.h5ad"
         adata.write_h5ad(path)
         v = AggregatedDataValidator(path)
@@ -212,11 +238,13 @@ class TestAggregatedDataValidator:
         assert "compartment" in error_messages
 
     def test_p_values_without_neg_log10_fdr_warns(self, tmp_path):
-        import anndata as ad
-        import pandas as pd
         n_obs, n_var = 3, len(VALID_FEATURES)
-        path = _make_h5ad(tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
-                          layers={"p_values": np.ones((n_obs, n_var), dtype=np.float32)})
+        path = _make_h5ad(
+            tmp_path,
+            VALID_PERTURBATIONS,
+            VALID_FEATURES,
+            layers={"p_values": np.ones((n_obs, n_var), dtype=np.float32)},
+        )
         v = AggregatedDataValidator(path)
         v.validate()
         assert any(i.rule_id == "NEG_LOG10_FDR" for i in v.warnings)
@@ -224,20 +252,32 @@ class TestAggregatedDataValidator:
     def test_x_must_be_float32(self, tmp_path):
         import anndata as ad
         import pandas as pd
+
         n_obs, n_var = 3, len(VALID_FEATURES)
         X = np.zeros((n_obs, n_var), dtype=np.float64)  # wrong dtype
         obs = pd.DataFrame(index=VALID_PERTURBATIONS)
         obs.index.name = "perturbation_id"
         var_data = {
             "feature_name": [f.split("__")[-1] for f in VALID_FEATURES],
-            "feature_type": ["shape" if "__shape__" in f else "correlation" if "__correlation__" in f else "intensity" for f in VALID_FEATURES],
+            "feature_type": [
+                "shape"
+                if "__shape__" in f
+                else "correlation"
+                if "__correlation__" in f
+                else "intensity"
+                for f in VALID_FEATURES
+            ],
             "compartment": [f.split("__")[0] for f in VALID_FEATURES],
         }
         var = pd.DataFrame(var_data, index=VALID_FEATURES)
         var.index.name = "feature_id"
-        adata = ad.AnnData(X=X, obs=obs, var=var,
-                           obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-                           uns={"schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"})
+        adata = ad.AnnData(
+            X=X,
+            obs=obs,
+            var=var,
+            obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
+            uns={"schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"},
+        )
         path = tmp_path / "aggregated_data.h5ad"
         adata.write_h5ad(path)
         v = AggregatedDataValidator(path)

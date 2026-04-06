@@ -6,15 +6,38 @@ import argparse
 import sys
 from pathlib import Path
 
-
 ARTIFACT_TYPES = {
-    "zarr": ("Zarr plate store (.zarr)", "ops_validator.validators.zarr_images", "ZarrImagesValidator"),
-    "aggregated": ("Aggregated data (.h5ad)", "ops_validator.validators.aggregated_data", "AggregatedDataValidator"),
+    "zarr": (
+        "Zarr plate store (.zarr)",
+        "ops_validator.validators.zarr_images",
+        "ZarrImagesValidator",
+    ),
+    "aggregated": (
+        "Aggregated data (.h5ad)",
+        "ops_validator.validators.aggregated_data",
+        "AggregatedDataValidator",
+    ),
     "cell-data": ("Cell data (.h5ad)", "ops_validator.validators.cell_data", "CellDataValidator"),
-    "collection": ("Collection metadata (.yaml)", "ops_validator.validators.collection", "CollectionValidator"),
-    "experimental": ("Experimental metadata (.yaml)", "ops_validator.validators.experimental", "ExperimentalValidator"),
-    "features": ("Feature definitions (.csv)", "ops_validator.validators.feature_definitions", "FeatureDefinitionsValidator"),
-    "perturbation": ("Perturbation library (.csv)", "ops_validator.validators.perturbation_library", "PerturbationLibraryValidator"),
+    "collection": (
+        "Collection metadata (.yaml)",
+        "ops_validator.validators.collection",
+        "CollectionValidator",
+    ),
+    "experimental": (
+        "Experimental metadata (.yaml)",
+        "ops_validator.validators.experimental",
+        "ExperimentalValidator",
+    ),
+    "features": (
+        "Feature definitions (.csv)",
+        "ops_validator.validators.feature_definitions",
+        "FeatureDefinitionsValidator",
+    ),
+    "perturbation": (
+        "Perturbation library (.csv)",
+        "ops_validator.validators.perturbation_library",
+        "PerturbationLibraryValidator",
+    ),
 }
 
 
@@ -33,7 +56,10 @@ def main() -> None:
         "--type",
         choices=list(ARTIFACT_TYPES.keys()) + ["submission"],
         default=None,
-        help="Artifact type to validate. Use 'submission' for a full submission directory. Auto-detected from path if omitted.",
+        help=(
+            "Artifact type to validate. Use 'submission' for a full submission directory. "
+            "Auto-detected from path if omitted."
+        ),
     )
 
     args = parser.parse_args()
@@ -62,6 +88,7 @@ def main() -> None:
     # Import and run validator
     desc, module_path, class_name = ARTIFACT_TYPES[artifact_type]
     import importlib
+
     module = importlib.import_module(module_path)
     validator_class = getattr(module, class_name)
 
@@ -86,10 +113,7 @@ def _validate_submission(submission_dir: Path) -> int:
     collection_yaml = submission_dir / "collection_metadata.yaml"
 
     # Find screen directories (any subdir that has metadata/)
-    screen_dirs = [
-        d for d in submission_dir.iterdir()
-        if d.is_dir() and (d / "metadata").is_dir()
-    ]
+    screen_dirs = [d for d in submission_dir.iterdir() if d.is_dir() and (d / "metadata").is_dir()]
 
     # Build list of (path, type) pairs to validate
     artifacts: list[tuple[Path, str]] = []
@@ -166,7 +190,7 @@ def _validate_submission(submission_dir: Path) -> int:
     print("\n" + "=" * 70)
     print(f"\n{'SUMMARY':^70}\n")
     print(f"  {'Artifact':<50} {'Status':>8}")
-    print(f"  {'-'*50} {'-'*8}")
+    print(f"  {'-' * 50} {'-' * 8}")
     for rel, atype, passed, n_err, n_warn in results:
         status = "PASS" if passed else "FAIL"
         extra = f" ({n_warn}w)" if n_warn > 0 and passed else ""
@@ -181,7 +205,7 @@ def _validate_submission(submission_dir: Path) -> int:
     return 0 if all_passed else 1
 
 
-
+def _detect_type(path: Path) -> str | None:
     """Attempt to auto-detect artifact type from file path."""
     name = path.name.lower()
     suffix = path.suffix.lower()

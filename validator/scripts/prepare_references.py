@@ -25,13 +25,13 @@ REFERENCE_DIR = Path(__file__).parent.parent / "src" / "ops_validator" / "refere
 GENE_INFO_PATH = REFERENCE_DIR / "gene_info.yml"
 
 OBO_SOURCES: dict[str, str] = {
-    "cl.obo.gz":         "http://purl.obolibrary.org/obo/cl.obo",
-    "uberon.obo.gz":     "http://purl.obolibrary.org/obo/uberon.obo",
-    "mondo.obo.gz":      "http://purl.obolibrary.org/obo/mondo.obo",
-    "pato.obo.gz":       "http://purl.obolibrary.org/obo/pato.obo",
-    "hsapdv.obo.gz":     "http://purl.obolibrary.org/obo/hsapdv.obo",
-    "mmusdv.obo.gz":     "http://purl.obolibrary.org/obo/mmusdv.obo",
-    "efo.obo.gz":        "https://www.ebi.ac.uk/efo/efo.obo",
+    "cl.obo.gz": "http://purl.obolibrary.org/obo/cl.obo",
+    "uberon.obo.gz": "http://purl.obolibrary.org/obo/uberon.obo",
+    "mondo.obo.gz": "http://purl.obolibrary.org/obo/mondo.obo",
+    "pato.obo.gz": "http://purl.obolibrary.org/obo/pato.obo",
+    "hsapdv.obo.gz": "http://purl.obolibrary.org/obo/hsapdv.obo",
+    "mmusdv.obo.gz": "http://purl.obolibrary.org/obo/mmusdv.obo",
+    "efo.obo.gz": "https://www.ebi.ac.uk/efo/efo.obo",
     "cellosaurus.obo.gz": "https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo",
 }
 
@@ -103,10 +103,12 @@ def _parse_gtf_genes(gtf_bytes: bytes) -> list[dict[str, str]]:
                 continue
             seen.add(gene_id)
 
-            genes.append({
-                "gene_id": gene_id,
-                "gene_name": gene_name or gene_id,
-            })
+            genes.append(
+                {
+                    "gene_id": gene_id,
+                    "gene_name": gene_name or gene_id,
+                }
+            )
 
     return genes
 
@@ -115,6 +117,7 @@ def _extract_attr(attrs_str: str, key: str) -> str | None:
     """Extract a GTF attribute value by key."""
     # GTF attributes look like: gene_id "ENSG00000186092.7"; gene_name "OR4F5";
     import re
+
     match = re.search(rf'{key}\s+"([^"]+)"', attrs_str)
     return match.group(1) if match else None
 
@@ -150,9 +153,7 @@ def download_gencode_gene_table(dest: Path, force: bool = False) -> None:
     df = df[df["gene_id"].str.startswith("ENSG", na=False)]
 
     if len(df) < 20_000:
-        raise ValueError(
-            f"GENCODE GTF returned only {len(df)} gene entries -- expected ~60,000+."
-        )
+        raise ValueError(f"GENCODE GTF returned only {len(df)} gene entries -- expected ~60,000+.")
 
     df.to_parquet(dest, index=False)
     print(f"  Saved: {dest} ({len(df):,} genes)")

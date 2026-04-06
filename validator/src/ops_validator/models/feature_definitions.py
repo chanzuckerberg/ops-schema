@@ -10,7 +10,9 @@ from pydantic import BaseModel, field_validator
 class FeatureDefinitionRow(BaseModel):
     feature_id: str
     feature_name: str
-    feature_type: Literal["shape", "intensity", "correlation", "texture", "granularity", "categorical"]
+    feature_type: Literal[
+        "shape", "intensity", "correlation", "texture", "granularity", "categorical"
+    ]
     compartment: str | None = None
     channel: str | None = None
     unit: str | None = None

@@ -7,20 +7,26 @@ Levels 0, 2, 3, 5, 6 validate the zarr group attributes directly as Pydantic mod
 
 from __future__ import annotations
 
-from functools import reduce
-from operator import mul
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 from pydantic_zarr.v3 import ArraySpec, NamedConfig, RegularChunkingConfig
 
-ALLOWED_COMPRESSION_CODECS = ("blosc", "zstd", "lz4", "numcodecs.blosc", "numcodecs.zstd", "numcodecs.lz4")
+ALLOWED_COMPRESSION_CODECS = (
+    "blosc",
+    "zstd",
+    "lz4",
+    "numcodecs.blosc",
+    "numcodecs.zstd",
+    "numcodecs.lz4",
+)
 CHANNEL_TYPES = {"fluorescence", "chromogenic", "labelfree", "predicted"}
 
 
 # ---------------------------------------------------------------------------
 # Shared sub-models
 # ---------------------------------------------------------------------------
+
 
 class OmePlateAcquisition(BaseModel):
     id: int
@@ -72,9 +78,7 @@ class ChannelMetadata(BaseModel):
     @classmethod
     def validate_channel_type(cls, v: str) -> str:
         if v not in CHANNEL_TYPES:
-            raise ValueError(
-                f"channel_type must be one of {sorted(CHANNEL_TYPES)}. Got: {v!r}"
-            )
+            raise ValueError(f"channel_type must be one of {sorted(CHANNEL_TYPES)}. Got: {v!r}")
         return v
 
     @model_validator(mode="after")
@@ -92,8 +96,10 @@ class ChannelMetadata(BaseModel):
 # Level 0: Plate Root
 # ---------------------------------------------------------------------------
 
+
 class OPSPlateRoot(BaseModel):
     """Validates zarr attributes at {screen_name}.zarr/"""
+
     ome: dict  # full OME plate block; parsed into OmePlateMetadata below
     channels_metadata: list[ChannelMetadata]
 
@@ -107,8 +113,7 @@ class OPSPlateRoot(BaseModel):
         indices = [ch.index for ch in self.channels_metadata]
         if sorted(indices) != list(range(len(indices))):
             raise ValueError(
-                f"channels_metadata[].index must be 0-based sequential integers. "
-                f"Got: {indices}"
+                f"channels_metadata[].index must be 0-based sequential integers. Got: {indices}"
             )
         return self
 
@@ -116,6 +121,7 @@ class OPSPlateRoot(BaseModel):
 # ---------------------------------------------------------------------------
 # Level 2: Well Group
 # ---------------------------------------------------------------------------
+
 
 class OmeWellImage(BaseModel):
     path: str
@@ -128,6 +134,7 @@ class OmeWellMetadata(BaseModel):
 
 class OPSWellGroup(BaseModel):
     """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/"""
+
     ome: dict
 
     @model_validator(mode="after")
@@ -139,6 +146,7 @@ class OPSWellGroup(BaseModel):
 # ---------------------------------------------------------------------------
 # Level 3: Image Group (Multiscales)
 # ---------------------------------------------------------------------------
+
 
 class CoordinateTransformation(BaseModel):
     type: Literal["scale"]
@@ -191,14 +199,13 @@ class MultiscaleEntry(BaseModel):
                     f"Got: {ax.unit!r}"
                 )
             if ax.type in ("space", "time") and ax.unit is None:
-                raise ValueError(
-                    f"Axis '{ax.name}' (type='{ax.type}') must have a unit."
-                )
+                raise ValueError(f"Axis '{ax.name}' (type='{ax.type}') must have a unit.")
         return self
 
 
 class OPSImageGroup(BaseModel):
     """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/"""
+
     ome: dict
 
     @model_validator(mode="after")
@@ -215,6 +222,7 @@ class OPSImageGroup(BaseModel):
 # Level 4: Resolution Arrays (extends DCA DCAZarr pattern)
 # ---------------------------------------------------------------------------
 
+
 class OPSRegularChunkingConfig(RegularChunkingConfig):
     chunk_shape: Annotated[list[int], Field(min_length=5, max_length=5)]
 
@@ -227,6 +235,7 @@ class OPSResolutionArray(ArraySpec):
     Validates Level 4 Zarr arrays: [T, C, Z, Y, X] shape, sharding, codecs.
     Follows the DCA DCAZarr pattern exactly.
     """
+
     model_config = ConfigDict(extra="allow")
 
     shape: Annotated[list[int], Field(min_length=5, max_length=5)]
@@ -267,9 +276,7 @@ class OPSResolutionArray(ArraySpec):
                     index_codecs = codec.get("configuration", {}).get("index_codecs", [])
                     index_names = [c["name"] for c in index_codecs]
                     if "crc32c" not in index_names:
-                        raise ValueError(
-                            f"index_codecs must include 'crc32c'. Got: {index_names}"
-                        )
+                        raise ValueError(f"index_codecs must include 'crc32c'. Got: {index_names}")
         else:
             # Flat chunking: final codec must be an accepted compressor
             final = codec_names[-1] if codec_names else ""
@@ -288,8 +295,10 @@ class OPSResolutionArray(ArraySpec):
 # Level 5: Labels Container
 # ---------------------------------------------------------------------------
 
+
 class OPSLabelsContainer(BaseModel):
     """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/labels/"""
+
     ome: dict
 
     @model_validator(mode="after")
@@ -305,6 +314,7 @@ class OPSLabelsContainer(BaseModel):
 # ---------------------------------------------------------------------------
 # Level 6: Label Group (per segmentation)
 # ---------------------------------------------------------------------------
+
 
 class SourceChannel(BaseModel):
     index: int
@@ -334,6 +344,7 @@ class SegmentationMetadata(BaseModel):
 
 class OPSLabelGroup(BaseModel):
     """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/labels/{seg_name}/"""
+
     segmentation_metadata: SegmentationMetadata
 
 
@@ -341,8 +352,10 @@ class OPSLabelGroup(BaseModel):
 # Level 7: Label Resolution Array
 # ---------------------------------------------------------------------------
 
+
 class OPSLabelArray(ArraySpec):
     """Validates Level 7 label arrays."""
+
     model_config = ConfigDict(extra="allow")
 
     shape: Annotated[list[int], Field(min_length=5, max_length=5)]
@@ -378,9 +391,7 @@ class OPSLabelArray(ArraySpec):
                     index_codecs = codec.get("configuration", {}).get("index_codecs", [])
                     index_names = [c["name"] for c in index_codecs]
                     if "crc32c" not in index_names:
-                        raise ValueError(
-                            f"index_codecs must include 'crc32c'. Got: {index_names}"
-                        )
+                        raise ValueError(f"index_codecs must include 'crc32c'. Got: {index_names}")
         else:
             final = codec_names[-1] if codec_names else ""
             if not any(

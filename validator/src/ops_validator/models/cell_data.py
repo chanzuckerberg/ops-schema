@@ -9,7 +9,7 @@ The CellDataValidator uses this to validate the DataFrame as a whole.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pandas as pd
 
@@ -56,9 +56,7 @@ def validate_dataframe_structure(df: pd.DataFrame) -> list[str]:
         # Check for nulls in required columns
         if col.isnull().any():
             n_null = col.isnull().sum()
-            errors.append(
-                f"cell_data.parquet: column '{spec.name}' has {n_null} null value(s)"
-            )
+            errors.append(f"cell_data.parquet: column '{spec.name}' has {n_null} null value(s)")
 
     # Validate well_row format
     if "well_row" in df.columns:

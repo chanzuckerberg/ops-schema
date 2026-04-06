@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator
 
 DOI_PATTERN = re.compile(r"^https://doi\.org/10\.\d{4,9}/\S+$")
 
