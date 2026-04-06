@@ -64,15 +64,9 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 </tr>
 <tr>
 <td><code>cell_uid</code></td>
-<td><code>Integer</code></td>
+<td><code>String</code></td>
 <td>System MUST annotate.</td>
-<td>Globally unique cell identifier across experiments. Used as the primary cross-experiment cell-level linker.</td>
-</tr>
-<tr>
-<td><code>cell_seq_id</code></td>
-<td><code>Integer</code></td>
-<td>System MUST annotate.</td>
-<td>Unique integer identifier for a cell. MUST be unique within a <code>(plate, well_row, well_col)</code> tuple.</td>
+<td>Globally unique cell identifier across the experiment. Format: <code>{plate}_{well}_{tile}_{cell_id}</code>. Reconstructable from the Zarr store hierarchy and segmentation labels. Used as the primary cell-level linker.</td>
 </tr>
 <tr>
 <td><code>barcode</code></td>

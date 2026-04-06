@@ -56,7 +56,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 - Item #9: Specimen-level metadata (cell line authentication, passage number, mycoplasma testing)
 
 **Pending items resolved (continued)**
-- Item #5: `cell_seq_id` MUST be unique within a `(plate, well_row, well_col)` tuple
+- Item #5: `cell_seq_id` removed — redundant with `cell_uid` which is reconstructable from the Zarr hierarchy. `cell_uid` changed from Integer to String (format: `{plate}_{well}_{tile}_{cell_id}`)
 - Removed `segmentation_metadata.source_channel.name` and `source_channel.type` — redundant with `channels_metadata[]` at the Zarr plate root; `source_channel.index` alone is the FK
 
 **Out of scope for v0.1.0:** 3D imaging, time-series data, chemical perturbations

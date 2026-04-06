@@ -31,8 +31,7 @@ REQUIRED_COLUMNS: list[ColumnSpec] = [
     ColumnSpec("tile", (int,), required=True, description="Field of view identifier"),
     ColumnSpec("x", (float, int), required=True, description="X centroid in pixels"),
     ColumnSpec("y", (float, int), required=True, description="Y centroid in pixels"),
-    ColumnSpec("cell_uid", (int,), required=True, description="Globally unique cell ID"),
-    ColumnSpec("cell_seq_id", (int,), required=True, description="Per-well unique cell ID"),
+    ColumnSpec("cell_uid", str, required=True, description="Globally unique cell ID"),
     ColumnSpec("barcode", str, required=True, description="Perturbation barcode (ACGT)"),
     ColumnSpec("perturbation_id", str, required=True, description="FK to perturbation_library"),
 ]
@@ -86,16 +85,6 @@ def validate_dataframe_structure(df: pd.DataFrame) -> list[str]:
             errors.append(
                 f"cell_data.parquet: 'cell_uid' must be globally unique. "
                 f"Found {n_dupes} duplicate(s)."
-            )
-
-    # cell_seq_id must be unique within (plate, well_row, well_col)
-    required_for_uniqueness = {"cell_seq_id", "plate", "well_row", "well_col"}
-    if required_for_uniqueness.issubset(df.columns):
-        dupes = df.duplicated(subset=["plate", "well_row", "well_col", "cell_seq_id"])
-        if dupes.sum() > 0:
-            errors.append(
-                f"cell_data.parquet: 'cell_seq_id' must be unique within "
-                f"(plate, well_row, well_col). Found {dupes.sum()} duplicate(s)."
             )
 
     return errors

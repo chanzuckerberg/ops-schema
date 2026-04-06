@@ -17,6 +17,11 @@ import pronto
 REFERENCE_DIR = Path(__file__).parent / "reference_files"
 
 # Maps short ontology name to filename in reference_files/
+# NOTE: cellosaurus and efo are excluded because their OBO files contain
+# constructs that pronto cannot parse (cellosaurus: "expected NaiveMonth";
+# efo: "expected UnquotedString"). Validation for these ontologies is
+# silently skipped. If future pronto versions fix these issues, they can
+# be re-added here.
 ONTOLOGY_FILES: dict[str, str] = {
     "cl": "cl.obo.gz",
     "uberon": "uberon.obo.gz",
@@ -24,8 +29,6 @@ ONTOLOGY_FILES: dict[str, str] = {
     "pato": "pato.obo.gz",
     "hsapdv": "hsapdv.obo.gz",
     "mmusdv": "mmusdv.obo.gz",
-    "efo": "efo.obo.gz",
-    "cellosaurus": "cellosaurus.obo.gz",
 }
 
 
@@ -86,7 +89,15 @@ class OntologyParser:
 
 @lru_cache(maxsize=None)
 def get_parser(ontology_name: str) -> OntologyParser:
-    """Return a cached OntologyParser for the given ontology."""
+    """Return a cached OntologyParser for the given ontology.
+
+    If the ontology is not in ONTOLOGY_FILES (e.g. removed because pronto
+    cannot parse it), returns a no-op parser that skips all validation.
+    """
+    if ontology_name not in ONTOLOGY_FILES:
+        parser = object.__new__(OntologyParser)
+        parser._ontology = None
+        return parser
     return OntologyParser(ontology_name)
 
 
