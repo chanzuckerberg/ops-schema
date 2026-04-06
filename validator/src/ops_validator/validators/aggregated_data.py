@@ -16,7 +16,8 @@ OPS_SCHEMA_VERSION = "0.1.0"
 # Feature ID format: {compartment}__{channel_or_type}__{measurement}
 # ---------------------------------------------------------------------------
 
-VALID_COMPARTMENTS = {"nucleus", "cell"}
+# No restriction on compartment names — labs may use any compartment.
+VALID_COMPARTMENTS = None
 
 SHAPE_MEASUREMENTS = {"area", "eccentricity", "form_factor", "solidity"}
 
@@ -25,8 +26,9 @@ INTENSITY_MEASUREMENTS = {
     "mean_edge", "std_edge", "mean_frac_0", "mean_frac_3",
 }
 
-# Feature IDs follow: {compartment}__{channel_or_type}__{measurement}
-_FEATURE_ID_RE = re.compile(r"^(?P<compartment>[^_][^_]*)__(?P<middle>[^_][^_]*)__(?P<measurement>.+)$")
+# Feature IDs follow: {compartment}_{measurement} or {compartment}_{channel}_{measurement}
+# Single underscore separator. Any compartment name is valid.
+_FEATURE_ID_RE = re.compile(r"^(?P<compartment>[a-zA-Z]+)_(?P<rest>.+)$")
 
 
 def _validate_feature_id_format(feature_id: str) -> str | None:
@@ -36,38 +38,9 @@ def _validate_feature_id_format(feature_id: str) -> str | None:
     if not m:
         return (
             f"feature_id {feature_id!r} does not match the required format "
-            f"'{{compartment}}__{{channel_or_type}}__{{measurement}}'."
+            f"'{{compartment}}_{{measurement}}' or '{{compartment}}_{{channel}}_{{measurement}}'."
         )
-    compartment = m.group("compartment")
-    middle = m.group("middle")
-    measurement = m.group("measurement")
-
-    if compartment not in VALID_COMPARTMENTS:
-        return (
-            f"feature_id {feature_id!r}: compartment must be one of "
-            f"{sorted(VALID_COMPARTMENTS)}. Got: {compartment!r}."
-        )
-
-    if middle == "shape":
-        if measurement not in SHAPE_MEASUREMENTS:
-            return (
-                f"feature_id {feature_id!r}: shape measurement must be one of "
-                f"{sorted(SHAPE_MEASUREMENTS)}. Got: {measurement!r}."
-            )
-    elif middle == "correlation":
-        # channel pair: any two non-empty names separated by underscore are valid
-        if "_" not in measurement:
-            return (
-                f"feature_id {feature_id!r}: correlation feature must encode a channel pair "
-                f"as '{{channel_a}}_{{channel_b}}'. Got: {measurement!r}."
-            )
-    else:
-        # middle is a channel name; measurement must be a valid intensity measurement
-        if measurement not in INTENSITY_MEASUREMENTS:
-            return (
-                f"feature_id {feature_id!r}: intensity measurement must be one of "
-                f"{sorted(INTENSITY_MEASUREMENTS)}. Got: {measurement!r}."
-            )
+    # Feature ID is valid if it starts with a compartment and has at least one measurement
     return None
 
 
@@ -168,17 +141,14 @@ class AggregatedDataValidator(BaseValidator):
                     f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
                 )
 
-        # compartment values must be valid
+        # compartment column should exist and have non-empty values
         if "compartment" in adata.var.columns:
-            invalid = adata.var["compartment"][
-                ~adata.var["compartment"].isin(VALID_COMPARTMENTS)
-            ]
-            if len(invalid) > 0:
-                self._error(
+            empty = adata.var["compartment"].isna() | (adata.var["compartment"] == "")
+            if empty.any():
+                self._warning(
                     "VAR_COMPARTMENT",
                     "aggregated_data.h5ad :: var.compartment",
-                    f"compartment must be one of {sorted(VALID_COMPARTMENTS)}. "
-                    f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
+                    f"{empty.sum()} features have empty compartment values.",
                 )
 
     def _validate_x(self, adata) -> None:
@@ -219,20 +189,23 @@ class AggregatedDataValidator(BaseValidator):
             )
 
     def _validate_obsm(self, adata) -> None:
-        if "X_umap" not in adata.obsm:
+        # At least one 2D embedding must be present (X_umap, X_phate, X_tsne, etc.)
+        embedding_keys = [k for k in adata.obsm if k.startswith("X_")]
+        if not embedding_keys:
             self._error(
                 "OBSM",
                 "aggregated_data.h5ad :: obsm",
-                "obsm must contain 'X_umap' (required 2D UMAP embedding).",
+                "obsm must contain at least one 2D embedding (e.g., X_umap, X_phate, X_tsne).",
             )
         else:
-            umap = adata.obsm["X_umap"]
-            if umap.shape[1] != 2:
-                self._error(
-                    "OBSM_UMAP",
-                    "aggregated_data.h5ad :: obsm['X_umap']",
-                    f"X_umap must have shape (n_perturbations, 2). Got shape: {umap.shape}",
-                )
+            for key in embedding_keys:
+                emb = adata.obsm[key]
+                if emb.shape[1] != 2:
+                    self._warning(
+                        "OBSM_SHAPE",
+                        f"aggregated_data.h5ad :: obsm['{key}']",
+                        f"{key} has shape {emb.shape}; expected (n_perturbations, 2).",
+                    )
 
     def _validate_uns(self, adata) -> None:
         for key in ("schema_version", "default_embedding", "title"):

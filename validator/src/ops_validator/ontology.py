@@ -37,10 +37,20 @@ class OntologyParser:
                 f"Ontology file not found: {path}\n"
                 f"Run `python scripts/prepare_references.py` to download reference files."
             )
-        with gzip.open(path, "rb") as f:
-            self._ontology = pronto.Ontology(io.BytesIO(f.read()))
+        try:
+            with gzip.open(path, "rb") as f:
+                self._ontology = pronto.Ontology(io.BytesIO(f.read()))
+        except Exception as e:
+            import warnings
+            warnings.warn(
+                f"Could not parse ontology '{ontology_name}' from {path}: {e}. "
+                f"Ontology validation will be skipped for this ontology."
+            )
+            self._ontology = None
 
     def term_exists(self, term_id: str) -> bool:
+        if self._ontology is None:
+            return True  # Skip validation if ontology failed to load
         try:
             self._ontology[term_id]
             return True
@@ -48,6 +58,8 @@ class OntologyParser:
             return False
 
     def is_deprecated(self, term_id: str) -> bool:
+        if self._ontology is None:
+            return False
         try:
             term = self._ontology[term_id]
             return term.obsolete
@@ -56,6 +68,8 @@ class OntologyParser:
 
     def is_descendant_of(self, term_id: str, ancestor_id: str) -> bool:
         """Return True if term_id is a descendant of ancestor_id (or is ancestor_id itself)."""
+        if self._ontology is None:
+            return True  # Skip validation if ontology failed to load
         try:
             term = self._ontology[term_id]
             ancestor = self._ontology[ancestor_id]

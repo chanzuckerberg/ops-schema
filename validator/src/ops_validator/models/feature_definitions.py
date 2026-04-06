@@ -34,6 +34,7 @@ class FeatureDefinitionRow(BaseModel):
     @field_validator("compartment")
     @classmethod
     def compartment_valid(cls, v: str | None) -> str | None:
-        if v is not None and v not in ("nucleus", "cell"):
-            raise ValueError(f"compartment must be 'nucleus' or 'cell'. Got: {v!r}")
+        # Any compartment name is valid (e.g., nucleus, cell, cytoplasm)
+        if v is not None and not v.strip():
+            raise ValueError("compartment must not be empty if provided")
         return v

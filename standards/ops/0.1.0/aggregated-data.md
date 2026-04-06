@@ -175,16 +175,10 @@ All pairwise combinations of the experiment's channels are included (channels li
 </thead>
 <tbody>
 <tr>
-<td><code>X_umap</code></td>
-<td><code>Float32, shape=(n_perturbations, 2)</code></td>
-<td>REQUIRED</td>
-<td>UMAP 2D coordinates, one row per perturbation</td>
-</tr>
-<tr>
 <td><code>X_{method}</code></td>
-<td><code>Float32</code></td>
-<td>OPTIONAL</td>
-<td>Additional dimensionality reduction coordinates (e.g., <code>X_pca</code>, <code>X_tsne</code>)</td>
+<td><code>Float32, shape=(n_perturbations, 2)</code></td>
+<td>REQUIRED (at least one)</td>
+<td>2D embedding coordinates for visualization. At least one MUST be present (e.g., <code>X_umap</code>, <code>X_phate</code>, <code>X_tsne</code>). The key referenced by <code>uns['default_embedding']</code> MUST exist in <code>obsm</code>.</td>
 </tr>
 </tbody>
 </table>
