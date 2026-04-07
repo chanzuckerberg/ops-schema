@@ -16,42 +16,42 @@ from ops_validator.validators.aggregated_data import (
 
 
 class TestFeatureIdFormat:
-    # Valid shape features
+    # Valid shape features: {compartment}_{measurement}
     @pytest.mark.parametrize(
         "feature_id",
         [
-            "nucleus__shape__area",
-            "cell__shape__eccentricity",
-            "nucleus__shape__form_factor",
-            "cell__shape__solidity",
+            "nucleus_area",
+            "cell_eccentricity",
+            "nucleus_form_factor",
+            "cell_solidity",
         ],
     )
     def test_valid_shape_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
-    # Valid intensity features
+    # Valid intensity features: {compartment}_{channel}_{measurement}
     @pytest.mark.parametrize(
         "feature_id",
         [
-            "nucleus__dna__mean",
-            "cell__tubulin__integrated",
-            "nucleus__gh2ax__mass_displacement",
-            "cell__actin__mean_edge",
-            "nucleus__gfp__std_edge",
-            "cell__mcherry__mean_frac_0",
-            "nucleus__dna__mean_frac_3",
+            "nucleus_DAPI_mean",
+            "cell_COXIV_integrated",
+            "nucleus_GH2AX_mass_displacement",
+            "cell_WGA_mean_edge",
+            "nucleus_GFP_std_edge",
+            "cell_MCHERRY_mean_frac_0",
+            "nucleus_DAPI_mean_frac_3",
         ],
     )
     def test_valid_intensity_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
-    # Valid correlation features
+    # Valid correlation features: {compartment}_correlation_{channel_a}_{channel_b}
     @pytest.mark.parametrize(
         "feature_id",
         [
-            "nucleus__correlation__dna_tubulin",
-            "cell__correlation__actin_gh2ax",
-            "nucleus__correlation__gfp_mcherry",
+            "nucleus_correlation_CENPA_DAPI",
+            "cell_correlation_COXIV_WGA",
+            "nucleus_correlation_GFP_MCHERRY",
         ],
     )
     def test_valid_correlation_features(self, feature_id):
@@ -87,12 +87,16 @@ def _make_h5ad(
         for col, vals in obs_columns.items():
             obs[col] = vals
 
-    var_data = {"feature_name": [v.split("__")[-1] for v in var_index]}
+    var_data = {"feature_name": [v.split("_", 1)[-1] for v in var_index]}
     var_data["feature_type"] = [
-        "shape" if "__shape__" in v else "correlation" if "__correlation__" in v else "intensity"
+        "shape"
+        if v.split("_", 1)[-1] in {"area", "eccentricity", "form_factor", "solidity"}
+        else "correlation"
+        if "_correlation_" in v
+        else "intensity"
         for v in var_index
     ]
-    var_data["compartment"] = [v.split("__")[0] for v in var_index]
+    var_data["compartment"] = [v.split("_", 1)[0] for v in var_index]
     if var_columns:
         var_data.update(var_columns)
     var = pd.DataFrame(var_data, index=var_index)
@@ -117,11 +121,11 @@ def _make_h5ad(
 
 
 VALID_FEATURES = [
-    "nucleus__shape__area",
-    "cell__shape__eccentricity",
-    "nucleus__dna__mean",
-    "cell__tubulin__integrated",
-    "nucleus__correlation__dna_tubulin",
+    "nucleus_area",
+    "cell_eccentricity",
+    "nucleus_DAPI_mean",
+    "cell_COXIV_integrated",
+    "nucleus_correlation_DAPI_COXIV",
 ]
 VALID_PERTURBATIONS = ["pert_001", "pert_002", "pert_003"]
 
@@ -162,7 +166,7 @@ class TestAggregatedDataValidator:
         obs.index.name = "perturbation_id"
         # var with only feature_name — missing feature_type and compartment
         var = pd.DataFrame(
-            {"feature_name": ["a", "b"]}, index=["nucleus__shape__area", "cell__dna__mean"]
+            {"feature_name": ["a", "b"]}, index=["nucleus_area", "cell_DAPI_mean"]
         )
         var.index.name = "feature_id"
         adata = ad.AnnData(
@@ -201,16 +205,16 @@ class TestAggregatedDataValidator:
         obs = pd.DataFrame(index=VALID_PERTURBATIONS)
         obs.index.name = "perturbation_id"
         var_data = {
-            "feature_name": [f.split("__")[-1] for f in VALID_FEATURES],
+            "feature_name": [f.split("_", 1)[-1] for f in VALID_FEATURES],
             "feature_type": [
                 "shape"
-                if "__shape__" in f
+                if f.split("_", 1)[-1] in {"area", "eccentricity", "form_factor", "solidity"}
                 else "correlation"
-                if "__correlation__" in f
+                if "_correlation_" in f
                 else "intensity"
                 for f in VALID_FEATURES
             ],
-            "compartment": [f.split("__")[0] for f in VALID_FEATURES],
+            "compartment": [f.split("_", 1)[0] for f in VALID_FEATURES],
         }
         var = pd.DataFrame(var_data, index=VALID_FEATURES)
         var.index.name = "feature_id"

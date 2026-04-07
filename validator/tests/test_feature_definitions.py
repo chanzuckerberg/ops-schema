@@ -17,7 +17,7 @@ from ops_validator.validators.feature_definitions import FeatureDefinitionsValid
 class TestFeatureDefinitionRowModel:
     def test_valid_shape_row(self):
         row = FeatureDefinitionRow(
-            feature_id="nucleus__shape__area",
+            feature_id="nucleus_area",
             feature_name="Nucleus Area",
             feature_type="shape",
             compartment="nucleus",
@@ -27,18 +27,18 @@ class TestFeatureDefinitionRowModel:
 
     def test_valid_intensity_row(self):
         row = FeatureDefinitionRow(
-            feature_id="cell__dna__mean",
-            feature_name="Cell DNA Mean Intensity",
+            feature_id="cell_DAPI_mean",
+            feature_name="Cell DAPI Mean Intensity",
             feature_type="intensity",
             compartment="cell",
-            channel="dna",
+            channel="DAPI",
         )
-        assert row.channel == "dna"
+        assert row.channel == "DAPI"
 
     def test_valid_correlation_row(self):
         row = FeatureDefinitionRow(
-            feature_id="nucleus__correlation__dna_tubulin",
-            feature_name="Nucleus DNA-Tubulin Correlation",
+            feature_id="nucleus_correlation_DAPI_COXIV",
+            feature_name="Nucleus DAPI-COXIV Correlation",
             feature_type="correlation",
             compartment="nucleus",
         )
@@ -119,9 +119,9 @@ class TestFeatureDefinitionsValidator:
         csv.write_text(
             textwrap.dedent("""\
             feature_id,feature_name,feature_type,compartment,channel
-            nucleus__shape__area,Nucleus Area,shape,nucleus,
-            cell__dna__mean,Cell DNA Mean,intensity,cell,dna
-            nucleus__correlation__dna_tubulin,DNA-Tubulin Correlation,correlation,nucleus,
+            nucleus_area,Nucleus Area,shape,nucleus,
+            cell_DAPI_mean,Cell DAPI Mean,intensity,cell,DAPI
+            nucleus_correlation_DAPI_COXIV,DAPI-COXIV Correlation,correlation,nucleus,
         """)
         )
         v = FeatureDefinitionsValidator(csv)
@@ -152,8 +152,8 @@ class TestFeatureDefinitionsValidator:
         csv.write_text(
             textwrap.dedent("""\
             feature_id,feature_name,feature_type
-            nucleus__shape__area,Nucleus Area,shape
-            nucleus__shape__area,Nucleus Area Dup,shape
+            nucleus_area,Nucleus Area,shape
+            nucleus_area,Nucleus Area Dup,shape
         """)
         )
         v = FeatureDefinitionsValidator(csv)
@@ -166,7 +166,7 @@ class TestFeatureDefinitionsValidator:
         csv.write_text(
             textwrap.dedent("""\
             feature_id,feature_name,feature_type,compartment,channel,software
-            nucleus__shape__area,Nucleus Area,shape,nucleus,,CellProfiler
+            nucleus_area,Nucleus Area,shape,nucleus,,CellProfiler
             my_custom_texture_1,Custom Texture Feature,texture,,,CustomPipeline
             my_custom_texture_2,Another Custom Feature,granularity,,,CustomPipeline
             cell_class_label,Cell Class,categorical,,,ClassifierV2

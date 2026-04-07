@@ -12,23 +12,11 @@ OPS_SCHEMA_VERSION = "0.1.0"
 
 # ---------------------------------------------------------------------------
 # Standardized feature set (Vesuvius-derived)
-# Feature ID format: {compartment}__{channel_or_type}__{measurement}
+# Feature ID formats (single-underscore separated):
+#   Shape:       {compartment}_{measurement}
+#   Intensity:   {compartment}_{channel}_{measurement}
+#   Correlation: {compartment}_correlation_{channel_a}_{channel_b}
 # ---------------------------------------------------------------------------
-
-# No restriction on compartment names — labs may use any compartment.
-VALID_COMPARTMENTS = None
-
-SHAPE_MEASUREMENTS = {"area", "eccentricity", "form_factor", "solidity"}
-
-INTENSITY_MEASUREMENTS = {
-    "mean",
-    "integrated",
-    "mass_displacement",
-    "mean_edge",
-    "std_edge",
-    "mean_frac_0",
-    "mean_frac_3",
-}
 
 # Feature IDs follow: {compartment}_{measurement} or {compartment}_{channel}_{measurement}
 # Single underscore separator. Any compartment name is valid.
@@ -126,7 +114,7 @@ class AggregatedDataValidator(BaseValidator):
                 f"var index (feature_id) must be unique. Found {n} duplicate(s).",
             )
 
-        # Validate each feature_id conforms to the standardized Vesuvius feature format
+        # Validate each feature_id conforms to the standardized feature format
         for feature_id in adata.var.index:
             err = _validate_feature_id_format(str(feature_id))
             if err:
