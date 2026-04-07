@@ -88,7 +88,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). Looked up from GENCODE using <code>gene_id</code>. Equivalent to <code>feature_name</code> in CELLxGENE schema v7.1.0. For control guides, MUST be <code>"non-targeting"</code>.</td>
+<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). Equivalent to <code>feature_name</code> in CELLxGENE schema v7.1.0.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -96,7 +96,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. Defaults to <code>gene_id</code> if no <code>gene_name</code> is assigned. For control rows, MUST be <code>"non-targeting"</code>.</td>
+<td><code>String</code>. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
