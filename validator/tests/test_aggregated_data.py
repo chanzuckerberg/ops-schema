@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import numpy as np
+import anndata as ad
+import pandas as pd
 import pytest
 
 from ops_validator.validators.aggregated_data import (
@@ -72,15 +74,13 @@ def _make_h5ad(
     layers=None,
     obsm=None,
     uns=None,
+    x_dtype=np.float32,
 ):
     """Helper to write a minimal valid AnnData file."""
-    import anndata as ad
-    import pandas as pd
-
     n_obs = len(obs_index)
     n_var = len(var_index)
 
-    X = np.zeros((n_obs, n_var), dtype=np.float32)
+    X = np.zeros((n_obs, n_var), dtype=x_dtype)
     obs = pd.DataFrame(index=obs_index)
     obs.index.name = "perturbation_id"
     if obs_columns:
@@ -90,7 +90,7 @@ def _make_h5ad(
     var_data = {"feature_name": [v.split("_", 1)[-1] for v in var_index]}
     var_data["feature_type"] = [
         "shape"
-        if v.split("_", 1)[-1] in {"area", "eccentricity", "form_factor", "solidity"}
+        if len(v.split("_")) == 2
         else "correlation"
         if "_correlation_" in v
         else "intensity"
@@ -157,9 +157,6 @@ class TestAggregatedDataValidator:
         assert any(i.rule_id == "OBS_CELL_CYCLE" for i in v.errors)
 
     def test_missing_required_var_columns_errors(self, tmp_path):
-        import anndata as ad
-        import pandas as pd
-
         n_obs, n_var = 3, 2
         X = np.zeros((n_obs, n_var), dtype=np.float32)
         obs = pd.DataFrame(index=["p1", "p2", "p3"])
@@ -197,36 +194,9 @@ class TestAggregatedDataValidator:
         assert any(i.rule_id == "NEG_LOG10_FDR" for i in v.warnings)
 
     def test_x_must_be_float32(self, tmp_path):
-        import anndata as ad
-        import pandas as pd
-
-        n_obs, n_var = 3, len(VALID_FEATURES)
-        X = np.zeros((n_obs, n_var), dtype=np.float64)  # wrong dtype
-        obs = pd.DataFrame(index=VALID_PERTURBATIONS)
-        obs.index.name = "perturbation_id"
-        var_data = {
-            "feature_name": [f.split("_", 1)[-1] for f in VALID_FEATURES],
-            "feature_type": [
-                "shape"
-                if f.split("_", 1)[-1] in {"area", "eccentricity", "form_factor", "solidity"}
-                else "correlation"
-                if "_correlation_" in f
-                else "intensity"
-                for f in VALID_FEATURES
-            ],
-            "compartment": [f.split("_", 1)[0] for f in VALID_FEATURES],
-        }
-        var = pd.DataFrame(var_data, index=VALID_FEATURES)
-        var.index.name = "feature_id"
-        adata = ad.AnnData(
-            X=X,
-            obs=obs,
-            var=var,
-            obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-            uns={"schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"},
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES, x_dtype=np.float64
         )
-        path = tmp_path / "aggregated_data.h5ad"
-        adata.write_h5ad(path)
         v = AggregatedDataValidator(path)
         v.validate()
         assert any(i.rule_id == "X_DTYPE" for i in v.errors)
