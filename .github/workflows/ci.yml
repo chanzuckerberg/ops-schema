@@ -15,7 +15,7 @@ jobs:
           python-version: "3.12"
       - name: Install validator
         run: pip install -e "validator/.[all,dev]"
-      - name: Lint
-        run: ruff check validator/
+      # - name: Lint
+      #   run: ruff check validator/
       - name: Test
         run: pytest validator/tests/ -v

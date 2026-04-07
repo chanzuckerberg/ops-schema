@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-import anndata as ad
-import pandas as pd
 import pytest
 
 from ops_validator.validators.aggregated_data import (
@@ -77,6 +75,9 @@ def _make_h5ad(
     x_dtype=np.float32,
 ):
     """Helper to write a minimal valid AnnData file."""
+    import anndata as ad
+    import pandas as pd
+
     n_obs = len(obs_index)
     n_var = len(var_index)
 
@@ -157,6 +158,9 @@ class TestAggregatedDataValidator:
         assert any(i.rule_id == "OBS_CELL_CYCLE" for i in v.errors)
 
     def test_missing_required_var_columns_errors(self, tmp_path):
+        import anndata as ad
+        import pandas as pd
+
         n_obs, n_var = 3, 2
         X = np.zeros((n_obs, n_var), dtype=np.float32)
         obs = pd.DataFrame(index=["p1", "p2", "p3"])
