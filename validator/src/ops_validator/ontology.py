@@ -45,7 +45,6 @@ class OntologyParser:
                 self._ontology = pronto.Ontology(io.BytesIO(f.read()))
         except Exception as e:
             import warnings
-
             warnings.warn(
                 f"Could not parse ontology '{ontology_name}' from {path}: {e}. "
                 f"Ontology validation will be skipped for this ontology."

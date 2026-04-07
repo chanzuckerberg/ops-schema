@@ -92,7 +92,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>For targeting rows, system MUST annotate using the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. For control rows, system MUST set to <code>"non-targeting"</code>.</td>
+<td>System MUST annotate. For targeting rows, MUST be the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>

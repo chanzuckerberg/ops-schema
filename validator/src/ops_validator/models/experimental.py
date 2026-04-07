@@ -38,7 +38,7 @@ class ExperimentBlock(BaseModel):
     organism_ontology_term_id: str
     organism: str | None = None  # system-annotated; validated post-load
     tissue_ontology_term_id: str
-    tissue: str | None = None  # system-annotated
+    tissue: str | None = None   # system-annotated
     tissue_type: Literal["tissue", "organoid", "cell culture", "cell line"]
     disease_ontology_term_id: str
     disease: str | None = None  # system-annotated
@@ -213,6 +213,7 @@ class ExperimentalMetadata(BaseModel):
         term = self.experiment.assay_ontology_term_id
         if not term.startswith("EFO:"):
             raise ValueError(
-                f"assay_ontology_term_id must be an EFO term (e.g. 'EFO:0022605'). Got: {term!r}"
+                f"assay_ontology_term_id must be an EFO term (e.g. 'EFO:0022605'). "
+                f"Got: {term!r}"
             )
         return self

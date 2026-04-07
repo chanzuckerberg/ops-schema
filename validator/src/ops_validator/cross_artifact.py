@@ -12,7 +12,7 @@ from pathlib import Path
 import anndata as ad
 import pandas as pd
 
-from ops_validator.validators.base import BaseValidator
+from ops_validator.validators.base import BaseValidator, ValidationIssue
 
 
 class CrossArtifactValidator(BaseValidator):
@@ -123,7 +123,9 @@ class CrossArtifactValidator(BaseValidator):
                 f"perturbation_library.csv. Sample: {sample}",
             )
 
-    def _check_perturbation_id_fk_aggregated(self, adata: ad.AnnData, h5ad_path: Path) -> None:
+    def _check_perturbation_id_fk_aggregated(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
         """All perturbation_id values in aggregated_data obs must exist in perturbation_library."""
         lib_ids = set(self._lib_df["perturbation_id"].dropna())
         agg_ids = set(adata.obs.index.dropna().astype(str))
@@ -137,7 +139,9 @@ class CrossArtifactValidator(BaseValidator):
                 f"perturbation_library.csv. Sample: {sample}",
             )
 
-    def _check_perturbation_id_consistency(self, adata: ad.AnnData, h5ad_path: Path) -> None:
+    def _check_perturbation_id_consistency(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
         """perturbation_id set in cell_data must match obs index in aggregated_data."""
         if self._cell_df is None:
             return
@@ -160,7 +164,9 @@ class CrossArtifactValidator(BaseValidator):
                 f"Sample: {sorted(only_in_agg)[:5]}",
             )
 
-    def _check_var_vs_feature_definitions(self, adata: ad.AnnData, h5ad_path: Path) -> None:
+    def _check_var_vs_feature_definitions(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
         """All feature_ids in aggregated_data var must be documented in feature_definitions.
 
         feature_definitions.csv covers the full lab feature universe and will contain
