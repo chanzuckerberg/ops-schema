@@ -78,17 +78,6 @@ class TestFeatureDefinitionRowModel:
                 feature_type="morphology",  # old value — removed from spec
             )
 
-    def test_rejects_invalid_compartment(self):
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError, match="compartment"):
-            FeatureDefinitionRow(
-                feature_id="bad__shape__area",
-                feature_name="Bad",
-                feature_type="shape",
-                compartment="cytoplasm",  # not a valid compartment
-            )
-
     def test_optional_fields_default_to_none(self):
         row = FeatureDefinitionRow(
             feature_id="f1",

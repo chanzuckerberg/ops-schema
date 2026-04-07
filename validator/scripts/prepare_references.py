@@ -15,9 +15,11 @@ from __future__ import annotations
 
 import gzip
 import io
+import re
 import sys
 from pathlib import Path
 
+import pandas as pd
 import requests
 import yaml
 
@@ -108,7 +110,6 @@ def _parse_gtf_genes(gtf_bytes: bytes) -> list[dict[str, str]]:
 def _extract_attr(attrs_str: str, key: str) -> str | None:
     """Extract a GTF attribute value by key."""
     # GTF attributes look like: gene_id "ENSG00000186092.7"; gene_name "OR4F5";
-    import re
 
     match = re.search(rf'{key}\s+"([^"]+)"', attrs_str)
     return match.group(1) if match else None
@@ -118,12 +119,6 @@ def download_gencode_gene_table(dest: Path, force: bool = False) -> None:
     if dest.exists() and not force:
         print(f"  Already exists: {dest.name} -- skipping")
         return
-
-    try:
-        import pandas as pd
-    except ImportError:
-        print("  pandas required -- pip install pandas pyarrow")
-        sys.exit(1)
 
     gene_info = _load_gene_info()
     human_info = gene_info["human"]

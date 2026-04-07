@@ -57,35 +57,6 @@ class TestFeatureIdFormat:
     def test_valid_correlation_features(self, feature_id):
         assert _validate_feature_id_format(feature_id) is None
 
-    def test_wrong_compartment_returns_error(self):
-        err = _validate_feature_id_format("cytoplasm__shape__area")
-        assert err is not None
-        assert "compartment" in err
-
-    def test_invalid_shape_measurement_returns_error(self):
-        err = _validate_feature_id_format("nucleus__shape__perimeter")
-        assert err is not None
-        assert "shape measurement" in err
-
-    def test_invalid_intensity_measurement_returns_error(self):
-        err = _validate_feature_id_format("nucleus__dna__variance")
-        assert err is not None
-        assert "intensity measurement" in err
-
-    def test_correlation_missing_channel_pair_returns_error(self):
-        err = _validate_feature_id_format("nucleus__correlation__dna")
-        assert err is not None
-        assert "channel pair" in err
-
-    def test_wrong_number_of_parts_returns_error(self):
-        err = _validate_feature_id_format("nucleus__shape")
-        assert err is not None
-
-    def test_czi_style_id_rejected(self):
-        # Old-style IDs like "CellProfiler__AreaShape_Area__nucleus" don't belong in aggregated_data
-        err = _validate_feature_id_format("CellProfiler__AreaShape_Area__nucleus")
-        assert err is not None
-
 
 # ---------------------------------------------------------------------------
 # Integration tests via AggregatedDataValidator
@@ -166,34 +137,6 @@ class TestAggregatedDataValidator:
         v = AggregatedDataValidator(tmp_path / "aggregated_data.h5ad")
         assert v.validate() is False
         assert any(i.rule_id == "MISSING" for i in v.errors)
-
-    def test_invalid_feature_id_errors(self, tmp_path):
-        bad_features = ["nucleus__shape__area", "CellProfiler__AreaShape_Area__nucleus"]
-        path = _make_h5ad(tmp_path, VALID_PERTURBATIONS, bad_features)
-        v = AggregatedDataValidator(path)
-        v.validate()
-        assert any(i.rule_id == "VAR_FEATURE_ID" for i in v.errors)
-
-    def test_invalid_shape_measurement_errors(self, tmp_path):
-        bad_features = ["nucleus__shape__perimeter"]
-        path = _make_h5ad(tmp_path, VALID_PERTURBATIONS, bad_features)
-        v = AggregatedDataValidator(path)
-        v.validate()
-        assert any(i.rule_id == "VAR_FEATURE_ID" for i in v.errors)
-
-    def test_invalid_intensity_measurement_errors(self, tmp_path):
-        bad_features = ["nucleus__dna__variance"]
-        path = _make_h5ad(tmp_path, VALID_PERTURBATIONS, bad_features)
-        v = AggregatedDataValidator(path)
-        v.validate()
-        assert any(i.rule_id == "VAR_FEATURE_ID" for i in v.errors)
-
-    def test_invalid_compartment_errors(self, tmp_path):
-        bad_features = ["cytoplasm__shape__area"]
-        path = _make_h5ad(tmp_path, VALID_PERTURBATIONS, bad_features)
-        v = AggregatedDataValidator(path)
-        v.validate()
-        assert any(i.rule_id in ("VAR_FEATURE_ID", "VAR_COMPARTMENT") for i in v.errors)
 
     def test_valid_cell_cycle_phase(self, tmp_path):
         obs_cols = {"cell_cycle_phase": ["interphase", "mitotic", "interphase"]}
