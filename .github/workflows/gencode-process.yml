@@ -29,5 +29,5 @@ jobs:
         run: python validator/scripts/prepare_references.py --force
       - name: Commit updated parquet
         run: |
-          git add validator/src/ops_validator/reference_files/gencode_*.parquet
+          git add validator/src/ops_validator/reference_files/genes_*.parquet
           git diff --cached --quiet || (git commit -m "AUTO: update GENCODE reference" && git push)

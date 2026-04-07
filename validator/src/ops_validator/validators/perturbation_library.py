@@ -76,7 +76,7 @@ class PerturbationLibraryValidator(BaseValidator):
                 self._error(
                     "GENE_ID_BLANK",
                     f"perturbation_library.csv :: row {row_idx} :: gene_id",
-                    "gene_id MUST be a valid GENCODE v48 Ensembl gene ID for targeting rows.",
+                    "gene_id MUST be a valid GENCODE Ensembl gene ID for targeting rows.",
                 )
 
         # GENCODE gene ID + symbol cross-check
@@ -89,13 +89,13 @@ class PerturbationLibraryValidator(BaseValidator):
                 self._error(
                     "GENCODE",
                     f"perturbation_library.csv :: row {idx} :: gene_id",
-                    f"{gid!r} not found in GENCODE v48 reference.",
+                    f"{gid!r} not found in GENCODE reference.",
                 )
             elif sym and not gene_symbol_matches(gid, sym):
                 self._warning(
                     "SYMBOL_MISMATCH",
                     f"perturbation_library.csv :: row {idx} :: gene_symbol",
-                    f"gene_symbol {sym!r} does not match GENCODE v48 name for {gid!r}.",
+                    f"gene_symbol {sym!r} does not match GENCODE name for {gid!r}.",
                 )
 
         return self.is_valid

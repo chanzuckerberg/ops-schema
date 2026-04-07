@@ -115,15 +115,15 @@ def _extract_attr(attrs_str: str, key: str) -> str | None:
     return match.group(1) if match else None
 
 
-def download_gencode_gene_table(dest: Path, force: bool = False) -> None:
+def download_gencode_gene_table(
+    organism_info: dict, dest: Path, force: bool = False
+) -> None:
     if dest.exists() and not force:
         print(f"  Already exists: {dest.name} -- skipping")
         return
 
-    gene_info = _load_gene_info()
-    human_info = gene_info["human"]
-    version = str(human_info["version"])
-    url = human_info["url"].format(version=version)
+    version = str(organism_info["version"])
+    url = organism_info["url"].format(version=version)
 
     print(f"  Downloading GENCODE v{version} GTF from {url} ...")
     resp = requests.get(url, stream=True, timeout=300)
@@ -137,10 +137,12 @@ def download_gencode_gene_table(dest: Path, force: bool = False) -> None:
     genes = _parse_gtf_genes(raw)
 
     df = pd.DataFrame(genes)
-    df = df[df["gene_id"].str.startswith("ENSG", na=False)]
+    df = df[df["gene_id"].str.startswith("ENS", na=False)]
 
     if len(df) < 20_000:
-        raise ValueError(f"GENCODE GTF returned only {len(df)} gene entries -- expected ~60,000+.")
+        raise ValueError(
+            f"GENCODE GTF returned only {len(df)} gene entries -- expected ~60,000+."
+        )
 
     df.to_parquet(dest, index=False)
     print(f"  Saved: {dest} ({len(df):,} genes)")
@@ -157,12 +159,15 @@ def main(force: bool = False) -> None:
         except Exception as e:
             print(f"  ERROR downloading {filename}: {e}")
 
-    print("\n=== Downloading GENCODE gene reference ===")
-    gencode_dest = REFERENCE_DIR / "gencode_v48_human.parquet"
-    try:
-        download_gencode_gene_table(gencode_dest, force=force)
-    except Exception as e:
-        print(f"  ERROR downloading GENCODE table: {e}")
+    print("\n=== Downloading GENCODE gene references ===")
+    gene_info = _load_gene_info()
+    for key, organism_info in gene_info.items():
+        description = organism_info["description"]
+        dest = REFERENCE_DIR / f"genes_{description}.parquet"
+        try:
+            download_gencode_gene_table(organism_info, dest, force=force)
+        except Exception as e:
+            print(f"  ERROR downloading {key}: {e}")
 
     print("\nDone. Reference files are ready.")
 
