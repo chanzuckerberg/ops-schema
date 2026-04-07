@@ -9,7 +9,6 @@ from ops_validator.validators.perturbation_library import PerturbationLibraryVal
 VALID_ROW = {
     "perturbation_id": "BRCA2",
     "gene_id": "ENSG00000139618",
-    "gene_symbol": "BRCA2",
     "barcode": "ACGTACGT",
     "role": "targeting",
     "control_type": "",
@@ -21,7 +20,6 @@ VALID_ROW = {
 VALID_CONTROL_ROW = {
     "perturbation_id": "non-targeting-1",
     "gene_id": "non-targeting",
-    "gene_symbol": "non-targeting",
     "barcode": "TTTTAAAA",
     "role": "control",
     "control_type": "non-targeting",
@@ -128,10 +126,3 @@ def test_gene_id_not_in_gencode_is_error(tmp_path):
     assert any("GENCODE" in e.rule_id for e in v.errors)
 
 
-def test_gene_symbol_mismatch_is_warning(tmp_path):
-    row = {**VALID_ROW, "gene_symbol": "NOT_BRCA2"}
-    p = write_csv(tmp_path, [row, VALID_CONTROL_ROW])
-    v = PerturbationLibraryValidator(p)
-    v.validate()
-    assert v.is_valid  # warnings don't fail validation
-    assert any("SYMBOL_MISMATCH" in w.rule_id for w in v.warnings)

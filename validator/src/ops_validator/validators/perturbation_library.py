@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 from pydantic import ValidationError
 
-from ops_validator.gencode import gene_id_exists, gene_symbol_matches
+from ops_validator.gencode import gene_id_exists
 from ops_validator.models.perturbation_library import PerturbationLibraryRow
 from ops_validator.validators.base import BaseValidator
 
@@ -26,7 +26,6 @@ class PerturbationLibraryValidator(BaseValidator):
         required_cols = {
             "perturbation_id",
             "gene_id",
-            "gene_symbol",
             "barcode",
             "role",
             "protospacer_sequence",
@@ -79,10 +78,9 @@ class PerturbationLibraryValidator(BaseValidator):
                     "gene_id MUST be a valid GENCODE Ensembl gene ID for targeting rows.",
                 )
 
-        # GENCODE gene ID + symbol cross-check
+        # GENCODE gene ID check
         for idx, row in targeting.iterrows():
             gid = row.get("gene_id", "")
-            sym = row.get("gene_symbol", "")
             if not gid or gid in ("", "non-targeting"):
                 continue
             if not gene_id_exists(gid):
@@ -90,12 +88,6 @@ class PerturbationLibraryValidator(BaseValidator):
                     "GENCODE",
                     f"perturbation_library.csv :: row {idx} :: gene_id",
                     f"{gid!r} not found in GENCODE reference.",
-                )
-            elif sym and not gene_symbol_matches(gid, sym):
-                self._warning(
-                    "SYMBOL_MISMATCH",
-                    f"perturbation_library.csv :: row {idx} :: gene_symbol",
-                    f"gene_symbol {sym!r} does not match GENCODE name for {gid!r}.",
                 )
 
         return self.is_valid

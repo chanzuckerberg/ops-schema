@@ -34,25 +34,10 @@ def _gene_id_set() -> set[str]:
     return set(_load_gene_table()["gene_id"].values)
 
 
-@lru_cache(maxsize=1)
-def _gene_id_to_name() -> dict[str, str]:
-    df = _load_gene_table()
-    return dict(zip(df["gene_id"], df["gene_name"]))
-
 
 def gene_id_exists(gene_id: str) -> bool:
     """Return True if gene_id is present in the GENCODE reference."""
     return gene_id in _gene_id_set()
-
-
-def gene_symbol_matches(gene_id: str, gene_symbol: str) -> bool:
-    """Return True if gene_symbol matches the GENCODE gene_name for gene_id."""
-    return _gene_id_to_name().get(gene_id) == gene_symbol
-
-
-def get_gene_symbol(gene_id: str) -> str | None:
-    """Return the GENCODE gene_name for gene_id, or None if not found."""
-    return _gene_id_to_name().get(gene_id)
 
 
 def validate_var_index(gene_ids: list[str]) -> list[str]:

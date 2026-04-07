@@ -67,7 +67,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. For targeting rows, MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) that is present in the GENCODE v48 (GRCh38) reference. For control rows, MUST be <code>"non-targeting"</code>.</td>
+<td><code>String</code>. For targeting rows, MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) that is present in GENCODE v48 (GRCh38). For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -88,15 +88,15 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). For control guides, MUST be <code>"non-targeting"</code>.</td>
+<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). Looked up from GENCODE using <code>gene_id</code>. Equivalent to <code>feature_name</code> in CELLxGENE schema v7.1.0. For control guides, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
+<td>For targeting rows, system MUST annotate using the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. For control rows, system MUST set to <code>"non-targeting"</code>.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be the HGNC-approved gene symbol or <code>"non-targeting"</code>.</td>
+<td><code>String</code>. OPTIONAL for targeting rows. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. Defaults to <code>gene_id</code> if no <code>gene_name</code> is assigned. For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -328,7 +328,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. OPTIONAL. MUST be the <code>gene_name</code> attribute from the corresponding gene reference. Defaults to <code>derived_gene_id</code> if no <code>gene_name</code> is assigned.</td>
+<td><code>String</code>. OPTIONAL. MUST be the <code>gene_symbol</code> value that would be looked up for <code>derived_gene_id</code>. Defaults to <code>derived_gene_id</code> if no gene name is assigned.</td>
 </tr>
 </tbody>
 </table>

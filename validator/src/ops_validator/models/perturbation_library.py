@@ -21,7 +21,7 @@ LOCUS_PATTERN = re.compile(r"^(\d+|X|Y|MT|[0-9A-Za-z_]+):\d+-\d+\([+-]\)$")
 class PerturbationLibraryRow(BaseModel):
     perturbation_id: str
     gene_id: str | None = None
-    gene_symbol: str
+    gene_symbol: str | None = None
     barcode: Annotated[str, Field(pattern=r"^[ACGT]+$")]
     role: Literal["targeting", "control"]
     control_type: Literal["non-targeting", "intergenic"] | None = None
@@ -52,13 +52,6 @@ class PerturbationLibraryRow(BaseModel):
                 f"gene_id must be a version-stripped Ensembl gene ID "
                 f"(e.g. 'ENSG00000186092'), 'non-targeting', or empty. Got: {v!r}"
             )
-        return v
-
-    @field_validator("gene_symbol")
-    @classmethod
-    def gene_symbol_not_empty(cls, v: str) -> str:
-        if not v.strip():
-            raise ValueError("gene_symbol must not be empty")
         return v
 
     @field_validator("protospacer_sequence")
