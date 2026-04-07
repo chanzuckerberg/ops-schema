@@ -295,7 +295,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>System SHOULD annotate when <code>sgrna_target_locus</code> is present.</td>
+<td>System MUST annotate when <code>sgrna_target_locus</code> is present.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
@@ -324,11 +324,11 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>System SHOULD annotate when <code>derived_gene_id</code> is present.</td>
+<td>System MUST annotate when <code>derived_gene_id</code> is present.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. OPTIONAL. MUST be the <code>gene_symbol</code> value that would be looked up for <code>derived_gene_id</code>. Defaults to <code>derived_gene_id</code> if no gene name is assigned.</td>
+<td><code>String</code>. OPTIONAL. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>derived_gene_id</code>. Defaults to <code>derived_gene_id</code> if no gene name is assigned.</td>
 </tr>
 </tbody>
 </table>
