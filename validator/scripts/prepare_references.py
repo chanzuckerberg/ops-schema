@@ -144,7 +144,7 @@ def download_gencode_gene_table(
             f"GENCODE GTF returned only {len(df)} gene entries -- expected ~60,000+."
         )
 
-    df.to_parquet(dest, index=False)
+    df.to_csv(dest, index=False)
     print(f"  Saved: {dest} ({len(df):,} genes)")
 
 
@@ -163,7 +163,7 @@ def main(force: bool = False) -> None:
     gene_info = _load_gene_info()
     for key, organism_info in gene_info.items():
         description = organism_info["description"]
-        dest = REFERENCE_DIR / f"genes_{description}.parquet"
+        dest = REFERENCE_DIR / f"genes_{description}.csv"
         try:
             download_gencode_gene_table(organism_info, dest, force=force)
         except Exception as e:

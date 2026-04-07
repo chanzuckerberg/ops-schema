@@ -20,13 +20,13 @@ REFERENCE_DIR = Path(__file__).parent / "reference_files"
 
 @lru_cache(maxsize=1)
 def _load_gene_table() -> pd.DataFrame:
-    files = sorted(REFERENCE_DIR.glob("genes_*.parquet"))
+    files = sorted(REFERENCE_DIR.glob("genes_*.csv"))
     if not files:
         raise FileNotFoundError(
-            f"No genes_*.parquet files found in {REFERENCE_DIR}. "
+            f"No genes_*.csv files found in {REFERENCE_DIR}. "
             "Run `python scripts/prepare_references.py` to generate them."
         )
-    return pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
+    return pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
 
 
 @lru_cache(maxsize=1)
