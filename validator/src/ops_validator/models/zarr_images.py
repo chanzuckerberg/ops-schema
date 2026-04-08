@@ -163,10 +163,10 @@ class MultiscaleEntry(BaseModel):
     downsamplingMethod: str | None = None  # RECOMMENDED
 
     @model_validator(mode="after")
-    def five_resolution_levels(self) -> MultiscaleEntry:
-        if len(self.datasets) != 5:
+    def at_least_one_resolution_level(self) -> MultiscaleEntry:
+        if len(self.datasets) < 1:
             raise ValueError(
-                f"multiscales must have exactly 5 resolution levels (full through 16x). "
+                f"multiscales must have at least 1 resolution level. "
                 f"Got {len(self.datasets)}."
             )
         return self

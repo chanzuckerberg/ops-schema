@@ -228,7 +228,7 @@ No required metadata beyond OME-NGFF row group conventions.
 
 `{screen_name}.zarr/A/1/0/0/` through `.../4/`
 
-Five resolution levels are REQUIRED: full resolution through 16x downsampled.
+At least one resolution level is REQUIRED. Multiple levels (e.g., full resolution through 16x downsampled) are RECOMMENDED for large merged-well images but not required for per-tile stores.
 
 <table>
 <thead>
