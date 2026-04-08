@@ -15,15 +15,13 @@ ENSEMBL_PATTERN = re.compile(r"^ENSG\d+$")
 IUPAC_CHARS = set("ABCDGHKMNRSTVWY")
 PAM_PATTERN = re.compile(r"^3' [ABCDGHKMNRSTVWY]+$")
 
-LOCUS_PATTERN = re.compile(
-    r"^(\d+|X|Y|MT|[0-9A-Za-z_]+):\d+-\d+\([+-]\)$"
-)
+LOCUS_PATTERN = re.compile(r"^(\d+|X|Y|MT|[0-9A-Za-z_]+):\d+-\d+\([+-]\)$")
 
 
 class PerturbationLibraryRow(BaseModel):
     perturbation_id: str
     gene_id: str | None = None
-    gene_symbol: str
+    gene_symbol: str | None = None
     barcode: Annotated[str, Field(pattern=r"^[ACGT]+$")]
     role: Literal["targeting", "control"]
     control_type: Literal["non-targeting", "intergenic"] | None = None
@@ -56,20 +54,11 @@ class PerturbationLibraryRow(BaseModel):
             )
         return v
 
-    @field_validator("gene_symbol")
-    @classmethod
-    def gene_symbol_not_empty(cls, v: str) -> str:
-        if not v.strip():
-            raise ValueError("gene_symbol must not be empty")
-        return v
-
     @field_validator("protospacer_sequence")
     @classmethod
     def protospacer_acgt_only(cls, v: str) -> str:
         if not BARCODE_PATTERN.match(v):
-            raise ValueError(
-                f"protospacer_sequence must contain only A, C, G, T. Got: {v!r}"
-            )
+            raise ValueError(f"protospacer_sequence must contain only A, C, G, T. Got: {v!r}")
         return v
 
     @field_validator("protospacer_adjacent_motif")
@@ -77,8 +66,8 @@ class PerturbationLibraryRow(BaseModel):
     def pam_format(cls, v: str) -> str:
         if not PAM_PATTERN.match(v):
             raise ValueError(
-                f"protospacer_adjacent_motif must be formatted as \"3' MOTIF\" using "
-                f"IUPAC codes (e.g. \"3' NGG\"). Got: {v!r}"
+                f'protospacer_adjacent_motif must be formatted as "3\' MOTIF" using '
+                f'IUPAC codes (e.g. "3\' NGG"). Got: {v!r}'
             )
         return v
 
@@ -101,22 +90,16 @@ class PerturbationLibraryRow(BaseModel):
         if v is None or v == "":
             return None
         if not ENSEMBL_PATTERN.match(v):
-            raise ValueError(
-                f"derived_gene_id must be a version-stripped Ensembl ID. Got: {v!r}"
-            )
+            raise ValueError(f"derived_gene_id must be a version-stripped Ensembl ID. Got: {v!r}")
         return v
 
     @model_validator(mode="after")
     def control_type_consistency(self) -> PerturbationLibraryRow:
         """V-10/V-11: control_type present iff role == 'control'."""
         if self.role == "control" and self.control_type is None:
-            raise ValueError(
-                "control_type is required when role is 'control' (V-10)"
-            )
+            raise ValueError("control_type is required when role is 'control' (V-10)")
         if self.role == "targeting" and self.control_type is not None:
-            raise ValueError(
-                "control_type must not be present when role is 'targeting' (V-11)"
-            )
+            raise ValueError("control_type must not be present when role is 'targeting' (V-11)")
         return self
 
     @model_validator(mode="after")

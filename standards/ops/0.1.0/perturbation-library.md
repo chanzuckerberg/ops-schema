@@ -67,7 +67,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) or <code>"non-targeting"</code>. MAY be empty when a gene cannot be resolved against the reference Ensembl release, but more than 50% blank values among targeting rows is an error and more than 20% blank triggers a warning.</td>
+<td><code>String</code>. For targeting rows, MUST be a version-stripped Ensembl gene ID (e.g., <code>"ENSG00000186092"</code>) that is present in GENCODE v48 (GRCh38). For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -88,15 +88,15 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). For control guides, MUST be <code>"non-targeting"</code>.</td>
+<td>Human-readable gene symbol for the gene targeted by this perturbation (e.g., <code>"BRCA2"</code>). Equivalent to <code>feature_name</code> in CELLxGENE schema v7.1.0.</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>Submitter MUST annotate.</td>
+<td>System MUST annotate.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. MUST be the HGNC-approved gene symbol or <code>"non-targeting"</code>.</td>
+<td><code>String</code>. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>gene_id</code>. For control rows, MUST be <code>"non-targeting"</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -295,7 +295,7 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>System SHOULD annotate when <code>sgrna_target_locus</code> is present.</td>
+<td>System MUST annotate when <code>sgrna_target_locus</code> is present.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
@@ -324,11 +324,11 @@ This file contains metadata about the specific perturbations applied in the OPS 
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
-<td>System SHOULD annotate when <code>derived_gene_id</code> is present.</td>
+<td>System MUST annotate when <code>derived_gene_id</code> is present.</td>
 </tr>
 <tr>
 <td><strong>Value</strong></td>
-<td><code>String</code>. OPTIONAL. MUST be the <code>gene_name</code> attribute from the corresponding gene reference. Defaults to <code>derived_gene_id</code> if no <code>gene_name</code> is assigned.</td>
+<td><code>String</code>. OPTIONAL. MUST be the <code>gene_name</code> attribute from GENCODE for the <code>derived_gene_id</code>. Defaults to <code>derived_gene_id</code> if no gene name is assigned.</td>
 </tr>
 </tbody>
 </table>

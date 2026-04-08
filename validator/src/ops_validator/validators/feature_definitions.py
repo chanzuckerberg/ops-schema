@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
 from pydantic import ValidationError
 
@@ -34,7 +32,9 @@ class FeatureDefinitionsValidator(BaseValidator):
         missing = required_cols - set(df.columns)
         if missing:
             for col in sorted(missing):
-                self._error("MISSING_COLUMN", "feature_definitions.csv", f"Missing required column: '{col}'")
+                self._error(
+                    "MISSING_COLUMN", "feature_definitions.csv", f"Missing required column: '{col}'"
+                )
             return False
 
         for idx, row in df.iterrows():
