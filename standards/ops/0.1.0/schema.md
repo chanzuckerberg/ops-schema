@@ -228,7 +228,7 @@ collection_metadata.yaml
         (one row per cell)                    obs index = aggregate_id
           cell_uid  ← globally unique         (one row per aggregation unit)
           perturbation_id FK                  perturbation_id FK
-                                              uns['observation_unit'] declares grouping
+                                              uns['observation_unit'] declares grouping (list)
                 │
                 ▼
         examples.zarr/

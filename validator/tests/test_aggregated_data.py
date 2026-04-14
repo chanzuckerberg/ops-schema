@@ -63,12 +63,15 @@ def _make_h5ad(
     obsm=None,
     uns=None,
     x_dtype=np.float32,
-    observation_unit="perturbation_id",
+    observation_unit=None,
     perturbation_ids=None,
 ):
     """Helper to write a minimal valid AnnData file."""
     import anndata as ad
     import pandas as pd
+
+    if observation_unit is None:
+        observation_unit = ["perturbation_id"]
 
     n_obs = len(obs_index)
     n_var = len(var_index)
@@ -82,10 +85,9 @@ def _make_h5ad(
     else:
         obs["perturbation_id"] = obs_index
 
-    unit_cols = [c.strip() for c in observation_unit.split("|")]
-    for col_idx, col in enumerate(unit_cols):
+    for col_idx, col in enumerate(observation_unit):
         if col not in obs.columns:
-            if len(unit_cols) == 1:
+            if len(observation_unit) == 1:
                 obs[col] = obs_index
             else:
                 obs[col] = [str(idx).split("|")[col_idx] if "|" in str(idx) else idx for idx in obs_index]
@@ -153,7 +155,7 @@ class TestAggregatedDataValidator:
             tmp_path,
             barcodes,
             VALID_FEATURES,
-            observation_unit="barcode",
+            observation_unit=["barcode"],
             perturbation_ids=["gene_A", "gene_A", "gene_B"],
         )
         v = AggregatedDataValidator(path)
@@ -166,7 +168,7 @@ class TestAggregatedDataValidator:
             tmp_path,
             obs_index,
             VALID_FEATURES,
-            observation_unit="perturbation_id|cell_cycle_phase",
+            observation_unit=["perturbation_id", "cell_cycle_phase"],
             perturbation_ids=["gene_A", "gene_A", "gene_B"],
             obs_columns={
                 "cell_cycle_phase": ["mitotic", "interphase", "mitotic"],
@@ -197,7 +199,7 @@ class TestAggregatedDataValidator:
         adata = ad.AnnData(
             X=X, obs=obs, var=var,
             obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-            uns={"observation_unit": "perturbation_id|cell_cycle_phase",
+            uns={"observation_unit": ["perturbation_id", "cell_cycle_phase"],
                  "schema_version": "0.1.0", "default_embedding": "X_umap", "title": "T"},
         )
         path = tmp_path / "aggregated_data.h5ad"
@@ -227,7 +229,7 @@ class TestAggregatedDataValidator:
         adata = ad.AnnData(
             X=X, obs=obs, var=var,
             obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-            uns={"observation_unit": "barcode", "schema_version": "0.1.0",
+            uns={"observation_unit": ["barcode"], "schema_version": "0.1.0",
                  "default_embedding": "X_umap", "title": "T"},
         )
         path = tmp_path / "aggregated_data.h5ad"
@@ -267,7 +269,7 @@ class TestAggregatedDataValidator:
         adata = ad.AnnData(
             X=X, obs=obs, var=var,
             obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-            uns={"observation_unit": "gene_id", "schema_version": "0.1.0",
+            uns={"observation_unit": ["gene_id"], "schema_version": "0.1.0",
                  "default_embedding": "X_umap", "title": "T"},
         )
         path = tmp_path / "aggregated_data.h5ad"
@@ -291,7 +293,7 @@ class TestAggregatedDataValidator:
         var.index.name = "feature_id"
         adata = ad.AnnData(X=X, obs=obs, var=var,
                            obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-                           uns={"observation_unit": "perturbation_id", "schema_version": "0.1.0",
+                           uns={"observation_unit": ["perturbation_id"], "schema_version": "0.1.0",
                                 "default_embedding": "X_umap", "title": "T"})
         path = tmp_path / "aggregated_data.h5ad"
         adata.write_h5ad(path)

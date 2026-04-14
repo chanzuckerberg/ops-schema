@@ -55,7 +55,7 @@ def _make_experiment(
         var=var,
         obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
         uns={
-            "observation_unit": "perturbation_id",
+            "observation_unit": ["perturbation_id"],
             "schema_version": "0.1.0",
             "default_embedding": "X_umap",
             "title": "Test",

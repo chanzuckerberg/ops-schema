@@ -12,9 +12,9 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 This file is an AnnData object where rows (`obs`) represent **aggregation units** and columns (`var`) represent **morphological features**. The shape of the object is `(n_obs × n_features)`.
 
-Each row represents one unit of pseudobulk aggregation. The granularity is submitter-defined: rows may represent genes, guides (barcodes), or any other grouping strategy. The `observation_unit` key in `uns` declares which column(s) from `cell_data.parquet` were used to define each row, and `aggregate_id` (the obs index) is constructed by concatenating the values of those columns with `|` (pipe) as separator.
+Each row represents one unit of pseudobulk aggregation. The granularity is submitter-defined: rows may represent genes, guides (barcodes), or any other grouping strategy. The `observation_unit` key in `uns` declares which column(s) from `cell_data.parquet` were used to define each row as a list of strings, and `aggregate_id` (the obs index) is constructed by concatenating the values of those columns with `|` (pipe) as separator.
 
-This file is the shared data object for the visualization layer. It backs both the **volcano plot** (per-feature effect sizes and significance per aggregation unit) and the **UMAP** (embedding derived from the feature matrix).
+Each `aggregated_data.h5ad` file represents exactly **one visualization unit** — all rows in the file are displayed together as a single UMAP and a single volcano plot. If a submitter wants to split data into separate plots (e.g., different cell-type subsets), each plot MUST be a separate `aggregated_data.h5ad` under its own `visualization_id`.
 
 The `var` axis MUST contain exactly the standardized feature set defined below. This fixed feature set is derived from the [Vesuvius dataset](https://vesuvius.wi.mit.edu/about). Lab-specific or extended features MUST NOT be added to this file; they belong in `metadata/feature_definitions.csv`.
 
@@ -22,15 +22,15 @@ The `var` axis MUST contain exactly the standardized feature set defined below. 
 
 ### obs index
 
-The `obs` index MUST be `aggregate_id`. Each value MUST be unique. Values are constructed by concatenating the values of the column(s) listed in `uns['observation_unit']`, joined with `|` (pipe). When `observation_unit` names a single column, `aggregate_id` is simply that column's value with no separator.
+The `obs` index MUST be `aggregate_id`. Each value MUST be unique. Values are constructed by concatenating the values of the column(s) listed in `uns['observation_unit']`, joined with `|` (pipe). When `observation_unit` contains a single column name, `aggregate_id` is simply that column's value with no separator.
 
 **Examples:**
 
 | `uns['observation_unit']` | `aggregate_id` example | Interpretation |
 |---|---|---|
-| `gene_id` | `ENSG00000130164` | Gene-level pseudobulk |
-| `barcode` | `ACGTACGT` | Guide-level pseudobulk |
-| `gene_id\|cell_cycle_phase` | `ENSG00000130164\|mitotic` | Gene × cell-cycle stratified |
+| `["gene_id"]` | `ENSG00000130164` | Gene-level pseudobulk |
+| `["barcode"]` | `ACGTACGT` | Guide-level pseudobulk |
+| `["gene_id", "cell_cycle_phase"]` | `ENSG00000130164\|mitotic` | Gene × cell-cycle stratified |
 
 ### obs (rows — aggregation units)
 
@@ -213,9 +213,9 @@ All pairwise combinations of the experiment's channels are included (channels li
 <tbody>
 <tr>
 <td><code>observation_unit</code></td>
-<td><code>String</code></td>
+<td><code>List[String]</code></td>
 <td>REQUIRED</td>
-<td>Declares which column(s) were used to define each row in <code>obs</code>. Column names are separated by <code>|</code> (pipe) when multiple columns are used. Every column named here MUST exist in <code>obs</code>. The values of these columns, concatenated with <code>|</code>, MUST equal the corresponding <code>aggregate_id</code>. Examples: <code>"gene_id"</code>, <code>"barcode"</code>, <code>"gene_id|cell_cycle_phase"</code>.</td>
+<td>Declares which column(s) were used to define each row in <code>obs</code>. Every column named here MUST exist in <code>obs</code>. The values of these columns, concatenated with <code>|</code>, MUST equal the corresponding <code>aggregate_id</code>. Examples: <code>["gene_id"]</code>, <code>["barcode"]</code>, <code>["gene_id", "cell_cycle_phase"]</code>.</td>
 </tr>
 <tr>
 <td><code>schema_version</code></td>

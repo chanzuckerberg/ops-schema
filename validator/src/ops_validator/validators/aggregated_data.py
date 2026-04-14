@@ -106,23 +106,31 @@ class AggregatedDataValidator(BaseValidator):
         # --- observation_unit columns must exist in obs ---
         observation_unit = adata.uns.get("observation_unit")
         if observation_unit is not None:
-            if not isinstance(observation_unit, str) or not observation_unit.strip():
+            if isinstance(observation_unit, np.ndarray):
+                unit_cols = observation_unit.tolist()
+            elif isinstance(observation_unit, (list, tuple)):
+                unit_cols = list(observation_unit)
+            else:
                 self._error(
                     "UNS_OBSERVATION_UNIT",
                     "aggregated_data.h5ad :: uns['observation_unit']",
-                    "uns['observation_unit'] must be a non-empty pipe-delimited string "
-                    "of obs column names.",
+                    "uns['observation_unit'] must be a list of obs column name strings.",
                 )
                 return
 
-            unit_cols = [c.strip() for c in observation_unit.split("|")]
-
-            if any(not c for c in unit_cols):
+            if not unit_cols:
                 self._error(
                     "UNS_OBSERVATION_UNIT",
                     "aggregated_data.h5ad :: uns['observation_unit']",
-                    "uns['observation_unit'] contains empty column name(s); provide a "
-                    "pipe-delimited list of non-empty obs column names.",
+                    "uns['observation_unit'] must not be empty.",
+                )
+                return
+
+            if not all(isinstance(c, str) and c.strip() for c in unit_cols):
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] must contain only non-empty strings.",
                 )
                 return
 
