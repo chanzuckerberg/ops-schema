@@ -21,7 +21,11 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 - Removed `experiment.publication_doi` and `experiment.publication_reference` from experimental metadata
 
 **Aggregated Data (h5ad)**
-- Corrected AnnData structure to match CELLxGENE conventions: `obs` index is `perturbation_id`; `X` matrix is `Float32 (n_perturbations × n_features)`; `p_values` moved to `layers`; `uns` section added with `schema_version`, `default_embedding`, `title`
+- Replaced `perturbation_id` as obs index with `aggregate_id` — a submitter-constructed unique key derived from the columns listed in `uns['observation_unit']`, joined with `|` (pipe). Supports gene-level, guide-level, and arbitrary stratified pseudobulk (e.g., gene × cell cycle phase).
+- `perturbation_id` is now an obs column (FK to `perturbation_library.csv`), no longer the index. Not necessarily unique per row.
+- Added `observation_unit` to `uns` (REQUIRED). Declares which column(s) define each aggregation row. Column values concatenated with `|` must equal the corresponding `aggregate_id`.
+- Removed `cell_cycle_phase` as a special-cased obs field — now handled generically via `observation_unit`.
+- Corrected AnnData structure to match CELLxGENE conventions: `X` matrix is `Float32 (n_obs × n_features)`; `p_values` moved to `layers`; `uns` section added with `schema_version`, `default_embedding`, `title`
 
 **Example Images**
 - Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{barcode}/{1..N}/`

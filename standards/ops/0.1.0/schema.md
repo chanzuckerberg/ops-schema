@@ -225,9 +225,10 @@ collection_metadata.yaml
                 ├──────────────────────────────────────────┐
                 ▼                                          ▼
         cell_data.parquet                     aggregated_data.h5ad
-        (one row per cell)                    obs index = perturbation_id
-          cell_uid  ← globally unique         (one row per perturbation group)
-          perturbation_id FK
+        (one row per cell)                    obs index = aggregate_id
+          cell_uid  ← globally unique         (one row per aggregation unit)
+          perturbation_id FK                  perturbation_id FK
+                                              uns['observation_unit'] declares grouping
                 │
                 ▼
         examples.zarr/

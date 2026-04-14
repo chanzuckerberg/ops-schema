@@ -127,14 +127,21 @@ class CrossArtifactValidator(BaseValidator):
         self, adata: ad.AnnData, h5ad_path: Path
     ) -> None:
         """All perturbation_id values in aggregated_data obs must exist in perturbation_library."""
+        if "perturbation_id" not in adata.obs.columns:
+            self._error(
+                "FK_PERTURBATION_ID_AGG",
+                f"{h5ad_path} :: obs.perturbation_id",
+                "perturbation_id column missing from aggregated_data obs.",
+            )
+            return
         lib_ids = set(self._lib_df["perturbation_id"].dropna())
-        agg_ids = set(adata.obs.index.dropna().astype(str))
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
         orphans = agg_ids - lib_ids
         if orphans:
             sample = sorted(orphans)[:5]
             self._error(
                 "FK_PERTURBATION_ID_AGG",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(orphans)} perturbation_id value(s) in aggregated_data.h5ad not found in "
                 f"perturbation_library.csv. Sample: {sample}",
             )
@@ -142,24 +149,26 @@ class CrossArtifactValidator(BaseValidator):
     def _check_perturbation_id_consistency(
         self, adata: ad.AnnData, h5ad_path: Path
     ) -> None:
-        """perturbation_id set in cell_data must match obs index in aggregated_data."""
+        """perturbation_id set in cell_data must match perturbation_id column in aggregated_data."""
         if self._cell_df is None:
             return
+        if "perturbation_id" not in adata.obs.columns:
+            return
         cell_ids = set(self._cell_df["perturbation_id"].dropna().astype(str))
-        agg_ids = set(adata.obs.index.dropna().astype(str))
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
         only_in_cell = cell_ids - agg_ids
         only_in_agg = agg_ids - cell_ids
         if only_in_cell:
             self._warning(
                 "PERTURBATION_ID_CONSISTENCY",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(only_in_cell)} perturbation_id(s) in cell_data not in aggregated_data obs. "
                 f"Sample: {sorted(only_in_cell)[:5]}",
             )
         if only_in_agg:
             self._warning(
                 "PERTURBATION_ID_CONSISTENCY",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(only_in_agg)} perturbation_id(s) in aggregated_data obs not in cell_data. "
                 f"Sample: {sorted(only_in_agg)[:5]}",
             )
