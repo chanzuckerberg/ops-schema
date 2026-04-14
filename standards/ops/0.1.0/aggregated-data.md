@@ -149,7 +149,7 @@ All pairwise combinations of the experiment's channels are included (channels li
 
 ### X (data matrix)
 
-`AnnData.X` MUST be a `Float32` matrix of shape `(n_obs × n_features)` containing the **aggregated feature values per perturbation** (e.g., mean across all cells assigned to that perturbation). MUST be stored as `numpy.float32`. Sparse matrices SHOULD use `scipy.sparse.csr_matrix`.
+`AnnData.X` MUST be a `Float32` matrix of shape `(n_obs × n_features)` containing the **aggregated feature values per aggregation unit** (e.g., mean across all cells assigned to that unit). MUST be stored as `numpy.float32`. Sparse matrices SHOULD use `scipy.sparse.csr_matrix`.
 
 ### layers (optional)
 
@@ -167,13 +167,13 @@ All pairwise combinations of the experiment's channels are included (channels li
 <td><code>p_values</code></td>
 <td><code>Float32, shape=(n_obs, n_features)</code></td>
 <td>OPTIONAL</td>
-<td>Per-feature p-values for each perturbation. Same shape as <code>X</code>.</td>
+<td>Per-feature p-values for each aggregation unit. Same shape as <code>X</code>.</td>
 </tr>
 <tr>
 <td><code>neg_log10_fdr</code></td>
 <td><code>Float32, shape=(n_obs, n_features)</code></td>
 <td>OPTIONAL</td>
-<td>−log₁₀(FDR-adjusted p-value) per feature per perturbation. Same shape as <code>X</code>. Primary value used in the volcano plot. RECOMMENDED when <code>p_values</code> is present.</td>
+<td>−log₁₀(FDR-adjusted p-value) per feature per aggregation unit. Same shape as <code>X</code>. Primary value used in the volcano plot. RECOMMENDED when <code>p_values</code> is present.</td>
 </tr>
 </tbody>
 </table>

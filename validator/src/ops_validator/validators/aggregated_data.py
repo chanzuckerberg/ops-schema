@@ -219,7 +219,7 @@ class AggregatedDataValidator(BaseValidator):
                     self._warning(
                         "OBSM_SHAPE",
                         f"aggregated_data.h5ad :: obsm['{key}']",
-                        f"{key} has shape {emb.shape}; expected (n_perturbations, 2).",
+                        f"{key} has shape {emb.shape}; expected (n_obs, 2).",
                     )
 
     def _validate_uns(self, adata) -> None:
