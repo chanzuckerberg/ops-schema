@@ -10,9 +10,11 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 **File format:** AnnData (`.h5ad`)
 **File path:** `visualizations/{visualization_id}/aggregated_data.h5ad`
 
-This file is an AnnData object where rows (`obs`) represent **perturbations** and columns (`var`) represent **morphological features**. The shape of the object is `(n_perturbations × n_features)`.
+This file is an AnnData object where rows (`obs`) represent **aggregation units** and columns (`var`) represent **morphological features**. The shape of the object is `(n_obs × n_features)`.
 
-This file is the shared data object for the visualization layer. It backs both the **volcano plot** (per-feature effect sizes and significance per perturbation) and the **UMAP** (perturbation-level embedding derived from the feature matrix).
+Each row represents one unit of pseudobulk aggregation. The granularity is submitter-defined: rows may represent genes, guides (barcodes), or any other grouping strategy. The `observation_unit` key in `uns` declares which column(s) from `cell_data.parquet` were used to define each row as a list of strings, and `aggregate_id` (the obs index) is constructed by concatenating the values of those columns with `|` (pipe) as separator.
+
+Each `aggregated_data.h5ad` file represents exactly **one visualization unit** — all rows in the file are displayed together as a single UMAP and a single volcano plot. If a submitter wants to split data into separate plots (e.g., different cell-type subsets), each plot MUST be a separate `aggregated_data.h5ad` under its own `visualization_id`.
 
 The `var` axis MUST contain exactly the standardized feature set defined below. This fixed feature set is derived from the [Vesuvius dataset](https://vesuvius.wi.mit.edu/about). Lab-specific or extended features MUST NOT be added to this file; they belong in `metadata/feature_definitions.csv`.
 
@@ -20,9 +22,17 @@ The `var` axis MUST contain exactly the standardized feature set defined below. 
 
 ### obs index
 
-The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id` in `perturbation_library.csv`.
+The `obs` index MUST be `aggregate_id`. Each value MUST be unique. Values are constructed by concatenating the values of the column(s) listed in `uns['observation_unit']`, joined with `|` (pipe). When `observation_unit` contains a single column name, `aggregate_id` is simply that column's value with no separator.
 
-### obs (rows — perturbations)
+**Examples:**
+
+| `uns['observation_unit']` | `aggregate_id` example | Interpretation |
+|---|---|---|
+| `["gene_id"]` | `ENSG00000130164` | Gene-level pseudobulk |
+| `["barcode"]` | `ACGTACGT` | Guide-level pseudobulk |
+| `["gene_id", "cell_cycle_phase"]` | `ENSG00000130164\|mitotic` | Gene × cell-cycle stratified |
+
+### obs (rows — aggregation units)
 
 <table>
 <thead>
@@ -35,10 +45,16 @@ The `obs` index MUST be `perturbation_id`. Values MUST match a `perturbation_id`
 </thead>
 <tbody>
 <tr>
-<td><code>cell_cycle_phase</code></td>
+<td><code>perturbation_id</code></td>
 <td><code>String</code></td>
-<td>OPTIONAL</td>
-<td>Cell cycle phase for this row. MUST be one of <code>"interphase"</code> or <code>"mitotic"</code> when present. When cell cycle stratification is used, each perturbation appears as two rows — one per phase.</td>
+<td>REQUIRED</td>
+<td>Foreign key linking this row to <code>perturbation_library.csv</code>. Every value MUST match a <code>perturbation_id</code> in <code>perturbation_library.csv</code>. Not necessarily unique — multiple rows may share the same <code>perturbation_id</code> when stratified by additional columns (e.g., cell cycle phase).</td>
+</tr>
+<tr>
+<td><em>columns named in <code>observation_unit</code></em></td>
+<td><em>varies</em></td>
+<td>REQUIRED</td>
+<td>Every column named in <code>uns['observation_unit']</code> MUST be present in <code>obs</code>. These columns define the aggregation grouping and their values are used to construct <code>aggregate_id</code>.</td>
 </tr>
 <tr>
 <td><code>cluster_group_{N}</code></td>
@@ -133,7 +149,7 @@ All pairwise combinations of the experiment's channels are included (channels li
 
 ### X (data matrix)
 
-`AnnData.X` MUST be a `Float32` matrix of shape `(n_perturbations × n_features)` containing the **aggregated feature values per perturbation** (e.g., mean across all cells assigned to that perturbation). MUST be stored as `numpy.float32`. Sparse matrices SHOULD use `scipy.sparse.csr_matrix`.
+`AnnData.X` MUST be a `Float32` matrix of shape `(n_obs × n_features)` containing the **aggregated feature values per aggregation unit** (e.g., mean across all cells assigned to that unit). MUST be stored as `numpy.float32`. Sparse matrices SHOULD use `scipy.sparse.csr_matrix`.
 
 ### layers (optional)
 
@@ -149,15 +165,15 @@ All pairwise combinations of the experiment's channels are included (channels li
 <tbody>
 <tr>
 <td><code>p_values</code></td>
-<td><code>Float32, shape=(n_perturbations, n_features)</code></td>
+<td><code>Float32, shape=(n_obs, n_features)</code></td>
 <td>OPTIONAL</td>
-<td>Per-feature p-values for each perturbation. Same shape as <code>X</code>.</td>
+<td>Per-feature p-values for each aggregation unit. Same shape as <code>X</code>.</td>
 </tr>
 <tr>
 <td><code>neg_log10_fdr</code></td>
-<td><code>Float32, shape=(n_perturbations, n_features)</code></td>
+<td><code>Float32, shape=(n_obs, n_features)</code></td>
 <td>OPTIONAL</td>
-<td>−log₁₀(FDR-adjusted p-value) per feature per perturbation. Same shape as <code>X</code>. Primary value used in the volcano plot. RECOMMENDED when <code>p_values</code> is present.</td>
+<td>−log₁₀(FDR-adjusted p-value) per feature per aggregation unit. Same shape as <code>X</code>. Primary value used in the volcano plot. RECOMMENDED when <code>p_values</code> is present.</td>
 </tr>
 </tbody>
 </table>
@@ -176,7 +192,7 @@ All pairwise combinations of the experiment's channels are included (channels li
 <tbody>
 <tr>
 <td><code>X_{method}</code></td>
-<td><code>Float32, shape=(n_perturbations, 2)</code></td>
+<td><code>Float32, shape=(n_obs, 2)</code></td>
 <td>REQUIRED (at least one)</td>
 <td>2D embedding coordinates for visualization. At least one MUST be present (e.g., <code>X_umap</code>, <code>X_phate</code>, <code>X_tsne</code>). The key referenced by <code>uns['default_embedding']</code> MUST exist in <code>obsm</code>.</td>
 </tr>
@@ -195,6 +211,12 @@ All pairwise combinations of the experiment's channels are included (channels li
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>observation_unit</code></td>
+<td><code>List[String]</code></td>
+<td>REQUIRED</td>
+<td>Declares which column(s) were used to define each row in <code>obs</code>. Every column named here MUST exist in <code>obs</code>. The values of these columns, concatenated with <code>|</code>, MUST equal the corresponding <code>aggregate_id</code>. Examples: <code>["gene_id"]</code>, <code>["barcode"]</code>, <code>["gene_id", "cell_cycle_phase"]</code>.</td>
+</tr>
 <tr>
 <td><code>schema_version</code></td>
 <td><code>String</code></td>

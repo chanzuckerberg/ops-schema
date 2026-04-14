@@ -60,18 +60,19 @@ class AggregatedDataValidator(BaseValidator):
         return self.is_valid
 
     def _validate_obs(self, adata) -> None:
-        if adata.obs.index.name not in (None, "perturbation_id"):
+        # --- aggregate_id index ---
+        if adata.obs.index.name not in (None, "aggregate_id"):
             self._warning(
                 "OBS_INDEX",
                 "aggregated_data.h5ad :: obs.index",
-                f"obs index name should be 'perturbation_id'. Got: {adata.obs.index.name!r}",
+                f"obs index name should be 'aggregate_id'. Got: {adata.obs.index.name!r}",
             )
 
         if adata.obs.index.isnull().any():
             self._error(
                 "OBS_INDEX",
                 "aggregated_data.h5ad :: obs.index",
-                "obs index (perturbation_id) contains null values.",
+                "obs index (aggregate_id) contains null values.",
             )
 
         if adata.obs.index.duplicated().any():
@@ -79,21 +80,93 @@ class AggregatedDataValidator(BaseValidator):
             self._error(
                 "OBS_INDEX",
                 "aggregated_data.h5ad :: obs.index",
-                f"obs index (perturbation_id) must be unique. Found {n} duplicate(s).",
+                f"obs index (aggregate_id) must be unique. Found {n} duplicate(s).",
             )
 
-        # cell_cycle_phase, if present, must be "interphase" or "mitotic"
-        if "cell_cycle_phase" in adata.obs.columns:
-            invalid = adata.obs["cell_cycle_phase"][
-                ~adata.obs["cell_cycle_phase"].isin({"interphase", "mitotic"})
-            ]
-            if len(invalid) > 0:
+        # --- perturbation_id FK column ---
+        if "perturbation_id" not in adata.obs.columns:
+            self._error(
+                "OBS_PERTURBATION_ID",
+                "aggregated_data.h5ad :: obs",
+                "obs must contain a 'perturbation_id' column (FK to perturbation_library.csv).",
+            )
+        else:
+            perturbation_id = adata.obs["perturbation_id"]
+            invalid_mask = perturbation_id.isnull() | (perturbation_id.astype(str).str.strip() == "")
+            if invalid_mask.any():
+                n = invalid_mask.sum()
+                sample = adata.obs.index[invalid_mask][:3].tolist()
                 self._error(
-                    "OBS_CELL_CYCLE",
-                    "aggregated_data.h5ad :: obs.cell_cycle_phase",
-                    f"cell_cycle_phase must be 'interphase' or 'mitotic'. "
-                    f"Found invalid value(s): {invalid.unique()[:5].tolist()}",
+                    "OBS_PERTURBATION_ID",
+                    "aggregated_data.h5ad :: obs",
+                    f"obs['perturbation_id'] must not contain null or empty values. "
+                    f"Found {n} invalid row(s). Sample aggregate_id(s): {sample}",
                 )
+
+        # --- observation_unit columns must exist in obs ---
+        observation_unit = adata.uns.get("observation_unit")
+        if observation_unit is not None:
+            if isinstance(observation_unit, np.ndarray):
+                unit_cols = observation_unit.tolist()
+            elif isinstance(observation_unit, (list, tuple)):
+                unit_cols = list(observation_unit)
+            else:
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] must be a list of obs column name strings.",
+                )
+                return
+
+            if not unit_cols:
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] must not be empty.",
+                )
+                return
+
+            if not all(isinstance(c, str) and c.strip() for c in unit_cols):
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] must contain only non-empty strings.",
+                )
+                return
+
+            if len(set(unit_cols)) != len(unit_cols):
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] contains duplicate column name(s); each "
+                    "obs column name must appear only once.",
+                )
+                return
+
+            for col in unit_cols:
+                if col not in adata.obs.columns:
+                    self._error(
+                        "OBS_OBSERVATION_UNIT",
+                        "aggregated_data.h5ad :: obs",
+                        f"Column '{col}' declared in uns['observation_unit'] "
+                        f"is missing from obs.",
+                    )
+
+            # --- validate aggregate_id is reconstructable ---
+            present_cols = [c for c in unit_cols if c in adata.obs.columns]
+            if len(present_cols) == len(unit_cols):
+                reconstructed = adata.obs[present_cols].astype(str).agg("|".join, axis=1)
+                mismatches = adata.obs.index.astype(str) != reconstructed.values
+                if mismatches.any():
+                    n = mismatches.sum()
+                    sample = adata.obs.index[mismatches][:3].tolist()
+                    self._error(
+                        "OBS_AGGREGATE_ID",
+                        "aggregated_data.h5ad :: obs.index",
+                        f"aggregate_id does not match concatenation of "
+                        f"observation_unit columns for {n} row(s). "
+                        f"Sample: {sample}",
+                    )
 
     def _validate_var(self, adata) -> None:
         # Required var columns
@@ -194,11 +267,11 @@ class AggregatedDataValidator(BaseValidator):
                     self._warning(
                         "OBSM_SHAPE",
                         f"aggregated_data.h5ad :: obsm['{key}']",
-                        f"{key} has shape {emb.shape}; expected (n_perturbations, 2).",
+                        f"{key} has shape {emb.shape}; expected (n_obs, 2).",
                     )
 
     def _validate_uns(self, adata) -> None:
-        for key in ("schema_version", "default_embedding", "title"):
+        for key in ("observation_unit", "schema_version", "default_embedding", "title"):
             if key not in adata.uns:
                 self._error(
                     "UNS",

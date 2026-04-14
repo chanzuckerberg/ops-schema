@@ -225,9 +225,10 @@ collection_metadata.yaml
                 ├──────────────────────────────────────────┐
                 ▼                                          ▼
         cell_data.parquet                     aggregated_data.h5ad
-        (one row per cell)                    obs index = perturbation_id
-          cell_uid  ← globally unique         (one row per perturbation group)
-          perturbation_id FK
+        (one row per cell)                    obs index = aggregate_id
+          cell_uid  ← globally unique         (one row per aggregation unit)
+          perturbation_id FK                  perturbation_id FK
+                                              uns['observation_unit'] declares grouping (list)
                 │
                 ▼
         examples.zarr/
@@ -414,8 +415,8 @@ The following conditional requirements apply across fields. These are in additio
 </tr>
 <tr>
 <td>V-12</td>
-<td><code>role</code> is <code>"control"</code> in <code>aggregated_data.h5ad</code> obs</td>
-<td><code>control_type</code> MUST be present and MUST be one of <code>"non-targeting"</code> or <code>"intergenic"</code>. Values MUST match the corresponding <code>control_type</code> in <code>perturbation_library.csv</code>.</td>
+<td><code>aggregated_data.h5ad</code> obs contains <code>perturbation_id</code> values that map to <code>perturbation_library.csv</code></td>
+<td>At least one <code>perturbation_id</code> MUST resolve to a row where <code>role</code> is <code>"control"</code>.</td>
 </tr>
 </tbody>
 </table>

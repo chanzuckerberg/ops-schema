@@ -81,6 +81,7 @@ class CrossArtifactValidator(BaseValidator):
 
             if self._lib_df is not None:
                 self._check_perturbation_id_fk_aggregated(adata, h5ad_path)
+                self._check_v12_control_present(adata, h5ad_path)
 
             if self._feat_df is not None:
                 self._check_var_vs_feature_definitions(adata, h5ad_path)
@@ -127,39 +128,68 @@ class CrossArtifactValidator(BaseValidator):
         self, adata: ad.AnnData, h5ad_path: Path
     ) -> None:
         """All perturbation_id values in aggregated_data obs must exist in perturbation_library."""
+        if "perturbation_id" not in adata.obs.columns:
+            self._error(
+                "FK_PERTURBATION_ID_AGG",
+                f"{h5ad_path} :: obs.perturbation_id",
+                "perturbation_id column missing from aggregated_data obs.",
+            )
+            return
         lib_ids = set(self._lib_df["perturbation_id"].dropna())
-        agg_ids = set(adata.obs.index.dropna().astype(str))
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
         orphans = agg_ids - lib_ids
         if orphans:
             sample = sorted(orphans)[:5]
             self._error(
                 "FK_PERTURBATION_ID_AGG",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(orphans)} perturbation_id value(s) in aggregated_data.h5ad not found in "
                 f"perturbation_library.csv. Sample: {sample}",
+            )
+
+    def _check_v12_control_present(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
+        """V-12: at least one perturbation_id in aggregated obs must map to a control row."""
+        if "perturbation_id" not in adata.obs.columns:
+            return
+        if "role" not in self._lib_df.columns:
+            return
+        control_ids = set(
+            self._lib_df.loc[self._lib_df["role"] == "control", "perturbation_id"].dropna()
+        )
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
+        if not agg_ids & control_ids:
+            self._error(
+                "V12_CONTROL_PRESENT",
+                f"{h5ad_path} :: obs.perturbation_id",
+                "No perturbation_id in aggregated_data.h5ad obs maps to a control row "
+                "in perturbation_library.csv. At least one control is required (V-12).",
             )
 
     def _check_perturbation_id_consistency(
         self, adata: ad.AnnData, h5ad_path: Path
     ) -> None:
-        """perturbation_id set in cell_data must match obs index in aggregated_data."""
+        """perturbation_id set in cell_data must match perturbation_id column in aggregated_data."""
         if self._cell_df is None:
             return
+        if "perturbation_id" not in adata.obs.columns:
+            return
         cell_ids = set(self._cell_df["perturbation_id"].dropna().astype(str))
-        agg_ids = set(adata.obs.index.dropna().astype(str))
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
         only_in_cell = cell_ids - agg_ids
         only_in_agg = agg_ids - cell_ids
         if only_in_cell:
             self._warning(
                 "PERTURBATION_ID_CONSISTENCY",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(only_in_cell)} perturbation_id(s) in cell_data not in aggregated_data obs. "
                 f"Sample: {sorted(only_in_cell)[:5]}",
             )
         if only_in_agg:
             self._warning(
                 "PERTURBATION_ID_CONSISTENCY",
-                f"{h5ad_path} :: obs.index",
+                f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(only_in_agg)} perturbation_id(s) in aggregated_data obs not in cell_data. "
                 f"Sample: {sorted(only_in_agg)[:5]}",
             )

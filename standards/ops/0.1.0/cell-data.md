@@ -117,6 +117,6 @@ Each row is a unique cell. Individual files are generated per well and stored wi
 </tbody>
 </table>
 
-Additional feature columns MAY be included. Column header names are not constrained, to accommodate outputs from different models and platforms (e.g., CellProfiler, vision models).
+Additional feature columns MAY be included. Column header names are not constrained, to accommodate outputs from different models and platforms (e.g., CellProfiler, vision models). However, field names and string values MUST NOT contain the pipe character (`|`), which is reserved as the delimiter for constructing `aggregate_id` in `aggregated_data.h5ad`.
 
 ---
