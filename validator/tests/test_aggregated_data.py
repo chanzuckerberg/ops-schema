@@ -236,6 +236,16 @@ class TestAggregatedDataValidator:
         v.validate()
         assert any(i.rule_id == "OBS_AGGREGATE_ID" for i in v.errors)
 
+    def test_duplicate_aggregate_id_errors(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path,
+            obs_index=["dup", "dup", "unique"],
+            var_index=VALID_FEATURES,
+        )
+        v = AggregatedDataValidator(path)
+        v.validate()
+        assert any(i.rule_id == "OBS_INDEX" for i in v.errors)
+
     def test_missing_perturbation_id_column_errors(self, tmp_path):
         import anndata as ad
         import pandas as pd
