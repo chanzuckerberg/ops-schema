@@ -81,6 +81,7 @@ class CrossArtifactValidator(BaseValidator):
 
             if self._lib_df is not None:
                 self._check_perturbation_id_fk_aggregated(adata, h5ad_path)
+                self._check_v12_control_present(adata, h5ad_path)
 
             if self._feat_df is not None:
                 self._check_var_vs_feature_definitions(adata, h5ad_path)
@@ -144,6 +145,26 @@ class CrossArtifactValidator(BaseValidator):
                 f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(orphans)} perturbation_id value(s) in aggregated_data.h5ad not found in "
                 f"perturbation_library.csv. Sample: {sample}",
+            )
+
+    def _check_v12_control_present(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
+        """V-12: at least one perturbation_id in aggregated obs must map to a control row."""
+        if "perturbation_id" not in adata.obs.columns:
+            return
+        if "role" not in self._lib_df.columns:
+            return
+        control_ids = set(
+            self._lib_df.loc[self._lib_df["role"] == "control", "perturbation_id"].dropna()
+        )
+        agg_ids = set(adata.obs["perturbation_id"].dropna().astype(str))
+        if not agg_ids & control_ids:
+            self._error(
+                "V12_CONTROL_PRESENT",
+                f"{h5ad_path} :: obs.perturbation_id",
+                "No perturbation_id in aggregated_data.h5ad obs maps to a control row "
+                "in perturbation_library.csv. At least one control is required (V-12).",
             )
 
     def _check_perturbation_id_consistency(
