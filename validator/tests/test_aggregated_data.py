@@ -276,7 +276,7 @@ class TestAggregatedDataValidator:
             index=["p1", "p2", "p3"],
         )
         obs.index.name = "aggregate_id"
-        obs["perturbation_id_col"] = obs.index
+
         var = pd.DataFrame({"feature_name": ["a", "b"]}, index=["nucleus_area", "cell_DAPI_mean"])
         var.index.name = "feature_id"
         adata = ad.AnnData(X=X, obs=obs, var=var,

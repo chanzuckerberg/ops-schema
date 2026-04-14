@@ -90,11 +90,51 @@ class AggregatedDataValidator(BaseValidator):
                 "aggregated_data.h5ad :: obs",
                 "obs must contain a 'perturbation_id' column (FK to perturbation_library.csv).",
             )
+        else:
+            perturbation_id = adata.obs["perturbation_id"]
+            invalid_mask = perturbation_id.isnull() | (perturbation_id.astype(str).str.strip() == "")
+            if invalid_mask.any():
+                n = invalid_mask.sum()
+                sample = adata.obs.index[invalid_mask][:3].tolist()
+                self._error(
+                    "OBS_PERTURBATION_ID",
+                    "aggregated_data.h5ad :: obs",
+                    f"obs['perturbation_id'] must not contain null or empty values. "
+                    f"Found {n} invalid row(s). Sample aggregate_id(s): {sample}",
+                )
 
         # --- observation_unit columns must exist in obs ---
         observation_unit = adata.uns.get("observation_unit")
         if observation_unit is not None:
-            unit_cols = [c.strip() for c in str(observation_unit).split("|")]
+            if not isinstance(observation_unit, str) or not observation_unit.strip():
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] must be a non-empty pipe-delimited string "
+                    "of obs column names.",
+                )
+                return
+
+            unit_cols = [c.strip() for c in observation_unit.split("|")]
+
+            if any(not c for c in unit_cols):
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] contains empty column name(s); provide a "
+                    "pipe-delimited list of non-empty obs column names.",
+                )
+                return
+
+            if len(set(unit_cols)) != len(unit_cols):
+                self._error(
+                    "UNS_OBSERVATION_UNIT",
+                    "aggregated_data.h5ad :: uns['observation_unit']",
+                    "uns['observation_unit'] contains duplicate column name(s); each "
+                    "obs column name must appear only once.",
+                )
+                return
+
             for col in unit_cols:
                 if col not in adata.obs.columns:
                     self._error(
