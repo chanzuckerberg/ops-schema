@@ -316,3 +316,48 @@ class TestAggregatedDataValidator:
         v = AggregatedDataValidator(path)
         v.validate()
         assert any(i.rule_id == "X_DTYPE" for i in v.errors)
+
+    def test_n_cells_valid(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
+            obs_columns={"n_cells": np.array([10, 20, 30], dtype=np.int64)},
+        )
+        v = AggregatedDataValidator(path)
+        assert v.validate() is True
+        assert not any(i.rule_id == "OBS_N_CELLS" for i in v.errors)
+
+    def test_n_cells_negative_errors(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
+            obs_columns={"n_cells": np.array([10, -5, 30], dtype=np.int64)},
+        )
+        v = AggregatedDataValidator(path)
+        v.validate()
+        assert any(i.rule_id == "OBS_N_CELLS" for i in v.errors)
+
+    def test_n_cells_non_integer_errors(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
+            obs_columns={"n_cells": np.array([10.5, 20.0, 30.0], dtype=np.float64)},
+        )
+        v = AggregatedDataValidator(path)
+        v.validate()
+        assert any(i.rule_id == "OBS_N_CELLS" for i in v.errors)
+
+    def test_neg_log10_fdr_threshold_valid(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
+            uns={"neg_log10_fdr_threshold": 1.30103},
+        )
+        v = AggregatedDataValidator(path)
+        assert v.validate() is True
+        assert not any(i.rule_id == "NEG_LOG10_FDR_THRESHOLD" for i in v.errors)
+
+    def test_neg_log10_fdr_threshold_non_positive_errors(self, tmp_path):
+        path = _make_h5ad(
+            tmp_path, VALID_PERTURBATIONS, VALID_FEATURES,
+            uns={"neg_log10_fdr_threshold": 0.0},
+        )
+        v = AggregatedDataValidator(path)
+        v.validate()
+        assert any(i.rule_id == "NEG_LOG10_FDR_THRESHOLD" for i in v.errors)

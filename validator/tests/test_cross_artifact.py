@@ -120,3 +120,83 @@ class TestV12ControlPresent:
         v.validate()
         v12_errors = [e for e in v.errors if e.rule_id == "V12_CONTROL_PRESENT"]
         assert len(v12_errors) == 0
+
+
+def _make_experiment_with_cell_data(
+    tmp_path: Path,
+    lib_rows: list[dict],
+    agg_perturbation_ids: list[str],
+    n_cells_values: list[int],
+    cell_data_perturbation_ids: list[str],
+) -> Path:
+    """Build an experiment with cell_data.parquet and obs['n_cells']."""
+    base = _make_experiment(tmp_path, lib_rows, agg_perturbation_ids)
+
+    h5ad_path = base / "visualizations" / "viz1" / "aggregated_data.h5ad"
+    adata = ad.read_h5ad(h5ad_path)
+    adata.obs["n_cells"] = np.array(n_cells_values, dtype=np.int64)
+    adata.write_h5ad(h5ad_path)
+
+    cell_df = pd.DataFrame({
+        "perturbation_id": cell_data_perturbation_ids,
+        "barcode": [pid.upper() for pid in cell_data_perturbation_ids],
+        "cell_uid": [f"cell_{i}" for i in range(len(cell_data_perturbation_ids))],
+    })
+    cell_df.to_parquet(base / "cell_data.parquet", index=False)
+    return base
+
+
+class TestV14NCellsCrossCheck:
+    def test_passes_when_counts_match(self, tmp_path):
+        base = _make_experiment_with_cell_data(
+            tmp_path,
+            lib_rows=[
+                _lib_row("tgt_1", "targeting"),
+                _lib_row("ctrl_1", "control", "non-targeting"),
+            ],
+            agg_perturbation_ids=["tgt_1", "ctrl_1"],
+            n_cells_values=[3, 2],
+            cell_data_perturbation_ids=["tgt_1", "tgt_1", "tgt_1", "ctrl_1", "ctrl_1"],
+        )
+        v = CrossArtifactValidator(base)
+        v.validate()
+        v14_errors = [e for e in v.errors if e.rule_id == "V14_N_CELLS"]
+        assert len(v14_errors) == 0
+
+    def test_fails_when_counts_mismatch(self, tmp_path):
+        base = _make_experiment_with_cell_data(
+            tmp_path,
+            lib_rows=[
+                _lib_row("tgt_1", "targeting"),
+                _lib_row("ctrl_1", "control", "non-targeting"),
+            ],
+            agg_perturbation_ids=["tgt_1", "ctrl_1"],
+            n_cells_values=[99, 2],
+            cell_data_perturbation_ids=["tgt_1", "tgt_1", "tgt_1", "ctrl_1", "ctrl_1"],
+        )
+        v = CrossArtifactValidator(base)
+        v.validate()
+        v14_errors = [e for e in v.errors if e.rule_id == "V14_N_CELLS"]
+        assert len(v14_errors) == 1
+
+    def test_skipped_when_n_cells_absent(self, tmp_path):
+        base = _make_experiment(
+            tmp_path,
+            lib_rows=[
+                _lib_row("tgt_1", "targeting"),
+                _lib_row("ctrl_1", "control", "non-targeting"),
+            ],
+            agg_perturbation_ids=["tgt_1", "ctrl_1"],
+        )
+        cell_df = pd.DataFrame({
+            "perturbation_id": ["tgt_1", "ctrl_1"],
+            "barcode": ["TGT1", "CTRL1"],
+            "cell_uid": ["c0", "c1"],
+        })
+        cell_df.to_parquet(base / "cell_data.parquet", index=False)
+        v = CrossArtifactValidator(base)
+        v.validate()
+        v14_issues = [
+            i for i in (*v.errors, *v.warnings) if i.rule_id == "V14_N_CELLS"
+        ]
+        assert len(v14_issues) == 0

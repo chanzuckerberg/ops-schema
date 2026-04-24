@@ -57,10 +57,10 @@ The `obs` index MUST be `aggregate_id`. Each value MUST be unique. Values are co
 <td>Every column named in <code>uns['observation_unit']</code> MUST be present in <code>obs</code>. These columns define the aggregation grouping and their values are used to construct <code>aggregate_id</code>.</td>
 </tr>
 <tr>
-<td><code>cell_count</code></td>
+<td><code>n_cells</code></td>
 <td><code>Integer</code></td>
 <td>RECOMMENDED</td>
-<td>Number of cells aggregated into this row. Used by the UI to surface aggregation depth per point and to support downstream weighting or filtering. MUST be a non-negative integer.</td>
+<td>Number of cells aggregated into this row. Used by the UI to surface aggregation depth per point and to support downstream weighting or filtering. MUST be a non-negative integer. When present, MUST equal the count of rows in <code>cell_data.parquet</code> whose <code>observation_unit</code> column values match this row (see V-14). Named <code>n_cells</code> to align with <code>segmentation_metadata.statistics.n_cells</code> in <code>zarr-images.md</code>.</td>
 </tr>
 <tr>
 <td><code>cluster_group_{N}</code></td>
@@ -242,10 +242,10 @@ All pairwise combinations of the experiment's channels are included (channels li
 <td>Human-readable title for this visualization</td>
 </tr>
 <tr>
-<td><code>significance_threshold_fdr</code></td>
+<td><code>neg_log10_fdr_threshold</code></td>
 <td><code>Float</code></td>
 <td>RECOMMENDED</td>
-<td>FDR cutoff used by the submitter to define significance for the volcano plot (e.g., <code>0.05</code>). The UI uses this value to draw the threshold line and color dots. When absent, the UI falls back to <code>0.05</code>. MUST be in the open interval <code>(0, 1)</code> when present.</td>
+<td>Significance threshold for the volcano plot, expressed in the same −log₁₀(FDR) units as the <code>neg_log10_fdr</code> layer. For example, an FDR cutoff of <code>0.05</code> is stored as <code>1.30103</code> (= −log₁₀(0.05)). The UI uses this value to draw the horizontal threshold line and to color dots above/below the cutoff. When absent, the UI falls back to <code>−log₁₀(0.05) ≈ 1.30103</code>. MUST be a positive finite float when present.</td>
 </tr>
 </tbody>
 </table>

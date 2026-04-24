@@ -423,6 +423,11 @@ The following conditional requirements apply across fields. These are in additio
 <td><code>aggregated_data.h5ad</code> declares <code>uns['observation_unit']</code> with more than one column</td>
 <td>The sibling <code>examples.zarr</code> MUST nest every <code>observation_unit</code> column beyond the perturbation-identifying one between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared in <code>uns['observation_unit']</code>. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to a crop group in <code>examples.zarr</code> whose path matches all of its <code>observation_unit</code> values.</td>
 </tr>
+<tr>
+<td>V-14</td>
+<td><code>aggregated_data.h5ad</code> <code>obs</code> contains <code>n_cells</code></td>
+<td>For every row in <code>obs</code>, <code>n_cells</code> MUST equal the number of rows in <code>cell_data.parquet</code> whose values for the columns named in <code>uns['observation_unit']</code> match the values for that row. Applies only when every column in <code>uns['observation_unit']</code> is present in <code>cell_data.parquet</code>.</td>
+</tr>
 </tbody>
 </table>
 

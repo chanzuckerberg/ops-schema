@@ -91,6 +91,7 @@ class CrossArtifactValidator(BaseValidator):
                 try:
                     adata = ad.read_h5ad(h5ad_path)
                     self._check_perturbation_id_consistency(adata, h5ad_path)
+                    self._check_v14_n_cells_matches_cell_data(adata, h5ad_path)
                 except Exception:
                     pass
 
@@ -192,6 +193,65 @@ class CrossArtifactValidator(BaseValidator):
                 f"{h5ad_path} :: obs.perturbation_id",
                 f"{len(only_in_agg)} perturbation_id(s) in aggregated_data obs not in cell_data. "
                 f"Sample: {sorted(only_in_agg)[:5]}",
+            )
+
+    def _check_v14_n_cells_matches_cell_data(
+        self, adata: ad.AnnData, h5ad_path: Path
+    ) -> None:
+        """V-14: obs['n_cells'] must equal the count of rows in cell_data.parquet
+        whose observation_unit column values match each aggregate row.
+        """
+        if self._cell_df is None:
+            return
+        if "n_cells" not in adata.obs.columns:
+            return
+
+        observation_unit = adata.uns.get("observation_unit")
+        if observation_unit is None:
+            return
+        if hasattr(observation_unit, "tolist"):
+            unit_cols = list(observation_unit.tolist())
+        else:
+            unit_cols = list(observation_unit)
+        if not unit_cols:
+            return
+
+        missing = [c for c in unit_cols if c not in self._cell_df.columns]
+        if missing:
+            self._warning(
+                "V14_N_CELLS",
+                f"{h5ad_path} :: obs['n_cells']",
+                f"Cannot verify n_cells against cell_data.parquet: observation_unit "
+                f"column(s) {missing} not present in cell_data.parquet.",
+            )
+            return
+
+        cell_counts = (
+            self._cell_df.groupby([self._cell_df[c].astype(str) for c in unit_cols])
+            .size()
+            .to_dict()
+        )
+
+        mismatches = []
+        for aggregate_id, row in adata.obs[unit_cols + ["n_cells"]].iterrows():
+            key_values = tuple(str(row[c]) for c in unit_cols)
+            key = key_values[0] if len(key_values) == 1 else key_values
+            expected = int(cell_counts.get(key, 0))
+            actual = int(row["n_cells"])
+            if expected != actual:
+                mismatches.append((aggregate_id, actual, expected))
+
+        if mismatches:
+            sample = [
+                f"{agg_id!r}: n_cells={actual}, cell_data rows={expected}"
+                for agg_id, actual, expected in mismatches[:3]
+            ]
+            self._error(
+                "V14_N_CELLS",
+                f"{h5ad_path} :: obs['n_cells']",
+                f"{len(mismatches)} row(s) where obs['n_cells'] does not match the "
+                f"count of rows in cell_data.parquet with matching observation_unit "
+                f"values. Sample: {sample}",
             )
 
     def _check_var_vs_feature_definitions(

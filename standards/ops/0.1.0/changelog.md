@@ -27,8 +27,8 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 - Each `aggregated_data.h5ad` file represents exactly one visualization unit — all rows are displayed together as a single UMAP/volcano plot.
 - Removed `cell_cycle_phase` as a special-cased obs field — now handled generically via `observation_unit`.
 - Corrected AnnData structure to match CELLxGENE conventions: `X` matrix is `Float32 (n_obs × n_features)`; `p_values` moved to `layers`; `uns` section added with `schema_version`, `default_embedding`, `title`
-- Added RECOMMENDED `obs.cell_count` — number of cells aggregated into each row; used by the UI to surface aggregation depth and to support downstream weighting or filtering.
-- Added RECOMMENDED `uns.significance_threshold_fdr` — FDR cutoff the submitter used to define significance for the volcano plot; UI falls back to `0.05` when absent.
+- Added RECOMMENDED `obs.n_cells` — number of cells aggregated into each row; used by the UI to surface aggregation depth and to support downstream weighting or filtering. Named to align with `segmentation_metadata.statistics.n_cells` in `zarr-images.md`.
+- Added RECOMMENDED `uns.neg_log10_fdr_threshold` — significance threshold for the volcano plot, stored in the same −log₁₀(FDR) units as the `neg_log10_fdr` layer (e.g., `1.30103` for FDR = 0.05). UI falls back to `−log₁₀(0.05) ≈ 1.30103` when absent.
 
 **Example Images**
 - Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{barcode}/{1..N}/`
@@ -40,6 +40,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 - Updated V-6 to reference Zarr multiscales z-axis coordinate transformations instead of removed `phenotype.z_slices` / `phenotype.z_interval`
 - Updated V-9 to reference `perturbation_id`
 - Added V-13: when `aggregated_data.h5ad` declares `uns['observation_unit']` with more than one column, `examples.zarr` MUST nest each additional column between `{perturbation_id}` and `{barcode}` so every `aggregate_id` resolves to a matching crop group
+- Added V-14: when `obs.n_cells` is present, each value MUST equal the row count in `cell_data.parquet` whose `observation_unit` column values match that aggregation row
 
 **Metadata deduplication**
 - Removed `cellular.cell_line` (covered by `tissue_ontology_term_id` Cellosaurus term)
