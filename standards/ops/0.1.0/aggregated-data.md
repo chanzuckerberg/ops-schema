@@ -57,6 +57,12 @@ The `obs` index MUST be `aggregate_id`. Each value MUST be unique. Values are co
 <td>Every column named in <code>uns['observation_unit']</code> MUST be present in <code>obs</code>. These columns define the aggregation grouping and their values are used to construct <code>aggregate_id</code>.</td>
 </tr>
 <tr>
+<td><code>cell_count</code></td>
+<td><code>Integer</code></td>
+<td>RECOMMENDED</td>
+<td>Number of cells aggregated into this row. Used by the UI to surface aggregation depth per point and to support downstream weighting or filtering. MUST be a non-negative integer.</td>
+</tr>
+<tr>
 <td><code>cluster_group_{N}</code></td>
 <td><code>Integer</code></td>
 <td>OPTIONAL</td>
@@ -234,6 +240,12 @@ All pairwise combinations of the experiment's channels are included (channels li
 <td><code>String</code></td>
 <td>REQUIRED</td>
 <td>Human-readable title for this visualization</td>
+</tr>
+<tr>
+<td><code>significance_threshold_fdr</code></td>
+<td><code>Float</code></td>
+<td>RECOMMENDED</td>
+<td>FDR cutoff used by the submitter to define significance for the volcano plot (e.g., <code>0.05</code>). The UI uses this value to draw the threshold line and color dots. When absent, the UI falls back to <code>0.05</code>. MUST be in the open interval <code>(0, 1)</code> when present.</td>
 </tr>
 </tbody>
 </table>

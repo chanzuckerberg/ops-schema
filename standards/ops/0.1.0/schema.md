@@ -418,6 +418,11 @@ The following conditional requirements apply across fields. These are in additio
 <td><code>aggregated_data.h5ad</code> obs contains <code>perturbation_id</code> values that map to <code>perturbation_library.csv</code></td>
 <td>At least one <code>perturbation_id</code> MUST resolve to a row where <code>role</code> is <code>"control"</code>.</td>
 </tr>
+<tr>
+<td>V-13</td>
+<td><code>aggregated_data.h5ad</code> declares <code>uns['observation_unit']</code> with more than one column</td>
+<td>The sibling <code>examples.zarr</code> MUST nest every <code>observation_unit</code> column beyond the perturbation-identifying one between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared in <code>uns['observation_unit']</code>. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to a crop group in <code>examples.zarr</code> whose path matches all of its <code>observation_unit</code> values.</td>
+</tr>
 </tbody>
 </table>
 
