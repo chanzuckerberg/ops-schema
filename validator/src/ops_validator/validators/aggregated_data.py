@@ -83,6 +83,27 @@ class AggregatedDataValidator(BaseValidator):
                 f"obs index (aggregate_id) must be unique. Found {n} duplicate(s).",
             )
 
+        # --- n_cells column (RECOMMENDED) ---
+        if "n_cells" in adata.obs.columns:
+            n_cells = adata.obs["n_cells"]
+            if not np.issubdtype(n_cells.dtype, np.integer):
+                self._error(
+                    "OBS_N_CELLS",
+                    "aggregated_data.h5ad :: obs['n_cells']",
+                    f"obs['n_cells'] must be an integer dtype. Got: {n_cells.dtype}",
+                )
+            else:
+                negative_mask = n_cells < 0
+                if negative_mask.any():
+                    n = int(negative_mask.sum())
+                    sample = adata.obs.index[negative_mask][:3].tolist()
+                    self._error(
+                        "OBS_N_CELLS",
+                        "aggregated_data.h5ad :: obs['n_cells']",
+                        f"obs['n_cells'] must be non-negative. "
+                        f"Found {n} negative value(s). Sample aggregate_id(s): {sample}",
+                    )
+
         # --- perturbation_id FK column ---
         if "perturbation_id" not in adata.obs.columns:
             self._error(
@@ -297,3 +318,23 @@ class AggregatedDataValidator(BaseValidator):
                     f"default_embedding {default!r} is not present in obsm. "
                     f"Available: {list(adata.obsm.keys())}",
                 )
+
+        if "neg_log10_fdr_threshold" in adata.uns:
+            threshold = adata.uns["neg_log10_fdr_threshold"]
+            try:
+                threshold_value = float(threshold)
+            except (TypeError, ValueError):
+                self._error(
+                    "NEG_LOG10_FDR_THRESHOLD",
+                    "aggregated_data.h5ad :: uns['neg_log10_fdr_threshold']",
+                    f"neg_log10_fdr_threshold must be a float. Got: {threshold!r}",
+                )
+            else:
+                if not np.isfinite(threshold_value) or threshold_value <= 0:
+                    self._error(
+                        "NEG_LOG10_FDR_THRESHOLD",
+                        "aggregated_data.h5ad :: uns['neg_log10_fdr_threshold']",
+                        f"neg_log10_fdr_threshold must be a positive finite float "
+                        f"(in −log₁₀(FDR) units, e.g., 1.30103 for FDR = 0.05). "
+                        f"Got: {threshold_value}",
+                    )

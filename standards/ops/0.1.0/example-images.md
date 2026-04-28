@@ -30,6 +30,19 @@ examples.zarr/
 
 > **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one group at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples.zarr` per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
 
+When the sibling `aggregated_data.h5ad` uses an `observation_unit` with more than one column (e.g., `["gene_id", "cell_cycle_phase"]`), every column in `observation_unit` beyond the perturbation-identifying one MUST appear as an additional level nested between `{perturbation_id}` and `{barcode}`, in the order declared in `uns['observation_unit']`:
+
+```
+examples.zarr/
+└── {channel_combo}/
+    └── {perturbation_id}/
+        └── {cell_cycle_phase}/   # one nested level per additional observation_unit column, in declared order
+            └── {barcode}/
+                └── 0/ ... N/
+```
+
+This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset-accurate group of crops — so images shown on dot selection correspond to the specific aggregation row, not just the perturbation overall.
+
 ### Constraints
 
 <table>
@@ -40,6 +53,10 @@ examples.zarr/
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>Mirrors aggregated_data.h5ad grouping</strong></td>
+<td>The hierarchy of <code>examples.zarr</code> MUST mirror the aggregation grouping declared in the sibling <code>aggregated_data.h5ad</code>'s <code>uns['observation_unit']</code>. Any <code>observation_unit</code> column beyond the one identifying the perturbation MUST be nested between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to at least one crop group whose path matches all of its <code>observation_unit</code> values.</td>
+</tr>
 <tr>
 <td><strong>Barcodes per perturbation</strong></td>
 <td>Each perturbation MUST have between 1 and 10 barcodes. Each barcode group MUST contain at least one cell image crop.</td>
