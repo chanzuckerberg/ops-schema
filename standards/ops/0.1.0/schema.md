@@ -450,3 +450,9 @@ See [Feature Definitions](feature-definitions.md) for the full field specificati
 See [Example Images](example-images.md) for the full field specification.
 
 See [Zarr Images](zarr-images.md) for the full field specification.
+
+---
+
+## Acknowledgments
+
+The OPS Data Standard builds on [OME-Zarr](https://ngff.openmicroscopy.org/) and draws on the [`ome-zarr-py`](https://github.com/ome/ome-zarr-py) reference implementation, which is distributed under the BSD 2-Clause License. We are grateful to the OME community for their work establishing open standards for bioimaging data.
