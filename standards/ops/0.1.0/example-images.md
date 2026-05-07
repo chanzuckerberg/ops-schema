@@ -40,7 +40,7 @@ examples/
 
 `{perturbation_id}` and `{barcode}` are always present in the path as directory anchors. If either appears in `observation_unit` it MUST NOT be re-emitted as an additional nested level — i.e., `observation_unit = ["perturbation_id"]`, `["perturbation_id", "barcode"]`, or `["barcode"]` all produce the same flat layout below `{channel_combo}/{perturbation_id}/{barcode}/`. Only stratification columns *other than* `perturbation_id` and `barcode` add path levels.
 
-This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset-accurate group of crops — so images shown on dot selection correspond to the specific aggregation row, not just the perturbation overall.
+This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset-accurate set of crop zarrs — so images shown on dot selection correspond to the specific aggregation row, not just the perturbation overall.
 
 ### Constraints
 
@@ -54,7 +54,7 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <tbody>
 <tr>
 <td><strong>Mirrors aggregated_data.h5ad grouping</strong></td>
-<td>The directory hierarchy of <code>examples/</code> MUST mirror the aggregation grouping declared in the sibling <code>aggregated_data.h5ad</code>'s <code>uns['observation_unit']</code>. Any <code>observation_unit</code> column other than <code>perturbation_id</code> and <code>barcode</code> MUST be nested between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to at least one crop directory whose path matches all of its <code>observation_unit</code> values.</td>
+<td>The directory hierarchy of <code>examples/</code> MUST mirror the aggregation grouping declared in the sibling <code>aggregated_data.h5ad</code>'s <code>uns['observation_unit']</code>. Any <code>observation_unit</code> column other than <code>perturbation_id</code> and <code>barcode</code> MUST be nested between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to at least one crop zarr whose path matches all of its <code>observation_unit</code> values.</td>
 </tr>
 <tr>
 <td><strong>Barcodes per perturbation</strong></td>
