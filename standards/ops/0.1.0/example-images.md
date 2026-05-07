@@ -69,6 +69,10 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <td>Image arrays in each leaf MUST follow the same channel order as <code>channels_metadata[]</code> in the primary OME-NGFF HCS plate (see <a href="zarr-images.md">Zarr Images</a>). Each leaf's own <code>omero.channels</code> entries MUST reflect this same order.</td>
 </tr>
 <tr>
+<td><strong>Rendering hints</strong></td>
+<td>Each leaf's <code>omero.channels[*]</code> SHOULD include <code>color</code> (hex RGB, e.g. <code>"0000FF"</code>) and <code>window.start</code> / <code>window.end</code> (intensity range used for contrast normalization when rendering as 8-bit). When <code>window</code> is absent, viewers MAY fall back to per-image percentile-based normalization. Submitters who want consistent contrast across the visualization SHOULD provide <code>window.start</code> / <code>window.end</code>.</td>
+</tr>
+<tr>
 <td><strong>Leaf root metadata</strong></td>
 <td>Each leaf's <code>zarr.json</code> attributes MUST include a <code>perturbation_id</code> key. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>.</td>
 </tr>
