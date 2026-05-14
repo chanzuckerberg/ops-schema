@@ -30,7 +30,6 @@ nav:
   - Explorer Tutorial: tutorials/index.md
   - Download Data: download/index.md
   - CLI Reference: cli/index.md
-  - OPS Data Schema: schema/index.md
 
 plugins:
   - search
