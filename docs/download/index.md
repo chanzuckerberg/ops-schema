@@ -1,6 +1,6 @@
 # Download Data
 
-The CellxState OPS Explorer provides flexible data access for both interactive browsing and bulk downloads.
+The OPS Explorer provides flexible data access for both interactive browsing and bulk downloads.
 
 <div class="tile-grid">
   <a href="processed-images/" class="tile">
