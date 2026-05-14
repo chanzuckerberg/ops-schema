@@ -1,6 +1,6 @@
 # Explorer Reference Manual
 
-Complete guide to all panels, controls, and interactions in the CellxState OPS Explorer. Start here for comprehensive documentation; if you're new, try the [Quickstart](../quickstart/) first.
+Complete guide to all panels, controls, and interactions in the OPS Explorer. Start here for comprehensive documentation; if you're new, try the [Quickstart](../quickstart/) first.
 
 ## Contents
 
