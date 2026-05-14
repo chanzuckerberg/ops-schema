@@ -1,4 +1,4 @@
-# CellxState OPS Explorer
+# OPS Explorer
 
 Explore multimodal optical pooled screen data—imaging and transcriptomics—from 1,000 gene knockouts in a single interactive portal. Search by gene, visualize phenotypes, and download harmonized data without computational overhead.
 
