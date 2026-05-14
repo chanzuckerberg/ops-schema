@@ -27,8 +27,14 @@ theme:
 
 nav:
   - Home: index.md
-  - Explorer Tutorial: tutorials/index.md
-  - Download Data: download/index.md
+  - Explorer Tutorial:
+      - Overview: tutorials/index.md
+      - Quickstart: tutorials/quickstart/index.md
+      - Reference: tutorials/reference/index.md
+  - Download Data:
+      - Overview: download/index.md
+      - Processed Images: download/processed-images/index.md
+      - Feature Tables: download/feature-tables/index.md
   - CLI Reference: cli/index.md
 
 plugins:
