@@ -11,25 +11,21 @@ Explore multimodal optical pooled screen data—imaging and transcriptomics—fr
 
 <div class="tile-grid">
   <a href="tutorials/" class="tile">
-    <div class="tile-icon">📚</div>
     <div class="tile-title">Explorer Tutorial</div>
     <div class="tile-tagline">Learn how to navigate datasets, search genes, and interpret visualizations.</div>
     <div class="tile-arrow">→</div>
   </a>
   <a href="download/" class="tile">
-    <div class="tile-icon">⬇️</div>
     <div class="tile-title">Download Data</div>
     <div class="tile-tagline">Access processed images, feature tables, and raw data files.</div>
     <div class="tile-arrow">→</div>
   </a>
   <a href="cli/" class="tile">
-    <div class="tile-icon">💻</div>
     <div class="tile-title">CLI Reference</div>
     <div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
     <div class="tile-arrow">→</div>
   </a>
   <a href="schema/" class="tile">
-    <div class="tile-icon">📋</div>
     <div class="tile-title">OPS Data Schema</div>
     <div class="tile-tagline">Technical specification for standardized OPS data submissions.</div>
     <div class="tile-arrow">→</div>
