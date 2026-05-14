@@ -72,7 +72,7 @@ All datasets are cross-validated, standardized, and ready for exploration and do
 
 ## Citation
 
-If you use data from the CellxState OPS Explorer, please cite:
+If you use data from the OPS Explorer, please cite:
 
 > [Author List]. OPS Explorer: A centralized resource for optical pooled screen data. *[Publication]*. [Zenodo DOI: TBD].
 
