@@ -3,33 +3,28 @@
 Explore multimodal optical pooled screen data—imaging and transcriptomics—from 1,000 gene knockouts in a single interactive portal. Search by gene, visualize phenotypes, and download harmonized data without computational overhead.
 
 <div class="hero-buttons">
-  <a href="https://biohub.ai/ops" class="md-button md-button--primary">Use the Explorer</a>
-  <a href="tutorials/quickstart/" class="md-button md-button--secondary">Explorer Quickstart</a>
+<a href="https://biohub.ai/ops" class="md-button md-button--primary">Use the Explorer</a>
+<a href="tutorials/quickstart/" class="md-button md-button--secondary">Explorer Quickstart</a>
 </div>
 
 ## Getting Started
 
 <div class="tile-grid">
-  <a href="tutorials/" class="tile">
-    <div class="tile-title">Explorer Tutorial</div>
-    <div class="tile-tagline">Learn how to navigate datasets, search genes, and interpret visualizations.</div>
-    <div class="tile-arrow">→</div>
-  </a>
-  <a href="download/" class="tile">
-    <div class="tile-title">Download Data</div>
-    <div class="tile-tagline">Access processed images, feature tables, and raw data files.</div>
-    <div class="tile-arrow">→</div>
-  </a>
-  <a href="cli/" class="tile">
-    <div class="tile-title">CLI Reference</div>
-    <div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
-    <div class="tile-arrow">→</div>
-  </a>
-  <a href="schema/" class="tile">
-    <div class="tile-title">OPS Data Schema</div>
-    <div class="tile-tagline">Technical specification for standardized OPS data submissions.</div>
-    <div class="tile-arrow">→</div>
-  </a>
+<a href="tutorials/" class="tile">
+<div class="tile-title">Explorer Tutorial</div>
+<div class="tile-tagline">Learn how to navigate datasets, search genes, and interpret visualizations.</div>
+<div class="tile-arrow">→</div>
+</a>
+<a href="download/" class="tile">
+<div class="tile-title">Download Data</div>
+<div class="tile-tagline">Access processed images, feature tables, and raw data files.</div>
+<div class="tile-arrow">→</div>
+</a>
+<a href="cli/" class="tile">
+<div class="tile-title">CLI Reference</div>
+<div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
+<div class="tile-arrow">→</div>
+</a>
 </div>
 
 ---
