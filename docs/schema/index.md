@@ -4,7 +4,6 @@ The complete schema is detailed in the [OPS Schema Repository](https://github.co
 
 <div class="tile-grid">
   <a href="schema-overview/" class="tile">
-    <div class="tile-icon">📋</div>
     <div class="tile-title">Schema Overview</div>
     <div class="tile-tagline">Complete technical specification for standardized OPS data structure and validation.</div>
     <div class="tile-arrow">→</div>

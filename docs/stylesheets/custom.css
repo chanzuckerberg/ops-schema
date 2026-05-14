@@ -8,8 +8,9 @@
   --color-indigo-100: #F1F0FF;
   --color-gray-600: #767676;
   --color-gray-200: #DFDFDF;
-  --color-white: #FFFFFF;
   --color-black: #000000;
+  --color-white: #FFFFFF;
+  --color-dark-bg: #1a1a1a;
 
   /* Typography - Inter */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -29,7 +30,7 @@
 }
 
 /* =============================================================================
-   Base Typography
+   Base Typography & Layout
    ============================================================================= */
 
 html {
@@ -87,6 +88,163 @@ a:hover {
 }
 
 /* =============================================================================
+   Header & Navigation
+   ============================================================================= */
+
+.md-header {
+  background-color: var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.md-header__title {
+  font-size: var(--font-h1-size);
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.md-header__button {
+  color: var(--color-indigo-500);
+}
+
+.md-header__button:hover {
+  color: var(--color-indigo-500);
+}
+
+.md-logo {
+  margin-right: 16px;
+}
+
+.md-logo img {
+  height: 40px;
+  width: auto;
+}
+
+/* Search Bar */
+.md-search__input {
+  background-color: var(--color-indigo-500);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.md-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.md-search__input:focus {
+  border-color: var(--color-indigo-500);
+  box-shadow: 0 0 0 2px rgba(110, 79, 249, 0.2);
+}
+
+.md-search__icon {
+  color: var(--color-white);
+}
+
+/* Navigation Tabs */
+.md-tabs {
+  background-color: var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.md-tabs__list {
+  display: flex;
+  gap: 32px;
+  padding: 0 32px;
+}
+
+.md-tabs__link {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-black);
+  padding: 12px 0;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.md-tabs__link--active {
+  color: var(--color-black);
+  border-bottom-color: var(--color-indigo-500);
+  font-weight: 600;
+}
+
+.md-tabs__link:hover {
+  color: var(--color-indigo-500);
+}
+
+/* =============================================================================
+   Sidebar Navigation
+   ============================================================================= */
+
+.md-nav {
+  background-color: #2a2a2a;
+}
+
+.md-sidebar {
+  background-color: #2a2a2a;
+}
+
+.md-nav__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px 16px 8px;
+  margin-top: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.md-nav__title:first-child {
+  margin-top: 0;
+}
+
+.md-nav__link {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+
+.md-nav__link:hover {
+  background-color: rgba(110, 79, 249, 0.1);
+  color: var(--color-white);
+}
+
+.md-nav__link--active {
+  color: var(--color-indigo-500);
+  font-weight: 600;
+  border-left: 3px solid var(--color-indigo-500);
+  padding-left: 13px;
+}
+
+.md-nav__item {
+  margin: 0;
+}
+
+/* =============================================================================
+   Main Content Area - Full Width
+   ============================================================================= */
+
+.md-main {
+  flex-grow: 1;
+}
+
+.md-main__inner {
+  max-width: 100%;
+  margin: 0;
+  padding: 0 32px;
+}
+
+.md-content {
+  max-width: 100%;
+}
+
+/* =============================================================================
    Buttons & CTAs
    ============================================================================= */
 
@@ -100,6 +258,7 @@ a:hover {
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  font-family: var(--font-family);
 }
 
 .md-button--primary {
@@ -110,28 +269,30 @@ a:hover {
 .md-button--primary:hover {
   background-color: #5940d9;
   text-decoration: none;
+  box-shadow: 0 4px 12px rgba(110, 79, 249, 0.3);
 }
 
 .md-button--secondary {
-  background-color: var(--color-gray-200);
+  background-color: var(--color-indigo-100);
   color: var(--color-black);
-  border: 1px solid var(--color-gray-600);
+  border: 1px solid var(--color-gray-200);
 }
 
 .md-button--secondary:hover {
-  background-color: #f0f0f0;
+  background-color: #e8e5ff;
   text-decoration: none;
+  border-color: var(--color-indigo-500);
 }
 
 /* =============================================================================
-   Hero Section (Homepage)
+   Hero Section
    ============================================================================= */
 
 .hero {
   padding: 64px 32px;
   text-align: center;
-  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-indigo-100) 100%);
-  border-radius: 8px;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
   margin-bottom: 48px;
 }
 
@@ -145,7 +306,7 @@ a:hover {
   font-size: 16px;
   line-height: 28px;
   color: var(--color-gray-600);
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto 32px;
 }
 
@@ -157,12 +318,12 @@ a:hover {
 }
 
 /* =============================================================================
-   Tile/Card Grid (Landing Pages)
+   Tile/Card Grid
    ============================================================================= */
 
 .tile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
   margin: 32px 0;
 }
@@ -172,7 +333,7 @@ a:hover {
   flex-direction: column;
   padding: 24px;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: 4px;
   text-decoration: none;
   color: inherit;
   transition: all 0.2s ease;
@@ -181,27 +342,23 @@ a:hover {
 
 .tile:hover {
   border-color: var(--color-indigo-500);
-  box-shadow: 0 4px 12px rgba(110, 79, 249, 0.1);
+  background-color: var(--color-indigo-100);
+  box-shadow: 0 4px 12px rgba(110, 79, 249, 0.15);
   transform: translateY(-2px);
   text-decoration: none;
 }
 
-.tile-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-}
-
 .tile-title {
-  font-size: 18px;
+  font-size: var(--font-h2-size);
   font-weight: 600;
-  line-height: 28px;
-  margin-bottom: 8px;
+  line-height: var(--font-h2-line-height);
+  margin: 0 0 8px 0;
   color: var(--color-black);
 }
 
 .tile-tagline {
-  font-size: 14px;
-  line-height: 24px;
+  font-size: var(--font-body-size);
+  line-height: var(--font-body-line-height);
   color: var(--color-gray-600);
   flex-grow: 1;
   margin-bottom: 12px;
@@ -214,7 +371,7 @@ a:hover {
 }
 
 /* =============================================================================
-   Section Headings with Rule
+   Section Headings
    ============================================================================= */
 
 .section-heading {
@@ -228,7 +385,7 @@ a:hover {
 }
 
 /* =============================================================================
-   Secondary Text & Metadata
+   Secondary Text
    ============================================================================= */
 
 .text-secondary {
@@ -243,7 +400,7 @@ a:hover {
 }
 
 /* =============================================================================
-   Code & Preformatted Text
+   Code & Preformatted
    ============================================================================= */
 
 code {
@@ -261,6 +418,7 @@ pre {
   border-radius: 4px;
   overflow-x: auto;
   margin: 16px 0;
+  border: 1px solid var(--color-gray-200);
 }
 
 pre code {
@@ -289,6 +447,7 @@ th {
   font-weight: 600;
   font-size: 14px;
   border: 1px solid var(--color-gray-200);
+  color: var(--color-black);
 }
 
 td {
@@ -296,6 +455,7 @@ td {
   border: 1px solid var(--color-gray-200);
   font-size: 14px;
   line-height: 24px;
+  color: var(--color-black);
 }
 
 tr:nth-child(even) {
@@ -303,7 +463,7 @@ tr:nth-child(even) {
 }
 
 /* =============================================================================
-   Admonitions & Call-outs
+   Admonitions
    ============================================================================= */
 
 .admonition {
@@ -331,52 +491,6 @@ tr:nth-child(even) {
 }
 
 /* =============================================================================
-   Navigation & Header
-   ============================================================================= */
-
-.md-header {
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.md-header__button {
-  color: var(--color-indigo-500);
-}
-
-.md-nav__link {
-  font-size: 14px;
-  line-height: 24px;
-  color: var(--color-black);
-}
-
-.md-nav__link--active {
-  color: var(--color-indigo-500);
-  font-weight: 600;
-}
-
-/* =============================================================================
-   Sidebar & TOC
-   ============================================================================= */
-
-.md-sidebar {
-  background-color: var(--color-white);
-}
-
-.md-toc {
-  font-size: 14px;
-  line-height: 24px;
-}
-
-.md-toc__link {
-  color: var(--color-gray-600);
-}
-
-.md-toc__link--active {
-  color: var(--color-indigo-500);
-  font-weight: 600;
-}
-
-/* =============================================================================
    Coming Soon Placeholder
    ============================================================================= */
 
@@ -384,8 +498,9 @@ tr:nth-child(even) {
   text-align: center;
   padding: 64px 32px;
   background-color: var(--color-indigo-100);
-  border-radius: 8px;
+  border-radius: 4px;
   margin: 32px 0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .coming-soon h2 {
@@ -399,10 +514,76 @@ tr:nth-child(even) {
 }
 
 /* =============================================================================
+   Footer
+   ============================================================================= */
+
+.md-footer {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  padding: 24px 32px;
+  margin-top: 64px;
+}
+
+.md-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.md-footer-meta__inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.md-footer-meta a {
+  color: var(--color-white);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.md-footer-meta a:hover {
+  color: var(--color-indigo-500);
+  text-decoration: none;
+}
+
+.md-footer__logo {
+  height: 24px;
+  width: auto;
+}
+
+/* =============================================================================
    Responsive Design
    ============================================================================= */
 
 @media (max-width: 768px) {
+  .md-header {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .md-tabs__list {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+  }
+
+  .md-tabs__link {
+    padding: 12px 16px;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+  }
+
+  .md-tabs__link--active {
+    border-bottom: none;
+    border-left-color: var(--color-indigo-500);
+  }
+
   .hero {
     padding: 48px 24px;
   }
@@ -412,10 +593,6 @@ tr:nth-child(even) {
     line-height: 32px;
   }
 
-  .tile-grid {
-    grid-template-columns: 1fr;
-  }
-
   .hero-buttons {
     flex-direction: column;
   }
@@ -423,6 +600,19 @@ tr:nth-child(even) {
   .md-button {
     width: 100%;
     text-align: center;
+  }
+
+  .tile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .md-footer-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .md-main__inner {
+    padding: 0 16px;
   }
 
   h1 {

@@ -1,13 +1,14 @@
 site_name: OPS Explorer
 site_description: A data portal and visualization tool for Optical Pooled Screen data
-site_url: https://biohub.ai/ops-explorer
+site_url: https://chanzuckerberg.github.io/ops-schema/
 repo_url: https://github.com/chanzuckerberg/ops-schema
 repo_name: ops-schema
 
 theme:
   name: material
-  logo: assets/logo.png
-  favicon: assets/favicon.ico
+  custom_dir: docs/overrides
+  logo: assets/biohub_logo.png
+  favicon: assets/biohub_favicon.png
   palette:
     - scheme: light
       primary: indigo
@@ -19,6 +20,7 @@ theme:
     - navigation.instant
     - navigation.tabs
     - navigation.top
+    - navigation.sections
     - search.suggest
     - search.highlight
     - content.code.copy
