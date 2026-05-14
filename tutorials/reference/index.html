@@ -1,0 +1,1274 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A data portal and visualization tool for Optical Pooled Screen data">
+      
+      
+      
+        <link rel="canonical" href="https://biohub.ai/ops-explorer/tutorials/reference/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Explorer Reference Manual - OPS Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CInter:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Inter"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="light" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#explorer-reference-manual" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OPS Explorer" class="md-header__button md-logo" aria-label="OPS Explorer" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OPS Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Explorer Reference Manual
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="light" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/chanzuckerberg/ops-schema" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ops-schema
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Explorer Tutorial
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../download/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Download Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../schema/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  OPS Data Schema
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OPS Explorer" class="md-nav__button md-logo" aria-label="OPS Explorer" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    OPS Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/chanzuckerberg/ops-schema" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ops-schema
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explorer Tutorial
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../download/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OPS Data Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opening-the-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opening the Viewer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-info-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Info View
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-left-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Left Panel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Left Panel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gene-knockouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Knockouts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout Tab
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layout Tab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-visualization-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a Visualization Panel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-or-removing-a-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing or Removing a Panel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization-panels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualization Panels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Visualization Panels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embedding-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedding Panel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#images-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Images Panel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ops-feature-volcano-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OPS Feature Volcano Plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop-seq-gene-expression-volcano-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CROP-seq Gene Expression Volcano Plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotations-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annotations Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-expression-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Expression Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-the-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with the Viewer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interacting with the Viewer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hovering-a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hovering a Dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clicking-a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clicking a Dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-panel-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Panel Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="explorer-reference-manual">Explorer Reference Manual<a class="headerlink" href="#explorer-reference-manual" title="Permanent link">&para;</a></h1>
+<p>Complete guide to all panels, controls, and interactions in the CellxState OPS Explorer. Start here for comprehensive documentation; if you're new, try the <a href="../quickstart/">Quickstart</a> first.</p>
+<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#opening-the-viewer">Opening the Viewer</a></li>
+<li><a href="#collection-info-view">Collection Info View</a></li>
+<li><a href="#default-layout">Default Layout</a></li>
+<li><a href="#the-left-panel">The Left Panel</a></li>
+<li><a href="#visualization-panels">Visualization Panels</a></li>
+<li><a href="#interacting-with-the-viewer">Interacting with the Viewer</a></li>
+<li><a href="#quick-reference">Quick Reference</a></li>
+</ul>
+<hr />
+<h2 id="opening-the-viewer">Opening the Viewer<a class="headerlink" href="#opening-the-viewer" title="Permanent link">&para;</a></h2>
+<p>From the <strong>All Data</strong> page or a <strong>Collection Detail Page</strong>, find a dataset row and click <strong>Explore</strong>. The viewer opens full-screen.</p>
+<p><strong>Collection menu:</strong> The three-dot menu in the top-right of the left panel has two options:</p>
+<ul>
+<li><strong>View collection details</strong> — replaces left panel content with a collection summary</li>
+<li><strong>Download collection</strong> — opens a download modal</li>
+</ul>
+<h2 id="collection-info-view">Collection Info View<a class="headerlink" href="#collection-info-view" title="Permanent link">&para;</a></h2>
+<p>Click <strong>···</strong> → <strong>View collection details</strong> to replace the Gene Knockouts and tab content with a collection-level summary.</p>
+<p>The summary includes:</p>
+<ul>
+<li><strong>← Back button</strong> — returns to the Gene Knockouts view</li>
+<li><strong>Collection title</strong></li>
+<li><strong>Publication</strong> — linked citation</li>
+<li><strong>Contact</strong> — linked researcher name</li>
+<li><strong>Description</strong> of experimental context</li>
+<li><strong>Download button</strong></li>
+</ul>
+<p>The viewer always shows one <strong>collection</strong> at a time. A collection may contain multiple OPS datasets, multiple CROP-seq datasets, or both. Each open panel shows data from one dataset within that collection.</p>
+<h2 id="default-layout">Default Layout<a class="headerlink" href="#default-layout" title="Permanent link">&para;</a></h2>
+<p>What you see on first open depends on which dataset type you launched from:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>OPS Feature Volcano</th>
+<th>CROP-seq Gene Expression Volcano</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Each dot is</strong></td>
+<td>A gene knockout</td>
+<td>A measured transcript</td>
+</tr>
+<tr>
+<td><strong>Dot count</strong></td>
+<td>~1,000–5,000</td>
+<td>~20,000</td>
+</tr>
+<tr>
+<td><strong>Selected KOs labeled?</strong></td>
+<td>Yes</td>
+<td>No—dots are different entities</td>
+</tr>
+<tr>
+<td><strong>Colored by annotation?</strong></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Selector changes</strong></td>
+<td>Morphological feature</td>
+<td>Measured gene</td>
+</tr>
+<tr>
+<td><strong>X-axis</strong></td>
+<td>Effect Size</td>
+<td>Log₂ Fold Change</td>
+</tr>
+<tr>
+<td><strong>Y-axis</strong></td>
+<td>−log₁₀FDR</td>
+<td>−log₁₀(p-value)</td>
+</tr>
+</tbody>
+</table>
+<p>The OPS default gives you a ready-made view: as soon as you select a gene knockout, the Images panel populates automatically.</p>
+<p>Each panel shows a floating label in its top-left corner with the <strong>dataset name</strong> and, for embeddings, the <strong>embedding name</strong> (e.g., <code>UMAP_marker_x, marker_y</code>). The Images panel shows only the dataset name.</p>
+<p>You can change this layout at any time using the <strong>Layout Tab</strong>.</p>
+<h2 id="the-left-panel">The Left Panel<a class="headerlink" href="#the-left-panel" title="Permanent link">&para;</a></h2>
+<p>The left panel is the control center for the entire viewer. It is divided into two regions:</p>
+<ul>
+<li><strong>Gene Knockouts</strong> (top half) — search and select knockouts to highlight across all panels</li>
+<li><strong>Three tabs</strong> (bottom half) — <strong>Layout</strong>, <strong>Annotations</strong>, <strong>Gene Expression</strong></li>
+</ul>
+<h3 id="gene-knockouts">Gene Knockouts<a class="headerlink" href="#gene-knockouts" title="Permanent link">&para;</a></h3>
+<p>The Gene Knockouts section is the primary control. Selecting a knockout there highlights it in every open visualization simultaneously. The embedding, the images panel, and the volcano plot all update together.</p>
+<p><strong>To add a gene knockout:</strong></p>
+<ol>
+<li>Click the <strong>Search for gene knockout(s)</strong> bar.</li>
+<li>A dropdown lists all knockouts available in the collection. Checked items are already selected.</li>
+<li>Click a name to add it, or uncheck to remove it.</li>
+<li>If your search term has no results, <strong>No matches found</strong> appears.</li>
+</ol>
+<p>Once added, each knockout appears as a row with:</p>
+<ul>
+<li>The gene name</li>
+<li>An <strong>ⓘ button</strong> — opens the <strong>Gene Info</strong> sidebar</li>
+<li>A <strong>delete button</strong> — removes it from the selection</li>
+</ul>
+<p>A counter in the top-right shows how many are active.</p>
+<h3 id="gene">Gene<a class="headerlink" href="#gene" title="Permanent link">&para;</a></h3>
+<p>After clicking <strong>ⓘ</strong> next to a gene knockout:</p>
+<p>The sidebar shows:</p>
+<ul>
+<li>Gene name and description</li>
+<li>External database links: <strong>Gene Pathways</strong> ↗ and <strong>Protein Complexes</strong> ↗</li>
+<li>A <strong>Knockout Effects</strong> table with physical and transcriptional effect summaries for this gene in the current dataset</li>
+</ul>
+<p>Click <strong>−</strong> to minimize the sidebar or <strong>×</strong> to close it.</p>
+<h3 id="cluster">Cluster<a class="headerlink" href="#cluster" title="Permanent link">&para;</a></h3>
+<p>Clicking an <strong>ⓘ</strong> button next to a cluster in the <strong>Annotations Tab</strong> opens a cluster info sidebar.</p>
+<p>After clicking <strong>ⓘ</strong> next to a cluster in the Annotations tab:</p>
+<p>The sidebar shows a breadcrumb identifying the dataset, embedding, and cluster, followed by a table listing all gene knockouts assigned to that cluster.</p>
+<h3 id="layout-tab">Layout Tab<a class="headerlink" href="#layout-tab" title="Permanent link">&para;</a></h3>
+<p>The Layout tab controls which panels are open and how they are arranged. It is the default tab when you first open the viewer.</p>
+<p><strong>Visualization list</strong> — each row represents one open panel and shows:</p>
+<ul>
+<li>A <strong>thumbnail</strong> indicating the panel's position in the layout. Click the other rectangle in the thumbnail to swap that panel to the opposite position.</li>
+<li>A <strong>chip label</strong>: <strong>Embedding</strong> (purple), <strong>Images</strong> (blue), or <strong>Volcano Plot</strong></li>
+<li>The <strong>dataset name</strong> and <strong>embedding name</strong> as a subtitle</li>
+<li><strong>Edit</strong> and <strong>Delete</strong> buttons on hover</li>
+</ul>
+<p><strong>+ Add Visualization</strong> — opens the Add Visualization sidebar. The viewer supports a minimum of 1 and a maximum of 4 panels open at once.</p>
+<h4 id="adding-a-visualization-panel">Adding a Visualization Panel<a class="headerlink" href="#adding-a-visualization-panel" title="Permanent link">&para;</a></h4>
+<p>Click <strong>+ Add Visualization</strong> in the <strong>Layout Tab</strong>. A sidebar slides open on the left.</p>
+<p><strong>Step 1 — Choose a visualization type:</strong>
+- Embedding
+- Images
+- Volcano Plot</p>
+<p><strong>Step 2 — Select a dataset</strong> from the dropdown.</p>
+<p><strong>Step 3 — Select an embedding</strong> (Embedding and Volcano Plot types only). Multiple embeddings may be available per dataset. For the Embedding type, a live preview appears in the sidebar before you confirm.</p>
+<p><strong>Images panels</strong> are available for OPS datasets only. No embedding selection is needed. Just choose the dataset and click <strong>Add</strong>.</p>
+<p>Once all required fields are complete, click <strong>Add Visualization</strong>. The sidebar closes and the new panel appears in the layout.</p>
+<h4 id="editing-or-removing-a-panel">Editing or Removing a Panel<a class="headerlink" href="#editing-or-removing-a-panel" title="Permanent link">&para;</a></h4>
+<p>In the <strong>Layout Tab</strong>, hover any row to reveal action buttons:</p>
+<ul>
+<li><strong>Edit</strong> (pencil icon) — opens the same Add Visualization sidebar pre-filled with the current settings. The confirm button reads <strong>Apply Changes</strong>.</li>
+<li><strong>Delete</strong> (trash icon) — removes the panel immediately.</li>
+</ul>
+<h2 id="visualization-panels">Visualization Panels<a class="headerlink" href="#visualization-panels" title="Permanent link">&para;</a></h2>
+<p>The right side of the viewer shows one to four panels. This section covers what each panel type displays and how to interact with it.</p>
+<h3 id="embedding-panel">Embedding Panel<a class="headerlink" href="#embedding-panel" title="Permanent link">&para;</a></h3>
+<p>The Embedding panel shows a scatter plot where <strong>each dot is one gene knockout</strong>, positioned according to the dataset authors' chosen embedding. For OPS datasets, positions typically come from morphological imaging features (i.e. computed with CellProfiler or a deep learning model; e.g. nucleus size). For CROP-seq datasets, positions come from transcriptomic profiles.</p>
+<p>When gene knockouts are selected from the Gene Knockouts section, they appear as colored, highlighted dots on the plot.</p>
+<h3 id="images-panel">Images Panel<a class="headerlink" href="#images-panel" title="Permanent link">&para;</a></h3>
+<p>The Images panel shows representative fluorescence image crops for each selected gene knockout, organized as a grid of rows (one per knockout) and columns (one per imaging marker; e.g., DAPI, ConA, Phalloidin).</p>
+<p><strong>Grid structure:</strong></p>
+<ul>
+<li><strong>Column headers</strong> — each column is one fluorescent marker, a stain highlighting a specific cellular structure (e.g. DAPI for DNA, ConA for cell membranes, phalloidin for actin)</li>
+<li><strong>CONTROL row</strong> — always shown at the top and pinned at the top: it stays fixed as you scroll down, so you always have control images as a visual reference</li>
+<li><strong>Gene KO rows</strong> — one row per selected knockout, with approximately 3 representative image crops per marker</li>
+<li><strong>Each row</strong> can be collapsed or expanded with the arrow on its header</li>
+</ul>
+<p><strong>Controls:</strong></p>
+<ul>
+<li><strong>Markers: N ▾ dropdown</strong> (top-right) — select how many markers to show as columns. Up to 20 markers can be displayed at once. Scroll horizontally to see all columns.</li>
+<li><strong>Hovering a row header</strong> highlights that knockout across all other open panels</li>
+</ul>
+<p><strong>Image interactions:</strong></p>
+<ul>
+<li><strong>Hovering an individual image</strong> shows a tooltip confirming the gene KO name and marker</li>
+<li><strong>Clicking an image</strong> opens it in the idetik viewer in a new browser tab for full-resolution viewing</li>
+</ul>
+<h3 id="ops-feature-volcano-plot">OPS Feature Volcano Plot<a class="headerlink" href="#ops-feature-volcano-plot" title="Permanent link">&para;</a></h3>
+<p>The OPS Feature Volcano Plot shows the morphological effect of every gene knockout in the screen for a chosen cellular feature. This is useful for identifying which perturbations have the strongest or most statistically significant effects.</p>
+<p><strong>What the dots represent:</strong></p>
+<ul>
+<li><strong>Each dot</strong> = one gene knockout (same as the Embedding Panel)</li>
+<li><strong>Selected gene knockouts</strong> are labeled on the plot</li>
+<li><strong>Dots</strong> can be colored by Annotations</li>
+</ul>
+<p><strong>Axes:</strong></p>
+<ul>
+<li><strong>X-axis: Effect Size</strong> — magnitude of morphological change vs. non-targeting control for the selected feature</li>
+<li><strong>Y-axis: −log₁₀FDR</strong> — corrected p-value as a measure of statistical significance</li>
+</ul>
+<p><strong>Feature selector:</strong></p>
+<ul>
+<li><strong>top-right dropdown</strong> — choose which morphological feature drives the x-axis (e.g. Nucleus Size, Nucleus Area, Mitochondria Intensity). The selected feature name also appears on the x-axis label.</li>
+</ul>
+<h3 id="crop-seq-gene-expression-volcano-plot">CROP-seq Gene Expression Volcano Plot<a class="headerlink" href="#crop-seq-gene-expression-volcano-plot" title="Permanent link">&para;</a></h3>
+<p>The CROP-seq Gene Expression Volcano Plot shows which transcripts are differentially expressed for a chosen gene condition.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Each dot here is a measured transcript (gene), not a gene knockout.</strong> There are approximately 20,000 dots, one per transcript in the CROP-seq dataset.</p>
+</div>
+<p><strong>Gene selector</strong> (top-right dropdown): choose which <strong>measured gene</strong> to use to display a volcano plot. The plot then shows how the expression of all ~20,000 transcripts changes when that gene is knocked out.</p>
+<h3 id="annotations-tab">Annotations Tab<a class="headerlink" href="#annotations-tab" title="Permanent link">&para;</a></h3>
+<p>The Annotations tab lets you color all eligible panels by a biological annotation, making it easy to see how gene knockouts group by cluster or control status. All annotations are supplied by the dataset authors.</p>
+<p><strong>Shared Categories</strong> apply across all datasets in the collection:</p>
+<ul>
+<li><strong>control type</strong> — control and non-control, each with a cell count</li>
+</ul>
+<p><strong>Per-dataset sections</strong> appear below, one per embedding (e.g. <code>OPS pseudobulked IF7_432 / UMAP_marker_x, marker_y</code>):</p>
+<ul>
+<li><strong>clusters</strong> — cluster 1 through cluster 5+, each with a count and an <strong>ⓘ button</strong> that opens Cluster</li>
+</ul>
+<p><strong>To apply a color:</strong> click the <strong>●</strong> filled-dot button next to any category or clusters label. All eligible panels update immediately.</p>
+<p><strong>Which panels get colored:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Panel type</th>
+<th>Gets annotation color?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPS Embedding</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>CROP-seq Embedding</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>OPS Feature Volcano Plot</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>CROP-seq Gene Expression Volcano Plot</td>
+<td>No—dots are measured genes, not knockouts</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Without annotation color:</strong> selected knockouts are labeled, all other dots are in default black.</p>
+<p><strong>With annotation color and hover active:</strong> hovering a dot highlights its cluster and fades all other clusters across all linked panels simultaneously.</p>
+<h3 id="gene-expression-tab">Gene Expression Tab<a class="headerlink" href="#gene-expression-tab" title="Permanent link">&para;</a></h3>
+<p>The Gene Expression tab lets you color panels by the expression level of a specific measured gene. This coloring applies <strong>only to CROP-seq panels</strong>.</p>
+<p><strong>To add a gene expression overlay:</strong></p>
+<ol>
+<li>Click <strong>Add gene(s)</strong> and type a gene symbol.</li>
+<li>The gene appears as a row with a miniature expression histogram.</li>
+<li>Click the <strong>●</strong> color icon on that row to activate it as the color overlay.</li>
+</ol>
+<p>CROP-seq embeddings are colored with a <strong>continuous (gradient) color scale</strong> based on expression level.</p>
+<p>OPS panels show an amber <strong>⚠ Limited</strong> badge. Hovering the badge shows: "Only available for CROP-seq data."</p>
+<p><strong>Switching back to the Annotations Tab</strong> restores annotation-based coloring across all eligible panels.</p>
+<h2 id="interacting-with-the-viewer">Interacting with the Viewer<a class="headerlink" href="#interacting-with-the-viewer" title="Permanent link">&para;</a></h2>
+<p>This section covers hover, click, and cross-panel behaviors that apply across all panel types.</p>
+<h3 id="hovering-a-dot">Hovering a Dot<a class="headerlink" href="#hovering-a-dot" title="Permanent link">&para;</a></h3>
+<p>Hovering any dot in an embedding or volcano panel shows a tooltip. The fields shown depend on the panel type:</p>
+<p><strong>OPS or CROP-seq Embedding, OPS Feature Volcano:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gene KO</td>
+<td>Name of the gene knockout</td>
+</tr>
+<tr>
+<td>Cluster</td>
+<td>Cluster assignment</td>
+</tr>
+<tr>
+<td># Cells Observed</td>
+<td>Number of cells that received this perturbation</td>
+</tr>
+<tr>
+<td>Images</td>
+<td>Number of representative images available (embeddings only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>CROP-seq Gene Expression Volcano:</strong> tooltip shows the <strong>transcript name</strong>, <strong>log₂FC</strong> (fold change), and <strong>−log₁₀FDR</strong> (false discovery rate = corrected p-value).</p>
+<p><strong>When annotation color is active:</strong> hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.</p>
+<p><strong>Hovering a name in the gene list:</strong> highlights that knockout's dot across all open panels and fades all other dots into the background.</p>
+<h3 id="clicking-a-dot">Clicking a Dot<a class="headerlink" href="#clicking-a-dot" title="Permanent link">&para;</a></h3>
+<p>Clicking any dot in an embedding panel opens a context menu with the following actions:</p>
+<ul>
+<li><strong>Select Gene KO</strong> — adds it to the Gene Knockouts selection</li>
+<li><strong>View Gene Info</strong> — opens the Gene Info sidebar</li>
+<li><strong>View Images</strong> — jumps to the Images Panel for this KO</li>
+<li><strong>View Feature Volcano Plot</strong> — navigates to the OPS Feature Volcano Plot</li>
+<li><strong>View Cluster #</strong> — opens the Cluster Info sidebar for that cluster</li>
+</ul>
+<h3 id="cross-panel-sync">Cross-Panel Sync<a class="headerlink" href="#cross-panel-sync" title="Permanent link">&para;</a></h3>
+<p>When you hover a dot in any embedding or volcano panel, the <strong>same gene knockout is simultaneously highlighted in all other open panels</strong>. This lets you compare how the same perturbation appears across the OPS embedding, CROP-seq embedding, OPS volcano, and images without navigating away.</p>
+<p><strong>Orientation switcher</strong> — Icons at the top change the panel arrangement:</p>
+<table>
+<thead>
+<tr>
+<th>Number of open panels</th>
+<th>Orientation options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Fixed—no choice</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Side by side or stacked</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4 arrangement options</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Fixed 2×2 grid—no choice</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Open a dataset in the viewer</td>
+<td>Click <strong>Explore</strong> on the dataset row</td>
+</tr>
+<tr>
+<td>Find a knockout in the embedding</td>
+<td>Type the name in the <strong>Search for gene knockout(s)</strong> bar</td>
+</tr>
+<tr>
+<td>Select feature for OPS volcano</td>
+<td><strong>Feature selector</strong> dropdown in top right of volcano panel</td>
+</tr>
+<tr>
+<td>See microscopy images for a KO</td>
+<td>Add the KO and the <strong>Images panel</strong> will populate automatically</td>
+</tr>
+<tr>
+<td>Locate a knockout across all open panels</td>
+<td>Hover its name in the <strong>Gene Knockouts</strong> list, or its dot in any panel</td>
+</tr>
+<tr>
+<td>Color all panels by cluster</td>
+<td><strong>Annotations</strong> tab → click <strong>●</strong> next to <strong>clusters</strong></td>
+</tr>
+<tr>
+<td>Color CROP-seq panels by gene expression</td>
+<td><strong>Gene Expression</strong> tab → add a gene → click its <strong>●</strong> color icon</td>
+</tr>
+<tr>
+<td>Open an image at full resolution</td>
+<td>Click any image—opens the <strong>idetik viewer</strong> in a new tab</td>
+</tr>
+<tr>
+<td>Identify knockouts with the largest morphological effect</td>
+<td>Look at the top edges of the <strong>OPS Feature Volcano Plot</strong></td>
+</tr>
+<tr>
+<td>Change which feature the volcano shows</td>
+<td>Use the <strong>Feature selector</strong> dropdown in the volcano panel header</td>
+</tr>
+<tr>
+<td>See which transcripts change for a knockout condition</td>
+<td>Open a <strong>CROP-seq Gene Expression Volcano</strong>; use the <strong>Gene selector</strong></td>
+</tr>
+<tr>
+<td>See which knockouts share a cluster</td>
+<td>Hover any dot while <strong>annotation color is active</strong>—other clusters fade</td>
+</tr>
+<tr>
+<td>Look up external gene info</td>
+<td>Click <strong>ⓘ</strong> next to a name in the <strong>Gene Knockouts</strong> list → <strong>Gene Info</strong> sidebar</td>
+</tr>
+<tr>
+<td>Add a new panel</td>
+<td><strong>Layout</strong> tab → <strong>+ Add Visualization</strong></td>
+</tr>
+<tr>
+<td>Swap two panels' positions</td>
+<td>Click the other rectangle in a panel's thumbnail in the <strong>Layout Tab</strong></td>
+</tr>
+<tr>
+<td>Download the collection</td>
+<td><strong>···</strong> menu → <strong>Download collection</strong></td>
+</tr>
+<tr>
+<td>View collection publication and metadata</td>
+<td><strong>···</strong> menu → <strong>View collection details</strong></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/chanzuckerberg/ops-schema" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
