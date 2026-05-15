@@ -18,7 +18,7 @@ From the **All Data page** or a **Collection Detail Page**, click **Explore** on
 
 The viewer is split into two regions:
 
-![Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels](docs/assets/quickstart_imgs/Default_-_Layout_Tab.png)
+![Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels](../../assets/quickstart_imgs/Default_-_Layout_Tab.png)
 
 | Region | What it does |
 |---|---|
