@@ -34,7 +34,7 @@ Hovering or clicking a dot in any visualization panel highlights the same gene k
 
 The left panel has two regions:
 
-![Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression](docs/assets/quickstart_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png)
+![Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression](../../assets/quickstart_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png)
 
 **Top region - Gene Knockouts**
 
@@ -48,11 +48,11 @@ The left panel has two regions:
 - **Annotations** - color all eligible panels by a categorical annotation (e.g. cluster)
 - **Gene Expression** - color CROP-seq panels by a measured gene's expression level
 
-![Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot](docs/assets/quickstart_imgs/Add_Visualization__Embedding.png)
+![Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot](../../assets/quickstart_imgs/Add_Visualization__Embedding.png)
 
 A **··· menu** in the top-right of the left panel opens collection-level actions: **View collection details** or **Download collection**.
 
-![Three-dot overflow menu open showing View collection details and Download collection options](docs/assets/quickstart_imgs/Collection_Overflow_Menu.png)
+![Three-dot overflow menu open showing View collection details and Download collection options](../../assets/quickstart_imgs/Collection_Overflow_Menu.png)
 
 
 ### Visualization Panels
@@ -66,7 +66,7 @@ The right side of the viewer holds 1–4 panels of four possible types:
 | **OPS Feature Volcano** | One gene knockout | Finding KOs with the largest morphological effect |
 | **CROP-seq Gene Expression Volcano** | One **measured transcript** (~20K dots) | Finding differentially expressed genes for a chosen condition |
 
-![Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano](docs/assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png)
+![Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano](../../assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png)
 
 > **Important:** The CROP-seq Gene Expression Volcano is the only panel where dots are **not** gene knockouts. Annotation coloring and selection-from-list do not apply to it.
 
