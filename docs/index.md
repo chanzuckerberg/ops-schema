@@ -10,6 +10,7 @@ The OPS Explorer is the first centralized location to visualize and interact wit
 </div>
 
 V1 capabilities include:
+
   * Dataset collection pages with experimental context and standardized schema
   * Interactive data explorer with synchronized imaging and scRNA-seq data
   * Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
@@ -26,17 +27,14 @@ V1 capabilities include:
 <a href="download/" class="tile">
 <div class="tile-title">Download Data</div>
 <div class="tile-tagline">Access processed images, feature tables, and raw data files.</div>
-<div class="tile-arrow">→</div>
 </a>
 <a href="cli/" class="tile">
 <div class="tile-title">CLI Reference</div>
 <div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
-<div class="tile-arrow">→</div>
 </a>
 <a href="schema/" class="tile">
 <div class="tile-title">Data Schema</div>
 <div class="tile-tagline">Details on data structure, organization, and relationships</div>
-<div class="tile-arrow">→</div>
 </a>
 </div>
 
