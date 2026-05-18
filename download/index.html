@@ -522,24 +522,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -556,86 +538,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-interactive-explorer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Interactive Explorer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-bulk-downloads" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Bulk Downloads
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-programmatic-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Programmatic API
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-availability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Availability
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -867,75 +769,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-interactive-explorer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Interactive Explorer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-bulk-downloads" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Bulk Downloads
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-programmatic-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Programmatic API
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-availability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Availability
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -955,7 +788,7 @@
 
 
 <h1 id="download-data">Download Data<a class="headerlink" href="#download-data" title="Permanent link">&para;</a></h1>
-<p>The OPS Explorer provides flexible data access for both interactive browsing and bulk downloads.</p>
+<p>Visualize data in the OPS Explorer and download via the CLI tool. All data is standardized to the <a href="../schema/">OPS Data Schema</a>.</p>
 <div class="tile-grid">
   <a href="processed-images/" class="tile">
     <div class="tile-title">Processed Images & Metadata</div>
@@ -968,25 +801,6 @@
     <div class="tile-arrow">→</div>
   </a>
 </div>
-
-<hr />
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>All V1 datasets are available via three access methods:</p>
-<h3 id="1-interactive-explorer">1. Interactive Explorer<a class="headerlink" href="#1-interactive-explorer" title="Permanent link">&para;</a></h3>
-<p>Search and explore directly in the web portal. Download specific subsets by gene knockout or cluster.</p>
-<h3 id="2-bulk-downloads">2. Bulk Downloads<a class="headerlink" href="#2-bulk-downloads" title="Permanent link">&para;</a></h3>
-<p>Tile links above provide access to processed data files and standardized feature tables.</p>
-<h3 id="3-programmatic-api">3. Programmatic API<a class="headerlink" href="#3-programmatic-api" title="Permanent link">&para;</a></h3>
-<p>Use Python or command-line tools to access data programmatically. See <a href="../cli/">CLI Reference</a> for details.</p>
-<hr />
-<h2 id="data-availability">Data Availability<a class="headerlink" href="#data-availability" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>OPS datasets</strong>: Biohub Dragonfly experiments (~50–100 screens, 1,000 gene KOs)</li>
-<li><strong>Transcriptomics</strong>: Matched CROP-seq data for selected experiments</li>
-<li><strong>External data</strong>: Vesuvius datasets from Broad/Cheeseman lab</li>
-<li><strong>Storage</strong>: AWS S3 (Virginia region; public access, no credentials required)</li>
-</ul>
-<p>All data is standardized to the <a href="../schema/">OPS Data Schema</a>.</p>
 
 
 
