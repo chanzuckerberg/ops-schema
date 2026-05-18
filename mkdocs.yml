@@ -54,8 +54,8 @@ markdown_extensions:
   - toc:
       permalink: true
 
-# extra_css:
- # - stylesheets/custom.css
+extra_css:
+  - stylesheets/custom.css
 
 extra:
   social:
