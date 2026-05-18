@@ -1,6 +1,6 @@
 # Download Data
 
-The OPS Explorer provides flexible data access for both interactive browsing and bulk downloads.
+Visualize data in the OPS Explorer and download via the CLI tool. All data is standardized to the [OPS Data Schema](../schema/).
 
 <div class="tile-grid">
   <a href="processed-images/" class="tile">
@@ -15,28 +15,3 @@ The OPS Explorer provides flexible data access for both interactive browsing and
   </a>
 </div>
 
----
-
-## Overview
-
-All V1 datasets are available via three access methods:
-
-### 1. Interactive Explorer
-Search and explore directly in the web portal. Download specific subsets by gene knockout or cluster.
-
-### 2. Bulk Downloads
-Tile links above provide access to processed data files and standardized feature tables.
-
-### 3. Programmatic API
-Use Python or command-line tools to access data programmatically. See [CLI Reference](../cli/) for details.
-
----
-
-## Data Availability
-
-- **OPS datasets**: Biohub Dragonfly experiments (~50–100 screens, 1,000 gene KOs)
-- **Transcriptomics**: Matched CROP-seq data for selected experiments
-- **External data**: Vesuvius datasets from Broad/Cheeseman lab
-- **Storage**: AWS S3 (Virginia region; public access, no credentials required)
-
-All data is standardized to the [OPS Data Schema](../schema/).
