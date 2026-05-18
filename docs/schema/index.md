@@ -3,11 +3,17 @@
 The complete schema is detailed in the [OPS Schema Repository](https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops/0.1.0).
 
 <div class="tile-grid">
+
   <a href="schema-overview/" class="tile">
-    <div class="tile-title">Schema Overview</div>
-    <div class="tile-tagline">Complete technical specification for standardized OPS data structure and validation.</div>
+    <h3 class="tile-title">Schema Overview</h3>
+
+    <p class="tile-tagline">
+      Complete technical specification for standardized OPS data structure and validation.
+    </p>
+
     <div class="tile-arrow">→</div>
   </a>
+
 </div>
 
 ---
@@ -33,9 +39,7 @@ Data contributors receive white-glove onboarding support and a citable collectio
 
 ## Submission & Contribution
 
-The OPS Explorer is currently accepting submissions from academic labs and industry partners with existing OPS datasets. For inquiries about depositing your data:
-
-📧 [Contact email TBD]
+The OPS Explorer is currently accepting submissions from academic labs and industry partners with existing OPS datasets. Reach out to support@biohub.org.
 
 ## Version History
 
