@@ -8,7 +8,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 **Scope:** Per experiment
 **File format:** YAML
-**File path:** `{screen_name}/metadata/experimental_metadata.yaml`
+**File path:** `{aggregation_name}/metadata/experimental_metadata.yaml`
 
 > **Scope limitations (v0.1.0):** Structured chemical/drug perturbation metadata is out of scope for this version. Experiments that multiplex genetic perturbations with chemical treatments (e.g., compound dosing, FFA treatment) SHOULD document the chemical context in `cellular.growth_conditions` as free text.
 
@@ -90,7 +90,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Path to the CROP-seq AnnData file, relative to <code>{screen_name}/metadata/</code>. MUST be present when the experiment includes a paired CROP-seq readout (see Multimodal Experiments).</td>
+<td>Path to the CROP-seq AnnData file, relative to <code>{aggregation_name}/metadata/</code>. MUST be present when the experiment includes a paired CROP-seq readout (see Multimodal Experiments).</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>

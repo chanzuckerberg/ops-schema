@@ -8,7 +8,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 **Scope:** Per experiment
 **File format:** Parquet
-**File path:** `{screen_name}/cell_data.parquet`
+**File path:** `{aggregation_name}/cell_data.parquet`
 
 > **Scope limitations:** This table does NOT support 3D imaging, time-series data, or chemical/drug perturbations. These use cases are out of scope for v0.1.0.
 

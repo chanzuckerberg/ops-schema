@@ -93,7 +93,7 @@ class ChannelMetadata(BaseModel):
 # ---------------------------------------------------------------------------
 
 class OPSPlateRoot(BaseModel):
-    """Validates zarr attributes at {screen_name}.zarr/"""
+    """Validates zarr attributes at {aggregation_name}.zarr/"""
     ome: dict  # full OME plate block; parsed into OmePlateMetadata below
     channels_metadata: list[ChannelMetadata]
 
@@ -127,7 +127,7 @@ class OmeWellMetadata(BaseModel):
 
 
 class OPSWellGroup(BaseModel):
-    """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/"""
+    """Validates zarr attributes at {aggregation_name}.zarr/{row}/{col}/"""
     ome: dict
 
     @model_validator(mode="after")
@@ -198,7 +198,7 @@ class MultiscaleEntry(BaseModel):
 
 
 class OPSImageGroup(BaseModel):
-    """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/"""
+    """Validates zarr attributes at {aggregation_name}.zarr/{row}/{col}/0/"""
     ome: dict
 
     @model_validator(mode="after")
@@ -289,7 +289,7 @@ class OPSResolutionArray(ArraySpec):
 # ---------------------------------------------------------------------------
 
 class OPSLabelsContainer(BaseModel):
-    """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/labels/"""
+    """Validates zarr attributes at {aggregation_name}.zarr/{row}/{col}/0/labels/"""
     ome: dict
 
     @model_validator(mode="after")
@@ -333,7 +333,7 @@ class SegmentationMetadata(BaseModel):
 
 
 class OPSLabelGroup(BaseModel):
-    """Validates zarr attributes at {screen_name}.zarr/{row}/{col}/0/labels/{seg_name}/"""
+    """Validates zarr attributes at {aggregation_name}.zarr/{row}/{col}/0/labels/{seg_name}/"""
     segmentation_metadata: SegmentationMetadata
 
 

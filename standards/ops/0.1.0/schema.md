@@ -19,7 +19,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 - [Aggregated Data](aggregated-data.md) — Per-visualization perturbation-level AnnData (`aggregated_data.h5ad`)
 - [Feature Definitions](feature-definitions.md) — Per-experiment optional feature catalog (`feature_definitions.csv`)
 - [Example Images](example-images.md) — Per-visualization representative single-cell image crops (`examples.zarr`)
-- [Zarr Images](zarr-images.md) — Per-experiment primary OME-NGFF HCS image store (`{screen_name}.zarr`)
+- [Zarr Images](zarr-images.md) — Per-experiment primary OME-NGFF HCS image store (`{aggregation_name}.zarr`)
 - [Changelog](changelog.md) — Appendix A: version history
 
 ---
@@ -267,7 +267,7 @@ A complete, valid OPS submission MUST conform to the following directory structu
 │
 ├── collection_metadata.yaml           # Required. Per collection.
 │
-└── {screen_name}/                     # One directory per experiment.
+└── {aggregation_name}/                     # One directory per experiment.
     ├── metadata/
     │   ├── experimental_metadata.yaml # Required. Per experiment.
     │   ├── perturbation_library.csv   # Required. Per experiment.
@@ -280,14 +280,14 @@ A complete, valid OPS submission MUST conform to the following directory structu
     │       ├── aggregated_data.h5ad   # Required. Per visualization.
     │       └── examples.zarr         # Required. Per visualization.
     │
-    └── {screen_name}.zarr             # Required. Per experiment.
+    └── {aggregation_name}.zarr             # Required. Per experiment.
 ```
 
 ### Notes
 
 - `{visualization_id}` MUST be a unique identifier within the submission.
-- `{screen_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
-- Collections with multiple experiments MUST include one `{screen_name}/` directory per experiment, each with a distinct `{screen_name}`.
+- `{aggregation_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
+- Collections with multiple experiments MUST include one `{aggregation_name}/` directory per experiment, each with a distinct `{aggregation_name}`.
 
 ### Multimodal Experiments (e.g., CROP-seq)
 
