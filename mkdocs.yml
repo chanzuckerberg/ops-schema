@@ -9,10 +9,27 @@ theme:
   custom_dir: docs/overrides
   logo: assets/biohub_logo.png
   favicon: assets/biohub_favicon.png
+  theme:
+  name: material
   palette:
-    - scheme: light
+
+    # Light mode
+    - scheme: default
       primary: white
       accent: indigo
+
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+
+    # Dark mode
+    - scheme: slate
+      primary: black
+      accent: indigo
+
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
   font:
     text: Inter
     code: Inter
