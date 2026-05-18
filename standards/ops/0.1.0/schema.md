@@ -24,54 +24,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ---
 
-## Pending Items for Review
-
-The following items are unresolved and MUST be addressed before v1.0.0:
-
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Item</th>
-<th>Owner</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2</td>
-<td>Aggregated Data full field specification</td>
-<td>Jason / CELLxGENE schema team</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Tighten Example Images artifact spec: array shape/dtype requirements for crop arrays, channel dimension requirements, behavior when a barcode has zero cells, OME-NGFF compliance scope</td>
-<td>TBD</td>
-</tr>
-<tr>
-<td>7</td>
-<td><del>Define exhaustive enum values for <code>channels_metadata[].channel_type</code></del> — <strong>Resolved. DCA-aligned values adopted: <code>"fluorescence"</code>, <code>"chromogenic"</code>, <code>"labelfree"</code>, <code>"predicted"</code>.</strong></td>
-<td>—</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Define exhaustive enum values for <code>segmentation_metadata.annotation_type</code>. Current examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code>. Needs follow-up on whether event-based annotations (e.g., <code>"apoptosis"</code>, <code>"mitosis"</code>) should be included.</td>
-<td>TBD</td>
-</tr>
-<tr>
-<td>9</td>
-<td>Add specimen-level metadata fields for cell line authentication, passage number, and mycoplasma testing status</td>
-<td>TBD</td>
-</tr>
-<tr>
-<td>10</td>
-<td>Define the list of 30 CZI-standard interpretable features (CellProfiler-derived) that will be displayed in the UI. Submitters may include up to 10 additional custom features. This list must be finalized before v1.0.0.</td>
-<td>CZI / cathystoli</td>
-</tr>
-</tbody>
-</table>
-
----
-
 ## Schema Versioning
 
 The OPS schema version is based on [Semantic Versioning](https://semver.org/).
@@ -333,7 +285,7 @@ A complete, valid OPS submission MUST conform to the following directory structu
 
 ### Notes
 
-- `{visualization_id}` MUST be a unique identifier within the submission. Format TBD (see Pending Item #2).
+- `{visualization_id}` MUST be a unique identifier within the submission.
 - `{screen_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
 - Collections with multiple experiments MUST include one `{screen_name}/` directory per experiment, each with a distinct `{screen_name}`.
 

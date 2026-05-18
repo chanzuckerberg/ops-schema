@@ -311,7 +311,7 @@ At least one resolution level is REQUIRED. Multiple levels (e.g., full resolutio
 <tr>
 <td><code>segmentation_metadata.annotation_type</code></td>
 <td>REQUIRED</td>
-<td>Type of biological structure annotated. See Pending Item #8 for exhaustive enum definition. Current examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code></td>
+<td>Type of biological structure annotated. Examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code></td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.is_ome_label</code></td>
