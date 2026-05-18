@@ -6,15 +6,15 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## Experimental Metadata
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** YAML
 **File path:** `{aggregation_name}/metadata/experimental_metadata.yaml`
 
 > **Scope limitations (v0.1.0):** Structured chemical/drug perturbation metadata is out of scope for this version. Experiments that multiplex genetic perturbations with chemical treatments (e.g., compound dosing, FFA treatment) SHOULD document the chemical context in `cellular.growth_conditions` as free text.
 
-This file captures the biological, experimental, and technical context of the screen.
+This file captures the biological, experimental, and technical context of the pseudobulk aggregation — the lab-defined dataset that may pool cells from one or more screen runs.
 
-### Screen Information
+### Aggregation Information
 
 #### experiment.title
 
@@ -32,7 +32,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Free-text title describing the screen</td>
+<td>Free-text title describing the pseudobulk aggregation</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -61,7 +61,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>List of cell state labels used for pseudobulk groupings in this experiment. MAY include a CROP-seq cell state label (e.g., <code>"crop_seq"</code>); if a CROP-seq label is present, a corresponding CROP-seq AnnData object MUST be included in the submission (see Multimodal Experiments).</td>
+<td>List of cell state labels used for pseudobulk groupings within this aggregation. MAY include a CROP-seq cell state label (e.g., <code>"crop_seq"</code>); if a CROP-seq label is present, a corresponding CROP-seq AnnData object MUST be included in the submission (see Multimodal Aggregations).</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>
@@ -90,7 +90,7 @@ This file captures the biological, experimental, and technical context of the sc
 </tr>
 <tr>
 <td><strong>Description</strong></td>
-<td>Path to the CROP-seq AnnData file, relative to <code>{aggregation_name}/metadata/</code>. MUST be present when the experiment includes a paired CROP-seq readout (see Multimodal Experiments).</td>
+<td>Path to the CROP-seq AnnData file, relative to <code>{aggregation_name}/metadata/</code>. MUST be present when the aggregation includes a paired CROP-seq readout (see Multimodal Aggregations).</td>
 </tr>
 <tr>
 <td><strong>Annotator</strong></td>

@@ -6,7 +6,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## Perturbation Library
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** `.csv`
 **File path:** `metadata/perturbation_library.csv`
 

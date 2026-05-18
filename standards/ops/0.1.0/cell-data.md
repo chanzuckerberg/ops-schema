@@ -6,7 +6,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## scFeature Table
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** Parquet
 **File path:** `{aggregation_name}/cell_data.parquet`
 

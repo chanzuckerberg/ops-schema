@@ -6,7 +6,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## Zarr Images
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** Zarr v3, OME-NGFF v0.5 HCS
 **File path:** `{aggregation_name}.zarr`
 

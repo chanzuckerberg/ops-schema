@@ -13,13 +13,13 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 ## Table of Contents
 
 - [Collection Metadata](collection-metadata.md) — Per-collection publication and provenance metadata (`collection_metadata.yaml`)
-- [Experimental Metadata](experimental-metadata.md) — Per-experiment biological, experimental, and technical context (`experimental_metadata.yaml`)
-- [Perturbation Library](perturbation-library.md) — Per-experiment sgRNA library with cross-table join keys (`perturbation_library.csv`)
-- [scFeature Table](cell-data.md) — Per-experiment single-cell feature table (`cell_data.parquet`)
+- [Experimental Metadata](experimental-metadata.md) — Per-aggregation biological, experimental, and technical context (`experimental_metadata.yaml`)
+- [Perturbation Library](perturbation-library.md) — Per-aggregation sgRNA library with cross-table join keys (`perturbation_library.csv`)
+- [scFeature Table](cell-data.md) — Per-aggregation single-cell feature table (`cell_data.parquet`)
 - [Aggregated Data](aggregated-data.md) — Per-visualization perturbation-level AnnData (`aggregated_data.h5ad`)
-- [Feature Definitions](feature-definitions.md) — Per-experiment optional feature catalog (`feature_definitions.csv`)
+- [Feature Definitions](feature-definitions.md) — Per-aggregation optional feature catalog (`feature_definitions.csv`)
 - [Example Images](example-images.md) — Per-visualization representative single-cell image crops (`examples.zarr`)
-- [Zarr Images](zarr-images.md) — Per-experiment primary OME-NGFF HCS image store (`{aggregation_name}.zarr`)
+- [Zarr Images](zarr-images.md) — Per-aggregation primary OME-NGFF HCS image store (`{aggregation_name}.zarr`)
 - [Changelog](changelog.md) — Appendix A: version history
 
 ---
@@ -152,13 +152,15 @@ The following ontology versions are pinned for this schema version. Submissions 
 
 ## Data Model Overview
 
-OPS datasets are organized in a four-level hierarchy:
+OPS datasets are organized in a three-level hierarchy:
 
 ```
-Collection                      [1 per submission; groups experiments from a single publication]
-└── Experiment (Screen)         [1 or more per collection]
-    └── Visualization (Subset)  [1 or more per experiment]
+Collection                          [1 per submission; groups pseudobulk aggregations from a single publication]
+└── Pseudobulk Aggregation          [1 or more per collection; lab-defined unit, may pool data from multiple screen runs]
+    └── Visualization (Embedding)   [1 or more per aggregation; each visualization renders one embedding of the aggregation]
 ```
+
+A **pseudobulk aggregation** is the lab-curated dataset that the rest of the artifacts hang off of — perturbation library, single-cell features, image store, and one or more visualizations. It is not necessarily one physical screen run: a lab may pool cells from multiple runs into a single aggregation. Each **visualization** corresponds to one such aggregation rendered through one or more embeddings (e.g., UMAP, PHATE, t-SNE), all carried in `obsm` of a single `aggregated_data.h5ad`.
 
 ### Cross-File Linkage
 
@@ -167,10 +169,10 @@ The following diagram shows how the key identifier fields connect all artifacts:
 ```
 collection_metadata.yaml
 │
-└── experimental_metadata.yaml  (per experiment)
+└── experimental_metadata.yaml  (per pseudobulk aggregation)
         │
         └── perturbation_library.csv
-                │  barcode           ← per-sgRNA primary key (unique within experiment)
+                │  barcode           ← per-sgRNA primary key (unique within aggregation)
                 │  perturbation_id   ← stable join key (submitter-defined)
                 │                      shared by all sgRNAs targeting the same gene
                 │
@@ -206,7 +208,7 @@ collection_metadata.yaml
 </tr>
 <tr>
 <td><a href="perturbation-library.md">Perturbation Library</a></td>
-<td>Per experiment</td>
+<td>Per pseudobulk aggregation</td>
 <td>REQUIRED</td>
 </tr>
 <tr>
@@ -216,7 +218,7 @@ collection_metadata.yaml
 </tr>
 <tr>
 <td><a href="experimental-metadata.md">Experimental Metadata</a></td>
-<td>Per experiment</td>
+<td>Per pseudobulk aggregation</td>
 <td>REQUIRED</td>
 </tr>
 <tr>
@@ -226,7 +228,7 @@ collection_metadata.yaml
 </tr>
 <tr>
 <td><a href="feature-definitions.md">Feature Definitions</a></td>
-<td>Per experiment</td>
+<td>Per pseudobulk aggregation</td>
 <td>OPTIONAL</td>
 </tr>
 </tbody>
@@ -245,12 +247,12 @@ collection_metadata.yaml
 <tbody>
 <tr>
 <td><a href="cell-data.md">scFeature Table</a></td>
-<td>Per experiment</td>
+<td>Per pseudobulk aggregation</td>
 <td>REQUIRED</td>
 </tr>
 <tr>
 <td><a href="zarr-images.md">Zarr Images</a></td>
-<td>Per experiment</td>
+<td>Per pseudobulk aggregation</td>
 <td>REQUIRED</td>
 </tr>
 </tbody>
@@ -267,37 +269,37 @@ A complete, valid OPS submission MUST conform to the following directory structu
 │
 ├── collection_metadata.yaml           # Required. Per collection.
 │
-└── {aggregation_name}/                     # One directory per experiment.
+└── {aggregation_name}/                     # One directory per pseudobulk aggregation.
     ├── metadata/
-    │   ├── experimental_metadata.yaml # Required. Per experiment.
-    │   ├── perturbation_library.csv   # Required. Per experiment.
-    │   └── feature_definitions.csv   # Optional. Per experiment.
+    │   ├── experimental_metadata.yaml # Required. Per pseudobulk aggregation.
+    │   ├── perturbation_library.csv   # Required. Per pseudobulk aggregation.
+    │   └── feature_definitions.csv   # Optional. Per pseudobulk aggregation.
     │
-    ├── cell_data.parquet              # Required. Per experiment.
+    ├── cell_data.parquet              # Required. Per pseudobulk aggregation.
     │
     ├── visualizations/
-    │   └── {visualization_id}/        # One directory per visualization.
+    │   └── {visualization_id}/        # One directory per visualization (embedding).
     │       ├── aggregated_data.h5ad   # Required. Per visualization.
     │       └── examples.zarr         # Required. Per visualization.
     │
-    └── {aggregation_name}.zarr             # Required. Per experiment.
+    └── {aggregation_name}.zarr             # Required. Per pseudobulk aggregation.
 ```
 
 ### Notes
 
 - `{visualization_id}` MUST be a unique identifier within the submission.
 - `{aggregation_name}` SHOULD match `experiment.title` with spaces replaced by underscores and all characters lowercased.
-- Collections with multiple experiments MUST include one `{aggregation_name}/` directory per experiment, each with a distinct `{aggregation_name}`.
+- Collections with multiple pseudobulk aggregations MUST include one `{aggregation_name}/` directory per aggregation, each with a distinct `{aggregation_name}`.
 
-### Multimodal Experiments (e.g., CROP-seq)
+### Multimodal Aggregations (e.g., CROP-seq)
 
-For experiments that include both OPS imaging data and a paired CROP-seq (or other sequencing-based) readout:
+For pseudobulk aggregations that bundle both OPS imaging data and a paired CROP-seq (or other sequencing-based) readout:
 
 > **Note:** No separate YAML file is created for CROP-seq data. All CROP-seq metadata is added directly to the existing `experimental_metadata.yaml` using the fields below.
 
 - The CROP-seq AnnData file (`crop_seq.h5ad`) MUST be declared in the **existing** `experimental_metadata.yaml` under the `experiment.crop_seq_anndata` field (see [experiment.crop_seq_anndata](experimental-metadata.md#experimentcrop_seq_anndata)).
 - The submission MUST include a visualization entry for the CROP-seq data. This visualization MUST contain `aggregated_data.h5ad` but MUST NOT include `examples.zarr` (no image crops are required for sequencing-only readouts).
-- `experiment.pseudobulk` in `experimental_metadata.yaml` SHOULD include `"crop_seq"` as a cell state label when CROP-seq groupings are used.
+- `experiment.pseudobulk` in `experimental_metadata.yaml` SHOULD include `"crop_seq"` as a cell state label when CROP-seq groupings are part of the aggregation.
 
 ---
 
