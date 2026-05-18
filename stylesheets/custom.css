@@ -221,12 +221,10 @@ body {
    Header Logo
    ========================================================================== */
 
-/* Logo container */
-
 .md-header__button.md-logo {
   padding: 0 !important;
 
-  margin: 0 0.5rem 0 0 !important;
+  margin-right: 0.75rem !important;
 
   display: flex;
 
@@ -235,28 +233,21 @@ body {
   height: 52px;
 }
 
-/* Actual image */
+/* Header logo image */
 
 .md-header__button.md-logo img,
-.md-header__button.md-logo svg {
+.md-header__button.md-logo svg,
+.md-logo img,
+.md-logo svg {
   display: block !important;
 
-  height: 18px !important;
+  height: 26px !important;
 
   width: auto !important;
 
-  max-height: 18px !important;
+  max-height: 26px !important;
 
   object-fit: contain;
-}
-
-/* Prevent Material overrides */
-
-.md-logo img,
-.md-logo svg {
-  height: 18px !important;
-
-  max-height: 18px !important;
 }
 
 /* ==========================================================================
@@ -496,6 +487,19 @@ body {
   padding-bottom: 1rem;
 }
 
+/* Footer logo sizing */
+
+.md-footer img,
+.md-footer svg {
+  height: 30px !important;
+
+  width: auto !important;
+
+  max-height: 30px !important;
+
+  object-fit: contain;
+}
+
 /* ==========================================================================
    Tile Grid
    ========================================================================== */
@@ -546,4 +550,18 @@ body {
   .md-sidebar--primary {
     border-right: none;
   }
+}
+
+/* Theme toggle icon */
+
+.md-header__button[for="__palette"] {
+  color: var(--biohub-text);
+
+  opacity: 0.8;
+}
+
+.md-header__button[for="__palette"]:hover {
+  color: var(--biohub-indigo);
+
+  opacity: 1;
 }
