@@ -200,21 +200,33 @@ body {
 
   color: var(--biohub-text);
 
-  border-bottom: 1px solid var(--biohub-border);
+  border-bottom: none !important;
 
   box-shadow: none;
 
-  height: 52px;
+  height: 60px;
 
-  min-height: 52px;
+  min-height: 60px;
 }
 
 .md-header__inner {
-  height: 52px;
+  height: 60px;
 
-  min-height: 52px;
+  min-height: 60px;
 
   align-items: center;
+}
+
+/* Remove subtle divider lines */
+
+.md-tabs,
+.md-tabs__list,
+.md-tabs__item,
+.md-header,
+.md-header__inner {
+  border: none !important;
+
+  box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -224,16 +236,16 @@ body {
 .md-header__button.md-logo {
   padding: 0 !important;
 
-  margin-right: 0.75rem !important;
+  margin-right: 1rem !important;
 
   display: flex;
 
   align-items: center;
 
-  height: 52px;
+  height: 60px;
 }
 
-/* Header logo image */
+/* Header logo */
 
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg,
@@ -241,11 +253,11 @@ body {
 .md-logo svg {
   display: block !important;
 
-  height: 36px !important;
+  height: 54px !important;
 
   width: auto !important;
 
-  max-height: 36px !important;
+  max-height: 54px !important;
 
   object-fit: contain;
 }
@@ -255,16 +267,31 @@ body {
    ========================================================================== */
 
 .md-header__title {
-  margin-left: 0.25rem;
+  margin-left: 0.5rem;
+
+  padding-left: 1rem;
+
+  border-left: 3px solid black;
 }
 
-.md-header__topic,
-.md-header__topic:first-child {
-  color: var(--biohub-text);
+/* Adds OPS Explorer Documentation text */
 
-  font-size: 15px;
+.md-header__topic:first-child::after {
+  content: "OPS Explorer Documentation";
+
+  margin-left: 1rem;
+
+  font-size: 18px;
 
   font-weight: 600;
+
+  color: black;
+}
+
+/* Hide duplicate built-in title */
+
+.md-header__topic:last-child {
+  display: none;
 }
 
 /* ==========================================================================
@@ -310,25 +337,26 @@ body {
 .md-tabs {
   background-color: var(--biohub-header);
 
-  border-bottom: 1px solid var(--biohub-border);
-
-  height: 44px;
+  height: 48px;
 }
 
 .md-tabs__list {
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .md-tabs__link {
-  color: var(--biohub-text-secondary);
+  color: black !important;
 
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+
+  font-weight: 700;
 }
 
-.md-tabs__link:hover,
-.md-tabs__link--active {
-  color: var(--biohub-indigo);
+/* Active tab */
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  color: var(--biohub-indigo) !important;
 }
 
 /* ==========================================================================
@@ -491,11 +519,11 @@ body {
 
 .md-footer img,
 .md-footer svg {
-  height: 36px !important;
+  height: 54px !important;
 
   width: auto !important;
 
-  max-height: 36px !important;
+  max-height: 54px !important;
 
   object-fit: contain;
 }
@@ -570,45 +598,59 @@ body {
    ========================================================================== */
 
 .hero-buttons {
-  display: flex;
+  width: 100%;
 
-  justify-content: center;
+  display: flex !important;
+
+  justify-content: center !important;
 
   align-items: center;
 
   gap: 1rem;
 
-  margin-top: 2rem;
-
-  margin-bottom: 2rem;
+  margin: 2rem auto;
 
   flex-wrap: wrap;
+
+  text-align: center;
 }
 
-.hero-button {
+.md-typeset .hero-button,
+.md-typeset a.hero-button {
+  display: inline-flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
   background-color: var(--biohub-indigo) !important;
 
   color: white !important;
 
-  border: 1px solid var(--biohub-indigo) !important;
+  border: none !important;
 
-  border-radius: 10px;
+  border-radius: 999px !important;
 
-  padding: 0.7rem 1.25rem;
+  padding: 0.85rem 1.5rem !important;
 
   font-weight: 600;
 
   text-decoration: none !important;
+
+  box-shadow: none !important;
 
   transition:
     opacity 0.15s ease,
     transform 0.15s ease;
 }
 
-.hero-button:hover {
+.md-typeset .hero-button:hover,
+.md-typeset a.hero-button:hover {
+  background-color: var(--biohub-indigo) !important;
+
+  color: white !important;
+
   opacity: 0.92;
 
   transform: translateY(-1px);
-
-  color: white !important;
 }
