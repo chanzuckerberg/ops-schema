@@ -9,27 +9,6 @@ The OPS Explorer is the first centralized location to visualize and interact wit
 <a href="tutorials/quickstart/" class="md-button md-button--secondary">Explorer Quickstart</a>
 </div>
 
-:class-container: landing-grid
-:gutter: 2 2 2 2
-
-````{grid-item}
-```{button-ref} data-organization
-:color: primary
-:align: center
-
-Learn about the Data Schema
-```
-````
-
-````{grid-item}
-```{button-ref} contributing-data
-:color: primary
-:align: center
-
-Learn about Contributing Data
-```
-````
-
 V1 capabilities include:
 
   * Dataset collection pages with experimental context and standardized schema
@@ -62,7 +41,7 @@ V1 capabilities include:
 ---
 
 ## Contribute Your Data
-For data contributor inquiries, contact: [contact email TBD]
+For data contributor inquiries, contact: support@biohub.org
 
 ## Citation
 
