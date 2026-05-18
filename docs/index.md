@@ -14,9 +14,8 @@ V1 capabilities include:
   * Interactive data explorer with synchronized imaging and scRNA-seq data
   * Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
   * Gene knockout search and exploration across 1,000 perturbations
-  * All data available for download via CLI
-  * The OPS Explorer is the first centralized destination for Optical Pooled Screening (OPS) data, giving researchers harmonized, large-scale genetic perturbation imaging datasets in one place.
-
+  * All data is available for download either in-browser or via a CLI
+    
 ## Getting Started
 
 <div class="tile-grid">
