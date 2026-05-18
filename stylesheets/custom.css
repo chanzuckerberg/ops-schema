@@ -281,11 +281,13 @@ body {
 
   margin-left: 1rem;
 
-  font-size: 18px;
+  font-size: 20px;
 
-  font-weight: 600;
+  font-weight: 700;
 
   color: black;
+
+  letter-spacing: -0.01em;
 }
 
 /* Hide duplicate built-in title */
@@ -593,6 +595,35 @@ body {
 
   opacity: 1;
 }
+
+/* ==========================================================================
+   Theme Toggle
+   ========================================================================== */
+
+.md-header__button[for="__palette"] {
+  display: flex !important;
+
+  align-items: center;
+
+  color: black !important;
+
+  opacity: 1;
+
+  margin-left: 0.5rem;
+}
+
+.md-header__button[for="__palette"]:hover {
+  color: var(--biohub-indigo) !important;
+}
+
+/* Slightly larger lightbulb icon */
+
+.md-header__button[for="__palette"] svg {
+  width: 22px;
+
+  height: 22px;
+}
+
 /* ==========================================================================
    Hero Buttons
    ========================================================================== */
@@ -608,11 +639,9 @@ body {
 
   gap: 1rem;
 
-  margin: 2rem auto;
+  margin: 1rem auto 1.5rem auto;
 
   flex-wrap: wrap;
-
-  text-align: center;
 }
 
 .md-typeset .hero-button,
@@ -631,9 +660,17 @@ body {
 
   border-radius: 999px !important;
 
-  padding: 0.85rem 1.5rem !important;
+  padding: 0.7rem 1.3rem !important;
 
-  font-weight: 600;
+  min-width: 260px;
+
+  min-height: 52px;
+
+  font-size: 15px !important;
+
+  font-weight: 700;
+
+  line-height: 1;
 
   text-decoration: none !important;
 
