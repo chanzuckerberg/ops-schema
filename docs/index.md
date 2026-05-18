@@ -10,13 +10,45 @@ The OPS Explorer is a centralized location to visualize and interact with standa
 </div>
 
 V1 capabilities include:
-- Dataset collection pages with experimental context and standardized schema
-- Interactive data explorer with synchronized imaging and scRNA-seq data
-- Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
-- Gene knockout search and exploration across 1,000 perturbations
-- All data available for download via CLIThe OPS Explorer is the first centralized destination for Optical Pooled Screening (OPS) data, giving researchers harmonized, large-scale genetic perturbation imaging datasets in one place.
+* Dataset collection pages with experimental context and standardized schema
+* Interactive data explorer with synchronized imaging and scRNA-seq data
+* Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
+* Gene knockout search and exploration across 1,000 perturbations
+* All data available for download via CLIThe OPS Explorer is the first centralized destination for Optical Pooled Screening (OPS) data, giving researchers harmonized, large-scale genetic perturbation imaging datasets in one place.
 
 ## Getting Started
+
+::::{grid} 1 1 2 2
+:gutter: 2
+
+:::{grid-item-card} Explorer Tutorial
+:link: tutorials/
+:link-type: ref
+
+Install and start using the Python Client API
+:::
+
+:::{grid-item-card} API Reference
+:link: api-reference
+:link-type: ref
+
+Information on the Python Client API Classes
+:::
+
+:::{grid-item-card} Tutorials
+:link: tutorials
+:link-type: doc
+
+Examples of selecting, downloading, and visualizing data from the Portal
+:::
+
+:::{grid-item-card} About CryoET Data Portal
+:link: about
+:link-type: doc
+
+Learn about CryoET data and how to find and preview it on the Portal
+:::
+::::
 
 <div class="tile-grid">
 <a href="tutorials/" class="tile">
