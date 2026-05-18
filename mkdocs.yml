@@ -47,7 +47,7 @@ theme:
 
 nav:
   - Home: index.md
-  - Explorer Tutorial:
+  - Tutorials:
       - Overview: tutorials/index.md
       - Quickstart: tutorials/quickstart/index.md
       - Reference: tutorials/reference/index.md
