@@ -20,25 +20,36 @@ V1 capabilities include:
 ## Getting Started
 
 <div class="tile-grid">
-<a href="tutorials/" class="tile">
-<div class="tile-title">Explorer Tutorial</div>
-<div class="tile-tagline">Learn how to navigate datasets, search genes, and interpret visualizations.</div>
-</a>
-<a href="download/" class="tile">
-<div class="tile-title">Download Data</div>
-<div class="tile-tagline">Access processed images, feature tables, and raw data files.</div>
-</a>
-<a href="cli/" class="tile">
-<div class="tile-title">CLI Reference</div>
-<div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
-</a>
-<a href="schema/" class="tile">
-<div class="tile-title">Data Schema</div>
-<div class="tile-tagline">Details on data structure, organization, and relationships</div>
-</a>
-</div>
 
----
+  <a href="tutorials/" class="tile">
+    <h3 class="tile-title">Explorer Tutorial</h3>
+    <p class="tile-tagline">
+      Learn how to navigate datasets, search genes, and interpret visualizations.
+    </p>
+  </a>
+
+  <a href="download/" class="tile">
+    <h3 class="tile-title">Download Data</h3>
+    <p class="tile-tagline">
+      Access processed images, feature tables, and raw data files.
+    </p>
+  </a>
+
+  <a href="cli/" class="tile">
+    <h3 class="tile-title">CLI Reference</h3>
+    <p class="tile-tagline">
+      Programmatic access and command-line tools for data retrieval.
+    </p>
+  </a>
+
+  <a href="schema/" class="tile">
+    <h3 class="tile-title">Data Schema</h3>
+    <p class="tile-tagline">
+      Details on data structure, organization, and relationships.
+    </p>
+  </a>
+
+</div>
 
 ## Contribute Your Data
 For data contributor inquiries, contact: support@biohub.org
