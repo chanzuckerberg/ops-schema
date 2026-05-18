@@ -16,7 +16,7 @@ This file captures the biological, experimental, and technical context of the sc
 
 ### Screen Information
 
-#### experiment.screen_title
+#### experiment.title
 
 <table>
 <thead>
@@ -28,7 +28,7 @@ This file captures the biological, experimental, and technical context of the sc
 <tbody>
 <tr>
 <td><strong>Key</strong></td>
-<td><code>experiment.screen_title</code></td>
+<td><code>experiment.title</code></td>
 </tr>
 <tr>
 <td><strong>Description</strong></td>

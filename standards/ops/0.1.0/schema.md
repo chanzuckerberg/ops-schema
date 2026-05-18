@@ -286,7 +286,7 @@ A complete, valid OPS submission MUST conform to the following directory structu
 ### Notes
 
 - `{visualization_id}` MUST be a unique identifier within the submission.
-- `{aggregation_name}` SHOULD match `experiment.screen_title` with spaces replaced by underscores and all characters lowercased.
+- `{aggregation_name}` SHOULD match `experiment.title` with spaces replaced by underscores and all characters lowercased.
 - Collections with multiple experiments MUST include one `{aggregation_name}/` directory per experiment, each with a distinct `{aggregation_name}`.
 
 ### Multimodal Experiments (e.g., CROP-seq)
