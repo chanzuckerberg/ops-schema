@@ -5,8 +5,13 @@ Optical Pooled Screening (OPS) combines CRISPR-based genetic perturbations with 
 The OPS Explorer is the first centralized location to visualize and interact with OPS data with a standardized schema and file formats accessible via CLI.
 
 <div class="hero-buttons">
-<a href="https://biohub.ai/ops" class="md-button md-button--primary">Use the Explorer</a>
-<a href="tutorials/quickstart/" class="md-button md-button--secondary">Explorer Quickstart</a>
+  <a href="https://biohub.ai/ops" class="md-button hero-button">
+    Use the Explorer
+  </a>
+
+  <a href="tutorials/quickstart/" class="md-button hero-button">
+    Explorer Quickstart
+  </a>
 </div>
 
 V1 capabilities include:
