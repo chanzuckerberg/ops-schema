@@ -565,3 +565,50 @@ body {
 
   opacity: 1;
 }
+/* ==========================================================================
+   Hero Buttons
+   ========================================================================== */
+
+.hero-buttons {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+
+  margin-bottom: 2rem;
+
+  flex-wrap: wrap;
+}
+
+.hero-button {
+  background-color: var(--biohub-indigo) !important;
+
+  color: white !important;
+
+  border: 1px solid var(--biohub-indigo) !important;
+
+  border-radius: 10px;
+
+  padding: 0.7rem 1.25rem;
+
+  font-weight: 600;
+
+  text-decoration: none !important;
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.hero-button:hover {
+  opacity: 0.92;
+
+  transform: translateY(-1px);
+
+  color: white !important;
+}
