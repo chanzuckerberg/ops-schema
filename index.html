@@ -335,49 +335,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-is-ops" class="md-nav__link">
+  <a href="#contribute-your-data" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is OPS?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="What is OPS?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-the-ops-explorer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the OPS Explorer?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#v1-launch-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        V1 Launch Data
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Links
+        Contribute Your Data
       
     </span>
   </a>
@@ -754,49 +715,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-is-ops" class="md-nav__link">
+  <a href="#contribute-your-data" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is OPS?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="What is OPS?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-the-ops-explorer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the OPS Explorer?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#v1-launch-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        V1 Launch Data
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Links
+        Contribute Your Data
       
     </span>
   </a>
@@ -835,18 +757,24 @@
 
 
 <h1 id="ops-explorer">OPS Explorer<a class="headerlink" href="#ops-explorer" title="Permanent link">&para;</a></h1>
-<p>Explore multimodal optical pooled screen data—imaging and transcriptomics—from 1,000 gene knockouts in a single interactive portal. Search by gene, visualize phenotypes, and download harmonized data without computational overhead.</p>
+<p>Optical Pooled Screening (OPS) combines high-content imaging with pooled genetic screens to reveal the relationship between genes and cell morphology.</p>
+<p>The OPS Explorer is a centralized location to visualize and interact with standardized fluoresence imaging and scRNAseq data accessible via CLI, in formats optimized for model training (OME-Zarr V3, H5AD, parquet), with a published schema on GitHub.</p>
 <div class="hero-buttons">
 <a href="https://biohub.ai/ops" class="md-button md-button--primary">Use the Explorer</a>
 <a href="tutorials/quickstart/" class="md-button md-button--secondary">Explorer Quickstart</a>
 </div>
 
+<p>V1 capabilities include:
+- Dataset collection pages with experimental context and standardized schema
+- Interactive data explorer with synchronized imaging and scRNA-seq data
+- Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
+- Gene knockout search and exploration across 1,000 perturbations
+- All data available for download via CLIThe OPS Explorer is the first centralized destination for Optical Pooled Screening (OPS) data, giving researchers harmonized, large-scale genetic perturbation imaging datasets in one place.</p>
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <div class="tile-grid">
 <a href="tutorials/" class="tile">
 <div class="tile-title">Explorer Tutorial</div>
 <div class="tile-tagline">Learn how to navigate datasets, search genes, and interpret visualizations.</div>
-<div class="tile-arrow">→</div>
 </a>
 <a href="download/" class="tile">
 <div class="tile-title">Download Data</div>
@@ -858,40 +786,25 @@
 <div class="tile-tagline">Programmatic access and command-line tools for data retrieval.</div>
 <div class="tile-arrow">→</div>
 </a>
+<a href="schema/" class="tile">
+<div class="tile-title">Data Schema</div>
+<div class="tile-tagline">Details on data structure, organization, and relationships</div>
+<div class="tile-arrow">→</div>
+</a>
 </div>
 
 <hr />
-<h2 id="what-is-ops">What is OPS?<a class="headerlink" href="#what-is-ops" title="Permanent link">&para;</a></h2>
-<p>Optical Pooled Screening (OPS) combines high-content imaging with pooled genetic screens to reveal what happens to cells across 40+ markers when any of 1,000 genes is knocked out—all without computational barriers.</p>
-<h3 id="why-the-ops-explorer">Why the OPS Explorer?<a class="headerlink" href="#why-the-ops-explorer" title="Permanent link">&para;</a></h3>
-<p>The OPS community faced three critical barriers to data accessibility:</p>
-<ol>
-<li><strong>Scale and Complexity</strong> — Multi-terabyte datasets require infrastructure beyond most labs.</li>
-<li><strong>No Shared Standard</strong> — Incompatible formats, metadata, and processing pipelines across labs meant data was effectively isolated.</li>
-<li><strong>Analysis Expertise Barrier</strong> — Users needed to replicate the entire computational stack of the generating lab just to engage with the data.</li>
-</ol>
-<p>The OPS Explorer solves all three by centralizing standardized, harmonized datasets and providing intuitive interactive visualizations accessible to any researcher with a gene of interest.</p>
-<h2 id="v1-launch-data">V1 Launch Data<a class="headerlink" href="#v1-launch-data" title="Permanent link">&para;</a></h2>
-<p>At launch (June 2, 2026), the OPS Explorer hosts:</p>
-<ul>
-<li><strong>Biohub Dragonfly OPS experiments</strong> — ~50–100 screens, 1,000 gene KOs, 40+ cellular markers</li>
-<li><strong>Matched CROP-seq data</strong> — Paired transcriptomic profiles for the same perturbations</li>
-<li><strong>Vesuvius datasets</strong> — Landmark data from the Broad/Cheeseman lab</li>
-</ul>
-<p>All datasets are cross-validated, standardized, and ready for exploration and download.</p>
-<h2 id="quick-links">Quick Links<a class="headerlink" href="#quick-links" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops/0.1.0">Full OPS Schema</a></li>
-<li><a href="https://github.com/chanzuckerberg/ops-schema">GitHub Repository</a></li>
-<li><a href="https://biohub.ai">Biohub Website</a></li>
-</ul>
-<hr />
-<h2 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
-<p>If you use data from the OPS Explorer, please cite:</p>
-<blockquote>
-<p>[Author List]. OPS Explorer: A centralized resource for optical pooled screen data. <em>[Publication]</em>. [Zenodo DOI: TBD].</p>
-</blockquote>
+<h2 id="contribute-your-data">Contribute Your Data<a class="headerlink" href="#contribute-your-data" title="Permanent link">&para;</a></h2>
 <p>For data contributor inquiries, contact: [contact email TBD]</p>
+<h2 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
+<p>If you use data from the OPS Explorer, please cite please acknowledge the authors, cite associated publications, and cite the Portal. Example langauge is below:</p>
+<blockquote>
+<p>Some of the data used in this work was provided by Irene de Teresa Trueba et al and Mallak Ali et al. The data are available through the OPS Explorer (Nat Methods 21, 2200–2202 (2024). https://doi.org/10.1038/s41592-024-02477-2) with the following metadata.
+| Deposition ID | Entity Type | Entity ID(s) | Primary Author(s) | Associated Publication DOI(s) |
+| ------------- | ----------- | ------------ | ----------------- | ----------------------------- |
+| 10000 | Dataset | 10000, 10001 | Irene de Teresa Trueba | 10.1101/2022.04.12.488077, 10.1038/s41592-022-01746-2 |
+| 10312 | Dataset | 10442 | Mallak Ali, Ariana Peck, Yue Yu, Jonathan Schwartz | None |</p>
+</blockquote>
 
 
 
