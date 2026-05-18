@@ -6,11 +6,12 @@ repo_name: ops-schema
 
 theme:
   name: material
+
   custom_dir: docs/overrides
+
   logo: assets/biohub_logo.png
   favicon: assets/biohub_favicon.png
-  theme:
-  name: material
+
   palette:
 
     # Light mode
@@ -30,9 +31,11 @@ theme:
       toggle:
         icon: material/lightbulb
         name: Switch to light mode
+
   font:
     text: Inter
     code: Inter
+
   features:
     - navigation.instant
     - navigation.tabs
