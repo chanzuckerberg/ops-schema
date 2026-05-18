@@ -1,12 +1,129 @@
 /* ==========================================================================
+   Biohub Documentation Theme
+   Inspired by OPS UI
+   ========================================================================== */
+
+/* ==========================================================================
+   Color System
+   ========================================================================== */
+
+:root {
+  --biohub-indigo: #6E4FF9;
+  --biohub-indigo-light: #F1F0FF;
+
+  --biohub-gray-600: #767676;
+  --biohub-gray-200: #DFDFDF;
+
+  --biohub-bg: #FAFAFA;
+  --biohub-surface: #FFFFFF;
+
+  --biohub-text: #111111;
+  --biohub-text-secondary: #767676;
+
+  --biohub-header: #F5F5F5;
+  --biohub-footer: #000000;
+
+  --biohub-border: #E8E8E8;
+}
+
+/* Dark mode */
+
+[data-md-color-scheme="slate"] {
+  --biohub-bg: #121212;
+  --biohub-surface: #1B1B1B;
+
+  --biohub-text: #F5F5F5;
+  --biohub-text-secondary: #B0B0B0;
+
+  --biohub-header: #1A1A1A;
+  --biohub-footer: #000000;
+
+  --biohub-border: #2B2B2B;
+}
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+
+html,
+body {
+  --md-text-font-family: "Inter", sans-serif;
+  --md-code-font-family: "Inter", sans-serif;
+
+  background-color: var(--biohub-bg);
+}
+
+body {
+  color: var(--biohub-text);
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.md-typeset {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: var(--biohub-text);
+}
+
+.md-typeset h1 {
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.md-typeset h2 {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+  margin-top: 2.5rem;
+}
+
+.md-typeset h3,
+.md-typeset h4 {
+  font-weight: 600;
+}
+
+.md-typeset p,
+.md-typeset li {
+  color: var(--biohub-text);
+}
+
+.text-secondary {
+  color: var(--biohub-text-secondary);
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.md-grid {
+  max-width: 1440px;
+}
+
+.md-main {
+  background-color: var(--biohub-bg);
+}
+
+.md-content {
+  padding-bottom: 5rem;
+}
+
+/* ==========================================================================
    Header
    ========================================================================== */
 
 .md-header {
-  background-color: #F5F5F5;
-  color: #111111;
-  border-bottom: 1px solid #DFDFDF;
+  background-color: var(--biohub-header);
+  color: var(--biohub-text);
+
+  border-bottom: 1px solid var(--biohub-border);
+
   box-shadow: none;
+
   height: 56px;
 }
 
@@ -14,52 +131,85 @@
   height: 56px;
 }
 
-/* Logo */
-.md-header__button.md-logo img,
-.md-header__button.md-logo svg {
-  height: 24px;
-  width: auto;
-}
+/* Header title */
 
-/* Site title */
 .md-header__title {
   margin-left: 0.4rem;
 }
 
 .md-header__topic,
 .md-header__topic:first-child {
-  font-size: 16px;
+  color: var(--biohub-text);
+  font-size: 15px;
   font-weight: 600;
-  color: #111111;
 }
 
-/* Navigation text */
-.md-tabs__link,
-.md-nav__link,
+/* Search */
+
+.md-search__form {
+  background-color: white;
+  border: 1px solid var(--biohub-border);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+[data-md-color-scheme="slate"] .md-search__form {
+  background-color: #242424;
+}
+
+.md-search__input {
+  font-size: 14px;
+}
+
+/* Header icons */
+
 .md-header__button {
-  color: #111111;
-}
-
-/* Active tab */
-.md-tabs__link--active,
-.md-nav__link--active {
-  color: #6E4FF9 !important;
-  font-weight: 600;
-}
-
-/* Hover states */
-.md-tabs__link:hover,
-.md-nav__link:hover {
-  color: #6E4FF9;
+  color: var(--biohub-text);
 }
 
 /* ==========================================================================
-   Top Navigation Tabs
+   Logo Sizing
+   ========================================================================== */
+
+/* Header logo */
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 24px;
+  width: auto;
+}
+
+/* Prevent oversized logo container */
+
+.md-header__button.md-logo {
+  padding: 0.2rem;
+}
+
+/* Footer logo */
+
+.md-footer img,
+.md-footer svg {
+  height: 30px;
+  width: auto;
+}
+
+/* Optional: tighter footer alignment */
+
+.md-footer-meta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   Top Tabs
    ========================================================================== */
 
 .md-tabs {
-  background-color: #F5F5F5;
-  border-bottom: 1px solid #DFDFDF;
+  background-color: var(--biohub-header);
+
+  border-bottom: 1px solid var(--biohub-border);
+
   height: 44px;
 }
 
@@ -68,40 +218,150 @@
 }
 
 .md-tabs__link {
+  color: var(--biohub-text-secondary);
+
   font-size: 14px;
   font-weight: 500;
 }
 
-/* ==========================================================================
-   Search Bar
-   ========================================================================== */
-
-.md-search__form {
-  background-color: white;
-  border: 1px solid #DFDFDF;
-  border-radius: 8px;
-}
-
-.md-search__input {
-  font-size: 14px;
+.md-tabs__link:hover,
+.md-tabs__link--active {
+  color: var(--biohub-indigo);
 }
 
 /* ==========================================================================
-   Sidebar Navigation
+   Left Sidebar
    ========================================================================== */
+
+.md-sidebar--primary {
+  border-right: 1px solid var(--biohub-border);
+}
 
 .md-sidebar {
+  background-color: var(--biohub-bg);
   padding-top: 1rem;
 }
 
 .md-nav__title {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--biohub-text-secondary);
 }
 
 .md-nav__link {
+  border-radius: 8px;
+
   font-size: 14px;
-  line-height: 1.5;
+
+  margin-bottom: 0.15rem;
+
+  transition: all 0.15s ease;
+}
+
+.md-nav__link:hover {
+  background-color: var(--biohub-indigo-light);
+  color: var(--biohub-indigo);
+}
+
+.md-nav__link--active {
+  background-color: var(--biohub-indigo-light);
+  color: var(--biohub-indigo);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Right Sidebar / TOC
+   ========================================================================== */
+
+.md-sidebar--secondary {
+  padding-left: 1rem;
+}
+
+.md-nav--secondary .md-nav__title {
+  font-size: 13px;
+}
+
+.md-nav--secondary .md-nav__link {
+  font-size: 13px;
+  color: var(--biohub-text-secondary);
+}
+
+.md-nav--secondary .md-nav__link--active {
+  color: var(--biohub-indigo);
+}
+
+/* ==========================================================================
+   Cards / Surfaces
+   ========================================================================== */
+
+.md-typeset .admonition,
+.md-typeset details,
+.tile {
+  background-color: var(--biohub-surface);
+
+  border: 1px solid var(--biohub-border);
+
+  border-radius: 12px;
+
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.md-typeset table:not([class]) {
+  background-color: var(--biohub-surface);
+
+  border: 1px solid var(--biohub-border);
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  font-size: 14px;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--biohub-indigo-light);
+
+  color: var(--biohub-text);
+
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid var(--biohub-border);
+
+  padding: 12px 16px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.md-button {
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.md-button--primary {
+  background-color: var(--biohub-indigo);
+  border-color: var(--biohub-indigo);
+}
+
+/* ==========================================================================
+   Code
+   ========================================================================== */
+
+.md-typeset code {
+  border-radius: 6px;
+}
+
+.md-typeset pre {
+  border-radius: 12px;
 }
 
 /* ==========================================================================
@@ -110,29 +370,69 @@
 
 .md-footer,
 .md-footer-meta {
-  background-color: #F5F5F5;
-  color: #767676;
-  border-top: 1px solid #DFDFDF;
+  background-color: var(--biohub-footer);
+  color: rgba(255,255,255,0.7);
+
+  border-top: none;
 }
 
 .md-footer a {
-  color: #6E4FF9;
+  color: white;
+}
+
+.md-footer-meta__inner {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 /* ==========================================================================
-   Remove old aggressive overrides
+   Tile Grid
    ========================================================================== */
 
-.md-header__topic {
-  align-items: center;
-  position: static;
+.tile-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 1.5rem;
+
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
-.md-header__button.md-logo {
-  display: flex;
+.tile {
+  padding: 1.5rem;
+
+  transition: border-color 0.15s ease;
 }
 
-.hv,
-.vl {
-  display: none;
+.tile:hover {
+  border-color: var(--biohub-indigo);
+}
+
+.tile h3 {
+  margin-top: 0;
+}
+
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.md-typeset img {
+  border-radius: 10px;
+}
+
+/* ==========================================================================
+   Mobile
+   ========================================================================== */
+
+@media screen and (max-width: 768px) {
+
+  .tile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .md-sidebar--primary {
+    border-right: none;
+  }
 }
