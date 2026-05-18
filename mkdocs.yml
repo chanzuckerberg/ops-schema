@@ -11,7 +11,7 @@ theme:
   favicon: assets/biohub_favicon.png
   palette:
     - scheme: light
-      primary: indigo
+      primary: white
       accent: indigo
   font:
     text: Inter
