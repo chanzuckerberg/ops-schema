@@ -10,8 +10,6 @@ The complete schema is detailed in the [OPS Schema Repository](https://github.co
     <p class="tile-tagline">
       Complete technical specification for standardized OPS data structure and validation.
     </p>
-
-    <div class="tile-arrow">→</div>
   </a>
 
 </div>
