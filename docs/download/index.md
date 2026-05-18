@@ -10,8 +10,6 @@ Visualize data in the OPS Explorer and download via the CLI tool. All data is st
     <p class="tile-tagline">
       Download cropped fluorescence images and cell identity CSVs for each gene knockout.
     </p>
-
-    <div class="tile-arrow">→</div>
   </a>
 
   <a href="feature-tables/" class="tile">
@@ -20,8 +18,6 @@ Visualize data in the OPS Explorer and download via the CLI tool. All data is st
     <p class="tile-tagline">
       Access standardized CellProfiler features and author-implemented analysis features.
     </p>
-
-    <div class="tile-arrow">→</div>
   </a>
 
 </div>
