@@ -249,19 +249,55 @@ body {
 /* ==========================================================================
    Logo Sizing
    ========================================================================== */
+/* ==========================================================================
+   Header Logo Fix
+   ========================================================================== */
 
-/* Header logo */
+/* Reduce overall header height */
+
+.md-header {
+  height: 52px;
+}
+
+.md-header__inner {
+  height: 52px;
+}
+
+/* Logo container */
+
+.md-header__button.md-logo {
+  padding: 0 !important;
+
+  margin: 0 0.5rem 0 0 !important;
+
+  display: flex;
+  align-items: center;
+}
+
+/* Actual logo image */
 
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg {
-  height: 24px;
-  width: auto;
+  height: 20px !important;
+
+  width: auto !important;
+
+  max-height: 20px !important;
+
+  display: block;
 }
 
-/* Prevent oversized logo container */
+/* Prevent inherited scaling */
 
-.md-header__button.md-logo {
-  padding: 0.2rem;
+.md-logo img,
+.md-logo svg {
+  height: 20px !important;
+}
+
+/* Tighten title spacing */
+
+.md-header__title {
+  margin-left: 0.25rem;
 }
 
 /* Footer logo */
