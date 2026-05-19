@@ -1,6 +1,6 @@
 # OPS Explorer Quickstart
 
-A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](visualization.md).
+A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](docs/tutorials/reference/index.md).
 
 
 ## Contents
