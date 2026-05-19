@@ -1,6 +1,6 @@
 # OPS Explorer Quickstart
 
-A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](docs/tutorials/reference/index.md).
+A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](../reference/index.md).
 
 
 ## Contents
@@ -134,6 +134,5 @@ Minimum 1, maximum 4. Layout orientation options change based on how many you ha
 
 ## Next Steps
 
-- Read the full tutorial: [Visualizing Data in the OPS Explorer](visualization.md)
-- Programmatic access: [Programmatic Data Access](api-access.md)
-- Browse datasets: [Browsing the All Data Page](all-data-page.md)
+- Read the full tutorial: [Visualizing Data in the OPS Explorer](../reference/index.md)
+- Programmatic access: [Programmatic Data Access](.../download/)
