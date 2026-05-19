@@ -2,7 +2,7 @@
 
 The CellxState viewer is a full-screen, multi-panel workspace for exploring OPS and CROP-seq datasets together. You can view embeddings, fluorescence image galleries, and volcano plots side by side. Everything is linked, so selecting a gene knockout highlights it across every open panel simultaneously.
 
-A collection may contain both OPS datasets (morphological imaging) and CROP-seq datasets (single-cell transcriptomics). The viewer can display panels from both modalities at once, and each panel type behaves slightly differently depending on the underlying data (see Visualization Panels).
+A collection can contain both OPS datasets (morphological imaging) and CROP-seq datasets (single-cell transcriptomics). The viewer can display panels from both modalities at once, and each panel type behaves slightly differently depending on the underlying data (see Visualization Panels).
 
 
 ## Contents
