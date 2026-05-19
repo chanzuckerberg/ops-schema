@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#explorer-reference-manual" class="md-skip">
+        <a href="#visualizing-data-in-the-ops-explorer" class="md-skip">
           Skip to content
         </a>
       
@@ -583,8 +583,7 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Layout Tab">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#adding-a-visualization-panel" class="md-nav__link">
@@ -605,11 +604,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1187,8 +1181,7 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Layout Tab">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#adding-a-visualization-panel" class="md-nav__link">
@@ -1209,11 +1202,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1386,215 +1374,291 @@
   
 
 
-<h1 id="explorer-reference-manual">Explorer Reference Manual<a class="headerlink" href="#explorer-reference-manual" title="Permanent link">&para;</a></h1>
-<p>Complete guide to all panels, controls, and interactions in the OPS Explorer. Start here for comprehensive documentation; if you're new, try the <a href="../quickstart/">Quickstart</a> first.</p>
+<h1 id="visualizing-data-in-the-ops-explorer">Visualizing Data in the OPS Explorer<a class="headerlink" href="#visualizing-data-in-the-ops-explorer" title="Permanent link">&para;</a></h1>
+<p>The CellxState viewer is a full-screen, multi-panel workspace for exploring OPS and CROP-seq datasets together. You can view embeddings, fluorescence image galleries, and volcano plots side by side. Everything is linked, so selecting a gene knockout highlights it across every open panel simultaneously.</p>
+<p>A collection can contain both OPS datasets (morphological imaging) and CROP-seq datasets (single-cell transcriptomics). The viewer can display panels from both modalities at once, and each panel type behaves slightly differently depending on the underlying data (see Visualization Panels).</p>
 <h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="#opening-the-viewer">Opening the Viewer</a></li>
 <li><a href="#collection-info-view">Collection Info View</a></li>
 <li><a href="#default-layout">Default Layout</a></li>
-<li><a href="#the-left-panel">The Left Panel</a></li>
-<li><a href="#visualization-panels">Visualization Panels</a></li>
-<li><a href="#interacting-with-the-viewer">Interacting with the Viewer</a></li>
+<li><a href="#the-left-panel">The Left Panel</a><ul>
+<li><a href="#gene-knockouts">Gene Knockouts</a></li>
+<li><a href="#gene">Gene</a></li>
+<li><a href="#cluster">Cluster</a></li>
+<li><a href="#layout-tab">Layout Tab</a></li>
+<li><a href="#adding-a-visualization-panel">Adding a Visualization Panel</a></li>
+<li><a href="#editing-or-removing-a-panel">Editing or Removing a Panel</a></li>
+</ul>
+</li>
+<li><a href="#visualization-panels">Visualization Panels</a><ul>
+<li><a href="#embedding-panel">Embedding Panel</a></li>
+<li><a href="#images-panel">Images Panel</a></li>
+<li><a href="#ops-feature-volcano-plot">OPS Feature Volcano Plot</a></li>
+<li><a href="#crop-seq-gene-expression-volcano-plot">CROP-seq Gene Expression Volcano Plot</a></li>
+<li><a href="#annotations-tab">Annotations Tab</a></li>
+<li><a href="#gene-expression-tab">Gene Expression Tab</a></li>
+</ul>
+</li>
+<li><a href="#interacting-with-the-viewer">Interacting with the Viewer</a><ul>
+<li><a href="#hovering-a-dot">Hovering a Dot</a></li>
+<li><a href="#clicking-a-dot">Clicking a Dot</a></li>
+<li><a href="#cross-panel-sync">Cross-Panel Sync</a></li>
+</ul>
+</li>
 <li><a href="#quick-reference">Quick Reference</a></li>
 </ul>
-<hr />
+<!-- - [What the Viewer Does Not Include](#what-the-viewer-does-not-include) -->
+
 <h2 id="opening-the-viewer">Opening the Viewer<a class="headerlink" href="#opening-the-viewer" title="Permanent link">&para;</a></h2>
-<p>From the <strong>All Data</strong> page or a <strong>Collection Detail Page</strong>, find a dataset row and click <strong>Explore</strong>. The viewer opens full-screen.</p>
-<p><strong>Collection menu:</strong> The three-dot menu in the top-right of the left panel has two options:</p>
+<p>From the <strong>All Data page</strong> or a <strong>Collection Detail Page</strong>, find a dataset row and click <strong>Explore</strong>. The viewer opens full-screen.</p>
+<p><strong>Collection menu</strong>: the three-dot menu in the top-right of the left panel has two options:</p>
 <ul>
-<li><strong>View collection details</strong> — replaces left panel content with a collection summary</li>
-<li><strong>Download collection</strong> — opens a download modal</li>
+<li><strong>View collection details</strong> - replaces left panel content with a <a href="#collection-info-view">collection summary</a></li>
+<li><strong>Download collection</strong> - opens a download modal</li>
 </ul>
+<p><img alt="Three-dot overflow menu open showing View collection details and Download collection options" src="../../assets/tutorial_imgs/Collection_Overflow_Menu.png" /></p>
 <h2 id="collection-info-view">Collection Info View<a class="headerlink" href="#collection-info-view" title="Permanent link">&para;</a></h2>
-<p>Click <strong>···</strong> → <strong>View collection details</strong> to replace the Gene Knockouts and tab content with a collection-level summary.</p>
+<p>Click <strong>··· → View collection details</strong> to replace the Gene Knockouts and tab content with a collection-level summary.</p>
 <p>The summary includes:</p>
 <ul>
-<li><strong>← Back button</strong> — returns to the Gene Knockouts view</li>
-<li><strong>Collection title</strong></li>
-<li><strong>Publication</strong> — linked citation</li>
-<li><strong>Contact</strong> — linked researcher name</li>
-<li><strong>Description</strong> of experimental context</li>
-<li><strong>Download button</strong></li>
+<li><strong>← Back</strong> button - returns to the Gene Knockouts view</li>
+<li>Collection title</li>
+<li><strong>Publication</strong> - linked citation</li>
+<li><strong>Contact</strong> - linked researcher name</li>
+<li>Description of experimental context</li>
+<li><strong>Download</strong> button</li>
 </ul>
+<p><img alt="Collection info view showing Back button, title, publication link, contact, description, and Download button" src="../../assets/tutorial_imgs/Collection_Info_Open.png" /></p>
 <p>The viewer always shows one <strong>collection</strong> at a time. A collection may contain multiple OPS datasets, multiple CROP-seq datasets, or both. Each open panel shows data from one dataset within that collection.</p>
 <h2 id="default-layout">Default Layout<a class="headerlink" href="#default-layout" title="Permanent link">&para;</a></h2>
 <p>What you see on first open depends on which dataset type you launched from:</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>OPS Feature Volcano</th>
-<th>CROP-seq Gene Expression Volcano</th>
+<th><strong>Launched from</strong></th>
+<th><strong>Default panels</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Each dot is</strong></td>
-<td>A gene knockout</td>
-<td>A measured transcript</td>
+<td>OPS dataset</td>
+<td>Embedding (left) + Images (right) - side by side</td>
 </tr>
 <tr>
-<td><strong>Dot count</strong></td>
-<td>~1,000–5,000</td>
-<td>~20,000</td>
-</tr>
-<tr>
-<td><strong>Selected KOs labeled?</strong></td>
-<td>Yes</td>
-<td>No—dots are different entities</td>
-</tr>
-<tr>
-<td><strong>Colored by annotation?</strong></td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>Selector changes</strong></td>
-<td>Morphological feature</td>
-<td>Measured gene</td>
-</tr>
-<tr>
-<td><strong>X-axis</strong></td>
-<td>Effect Size</td>
-<td>Log₂ Fold Change</td>
-</tr>
-<tr>
-<td><strong>Y-axis</strong></td>
-<td>−log₁₀FDR</td>
-<td>−log₁₀(p-value)</td>
+<td>CROP-seq dataset</td>
+<td>Embedding only - full width</td>
 </tr>
 </tbody>
 </table>
 <p>The OPS default gives you a ready-made view: as soon as you select a gene knockout, the Images panel populates automatically.</p>
-<p>Each panel shows a floating label in its top-left corner with the <strong>dataset name</strong> and, for embeddings, the <strong>embedding name</strong> (e.g., <code>UMAP_marker_x, marker_y</code>). The Images panel shows only the dataset name.</p>
-<p>You can change this layout at any time using the <strong>Layout Tab</strong>.</p>
+<p><img alt="Default two-panel layout when opening an OPS dataset: OPS embedding on the left, empty images panel on the right" src="../../assets/tutorial_imgs/Default_-_Layout_Tab.png" /></p>
+<p>Each panel shows a floating label in its top-left corner with the <strong>dataset name</strong> and, for embeddings, the <strong>embedding name</strong> (e.g. <em>UMAP_marker_x, marker_y</em>). The Images panel shows only the dataset name.</p>
+<p>You can change this layout at any time using the <a href="#layout-tab">Layout Tab</a>.</p>
 <h2 id="the-left-panel">The Left Panel<a class="headerlink" href="#the-left-panel" title="Permanent link">&para;</a></h2>
 <p>The left panel is the control center for the entire viewer. It is divided into two regions:</p>
 <ul>
-<li><strong>Gene Knockouts</strong> (top half) — search and select knockouts to highlight across all panels</li>
-<li><strong>Three tabs</strong> (bottom half) — <strong>Layout</strong>, <strong>Annotations</strong>, <strong>Gene Expression</strong></li>
+<li><strong>Gene Knockouts</strong> (top half) - search and select knockouts to highlight across all panels</li>
+<li><strong>Three tabs</strong> (bottom half) - <a href="#layout-tab">Layout</a>, <a href="#annotations-tab">Annotations</a>, <a href="#gene-expression-tab">Gene Expression</a></li>
 </ul>
 <h3 id="gene-knockouts">Gene Knockouts<a class="headerlink" href="#gene-knockouts" title="Permanent link">&para;</a></h3>
-<p>The Gene Knockouts section is the primary control. Selecting a knockout there highlights it in every open visualization simultaneously. The embedding, the images panel, and the volcano plot all update together.</p>
+<p>The Gene Knockouts (KO) section is the primary control. Selecting a knockout there highlights it in every open visualization simultaneously. The embedding, the images panel, and the volcano plot all update together.</p>
 <p><strong>To add a gene knockout:</strong></p>
 <ol>
 <li>Click the <strong>Search for gene knockout(s)</strong> bar.</li>
 <li>A dropdown lists all knockouts available in the collection. Checked items are already selected.</li>
 <li>Click a name to add it, or uncheck to remove it.</li>
-<li>If your search term has no results, <strong>No matches found</strong> appears.</li>
+<li>If your search term has no results, <em>No matches found</em> appears.</li>
 </ol>
+<p><img alt="Gene knockout search dropdown open with a list of available knockouts to select" src="../../assets/tutorial_imgs/Gene_KO_Search_Dropdown.png" /></p>
 <p>Once added, each knockout appears as a row with:</p>
 <ul>
 <li>The gene name</li>
-<li>An <strong>ⓘ button</strong> — opens the <strong>Gene Info</strong> sidebar</li>
-<li>A <strong>delete button</strong> — removes it from the selection</li>
+<li>An <strong>ⓘ</strong> button - opens the <a href="#gene">Gene Info</a> sidebar</li>
+<li>A <strong>delete</strong> button - removes it from the selection</li>
 </ul>
 <p>A counter in the top-right shows how many are active.</p>
+<p><img alt="Left panel with 12 gene knockouts selected, showing the Annotations tab" src="../../assets/tutorial_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png" /></p>
+<p><strong>Hovering a name in the list</strong> highlights that knockout's dot across all open panels and fades all other dots into the background.</p>
+<p><img alt="OPS embedding with gene C selected, showing both the highlighted dot on the embedding and the populated images panel alongside" src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images_-_Gene_C_Selected.png" /></p>
 <h3 id="gene">Gene<a class="headerlink" href="#gene" title="Permanent link">&para;</a></h3>
-<p>After clicking <strong>ⓘ</strong> next to a gene knockout:</p>
+<p>After clicking ⓘ next to a gene knockout:</p>
 <p>The sidebar shows:</p>
 <ul>
 <li>Gene name and description</li>
-<li>External database links: <strong>Gene Pathways</strong> ↗ and <strong>Protein Complexes</strong> ↗</li>
+<li>External database links: <strong>Gene Pathways ↗</strong> and <strong>Protein Complexes ↗</strong></li>
 <li>A <strong>Knockout Effects</strong> table with physical and transcriptional effect summaries for this gene in the current dataset</li>
 </ul>
+<p><img alt="Gene info sidebar populated with gene description and external links" src="../../assets/tutorial_imgs/Trailing_Sidebar__Gene_Knockout_Info.png" /></p>
 <p>Click <strong>−</strong> to minimize the sidebar or <strong>×</strong> to close it.</p>
 <h3 id="cluster">Cluster<a class="headerlink" href="#cluster" title="Permanent link">&para;</a></h3>
-<p>Clicking an <strong>ⓘ</strong> button next to a cluster in the <strong>Annotations Tab</strong> opens a cluster info sidebar.</p>
-<p>After clicking <strong>ⓘ</strong> next to a cluster in the Annotations tab:</p>
+<p>Clicking an <strong>ⓘ</strong> button next to a cluster in the <a href="#annotations-tab">Annotations Tab</a> opens a cluster info sidebar.</p>
+<p>After clicking ⓘ next to a cluster in the Annotations tab:</p>
 <p>The sidebar shows a breadcrumb identifying the dataset, embedding, and cluster, followed by a table listing all gene knockouts assigned to that cluster.</p>
+<p><img alt="Cluster info sidebar showing a breadcrumb and a table of gene knockouts in the selected cluster" src="../../assets/tutorial_imgs/Trailing_Sidebar__Cluster_Info.png" /></p>
 <h3 id="layout-tab">Layout Tab<a class="headerlink" href="#layout-tab" title="Permanent link">&para;</a></h3>
 <p>The Layout tab controls which panels are open and how they are arranged. It is the default tab when you first open the viewer.</p>
-<p><strong>Visualization list</strong> — each row represents one open panel and shows:</p>
+<p><img alt="Left panel showing the Layout tab with two visualization rows and the + Add Visualization button" src="../../assets/tutorial_imgs/Main_Panel_-_Layout_-_No_Gene_KOs.png" /></p>
+<p><strong>Visualization list</strong> - each row represents one open panel and shows:</p>
 <ul>
-<li>A <strong>thumbnail</strong> indicating the panel's position in the layout. Click the other rectangle in the thumbnail to swap that panel to the opposite position.</li>
-<li>A <strong>chip label</strong>: <strong>Embedding</strong> (purple), <strong>Images</strong> (blue), or <strong>Volcano Plot</strong></li>
-<li>The <strong>dataset name</strong> and <strong>embedding name</strong> as a subtitle</li>
+<li>A <strong>thumbnail</strong> indicating the panel's position in the layout. Click the <em>other</em> rectangle in the thumbnail to swap that panel to the opposite position.</li>
+<li>A <strong>chip</strong> label: <strong>Embedding</strong> (purple), <strong>Images</strong> (blue), or <strong>Volcano Plot</strong></li>
+<li>The dataset name and embedding name as a subtitle</li>
 <li><strong>Edit</strong> and <strong>Delete</strong> buttons on hover</li>
 </ul>
-<p><strong>+ Add Visualization</strong> — opens the Add Visualization sidebar. The viewer supports a minimum of 1 and a maximum of 4 panels open at once.</p>
-<h4 id="adding-a-visualization-panel">Adding a Visualization Panel<a class="headerlink" href="#adding-a-visualization-panel" title="Permanent link">&para;</a></h4>
-<p>Click <strong>+ Add Visualization</strong> in the <strong>Layout Tab</strong>. A sidebar slides open on the left.</p>
-<p><strong>Step 1 — Choose a visualization type:</strong>
-- Embedding
-- Images
-- Volcano Plot</p>
-<p><strong>Step 2 — Select a dataset</strong> from the dropdown.</p>
-<p><strong>Step 3 — Select an embedding</strong> (Embedding and Volcano Plot types only). Multiple embeddings may be available per dataset. For the Embedding type, a live preview appears in the sidebar before you confirm.</p>
-<p><strong>Images panels</strong> are available for OPS datasets only. No embedding selection is needed. Just choose the dataset and click <strong>Add</strong>.</p>
+<p><img alt="A Volcano Plot row in the Layout tab showing the thumbnail, chip, dataset name, and action buttons" src="../../assets/tutorial_imgs/Visualization_Info.png" /></p>
+<p><strong>+ Add Visualization</strong> - opens the Add Visualization sidebar. The viewer supports a minimum of <strong>1</strong> and a maximum of <strong>4</strong> panels open at once. See <a href="#adding-a-visualization-panel">Adding a Visualization Panel</a>.</p>
+<h3 id="adding-a-visualization-panel">Adding a Visualization Panel<a class="headerlink" href="#adding-a-visualization-panel" title="Permanent link">&para;</a></h3>
+<p>Click <strong>+ Add Visualization</strong> in the <a href="#layout-tab">Layout Tab</a>. A sidebar slides open on the left.</p>
+<p><strong>Step 1 - Choose a visualization type:</strong></p>
+<p><img alt="Add Visualization sidebar at Step 1 showing three type buttons: Embedding, Images, Volcano Plot" src="../../assets/tutorial_imgs/visualization-type.png" /></p>
+<p><strong>Step 2 - Select a dataset</strong> from the dropdown.</p>
+<p><strong>Step 3 - Select an embedding</strong> (Embedding and Volcano Plot types only). Multiple embeddings may be available per dataset. For the Embedding type, a <strong>live preview</strong> appears in the sidebar before you confirm.</p>
+<p><img alt="Add Visualization sidebar at Step 1 showing three type buttons: Embedding, Images, Volcano Plot" src="../../assets/tutorial_imgs/add-visualization-embedding.png" /></p>
+<blockquote>
+<p><strong>Images panels</strong> are available for OPS datasets only. No embedding selection is needed. Just choose the dataset and click Add.</p>
+</blockquote>
 <p>Once all required fields are complete, click <strong>Add Visualization</strong>. The sidebar closes and the new panel appears in the layout.</p>
-<h4 id="editing-or-removing-a-panel">Editing or Removing a Panel<a class="headerlink" href="#editing-or-removing-a-panel" title="Permanent link">&para;</a></h4>
-<p>In the <strong>Layout Tab</strong>, hover any row to reveal action buttons:</p>
+<p><img alt="Layout tab with the Add Visualization sidebar open alongside the existing panel list" src="../../assets/tutorial_imgs/Layout_Tab_%28Add_Visualization_Trailing_Sidebar_Open%29.png" /></p>
+<h3 id="editing-or-removing-a-panel">Editing or Removing a Panel<a class="headerlink" href="#editing-or-removing-a-panel" title="Permanent link">&para;</a></h3>
+<p>In the <a href="#layout-tab">Layout Tab</a>, hover any row to reveal action buttons:</p>
 <ul>
-<li><strong>Edit</strong> (pencil icon) — opens the same Add Visualization sidebar pre-filled with the current settings. The confirm button reads <strong>Apply Changes</strong>.</li>
-<li><strong>Delete</strong> (trash icon) — removes the panel immediately.</li>
+<li><strong>Edit</strong> (pencil icon) - opens the same Add Visualization sidebar pre-filled with the current settings. The confirm button reads <strong>Apply Changes</strong>.</li>
+<li><strong>Delete</strong> (trash icon) - removes the panel immediately.</li>
 </ul>
+<p><img alt="Edit Visualization sidebar open and pre-filled, showing the Apply Changes button" src="../../assets/tutorial_imgs/layout_panels.png" /></p>
 <h2 id="visualization-panels">Visualization Panels<a class="headerlink" href="#visualization-panels" title="Permanent link">&para;</a></h2>
-<p>The right side of the viewer shows one to four panels. This section covers what each panel type displays and how to interact with it.</p>
+<p>The right side of the viewer shows one to four panels. This section covers what each panel type displays and how to interact with it. For hover and click interactions shared by all panels, see <a href="#interacting-with-the-viewer">Interacting with the Viewer</a>.</p>
 <h3 id="embedding-panel">Embedding Panel<a class="headerlink" href="#embedding-panel" title="Permanent link">&para;</a></h3>
-<p>The Embedding panel shows a scatter plot where <strong>each dot is one gene knockout</strong>, positioned according to the dataset authors' chosen embedding. For OPS datasets, positions typically come from morphological imaging features (i.e. computed with CellProfiler or a deep learning model; e.g. nucleus size). For CROP-seq datasets, positions come from transcriptomic profiles.</p>
-<p>When gene knockouts are selected from the Gene Knockouts section, they appear as colored, highlighted dots on the plot.</p>
+<p>The Embedding panel shows a scatter plot where <strong>each dot is one gene knockout</strong>, positioned according to the dataset authors' chosen embedding. For OPS datasets, positions typically come from morphological imaging features (e.g. computed with CellProfiler or a deep learning model; e.g. nucleus size). For CROP-seq datasets, positions come from transcriptomic profiles.</p>
+<p><img alt="Full viewer showing two default panels: OPS embedding with cluster coloring on the left, empty images panel on the right" src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images.png" /></p>
+<!-- ![Embedding panel in standalone view showing the scatter plot, panel header, and dot count at the bottom](../../assets/tutorial_imgs/Dataset_-_Embedding_Panel.png) -->
+
+<p>When gene knockouts are selected from the <a href="#gene-knockouts">Gene Knockouts</a> section, they appear as labeled, highlighted dots on the plot. See <a href="#hovering-a-dot">Hovering a Dot</a> and <a href="#clicking-a-dot">Clicking a Dot</a> for interaction details.</p>
 <h3 id="images-panel">Images Panel<a class="headerlink" href="#images-panel" title="Permanent link">&para;</a></h3>
 <p>The Images panel shows representative fluorescence image crops for each selected gene knockout, organized as a grid of rows (one per knockout) and columns (one per imaging marker; e.g., DAPI, ConA, Phalloidin).</p>
+<p>When gene knockouts are selected:</p>
+<p><img alt="Images panel with CONTROL row pinned at the top and gene KO rows below, showing crops across four imaging channels" src="../../assets/tutorial_imgs/Default_-_Annotations_Tab_-_Gene_KOs_Added.png" /></p>
 <p><strong>Grid structure:</strong></p>
 <ul>
-<li><strong>Column headers</strong> — each column is one fluorescent marker, a stain highlighting a specific cellular structure (e.g. DAPI for DNA, ConA for cell membranes, phalloidin for actin)</li>
-<li><strong>CONTROL row</strong> — always shown at the top and pinned at the top: it stays fixed as you scroll down, so you always have control images as a visual reference</li>
-<li><strong>Gene KO rows</strong> — one row per selected knockout, with approximately 3 representative image crops per marker</li>
-<li><strong>Each row</strong> can be collapsed or expanded with the arrow on its header</li>
+<li>
+<p><strong>Column headers</strong> - each column is one fluorescent marker, a stain highlighting a specific cellular structure (e.g. DAPI for DNA, ConA for cell membranes, phalloidin for actin)</p>
+</li>
+<li>
+<p><strong>CONTROL row</strong> - always shown at the top and <strong>pinned at the top</strong>: it stays fixed as you scroll down, so you always have control images as a visual reference</p>
+</li>
+<li><strong>Gene KO rows</strong> - one row per selected knockout, with approximately <strong>3 representative image crops per marker</strong></li>
+<li>Each row can be <strong>collapsed or expanded</strong> with the arrow on its header</li>
 </ul>
 <p><strong>Controls:</strong></p>
 <ul>
-<li><strong>Markers: N ▾ dropdown</strong> (top-right) — select how many markers to show as columns. Up to 20 markers can be displayed at once. Scroll horizontally to see all columns.</li>
+<li><strong>Markers: N ▾</strong> dropdown (top-right) - select how many markers to show as columns. Up to <strong>20 markers</strong> can be displayed at once. Scroll horizontally to see all columns.</li>
 <li><strong>Hovering a row header</strong> highlights that knockout across all other open panels</li>
-</ul>
-<p><strong>Image interactions:</strong></p>
-<ul>
 <li><strong>Hovering an individual image</strong> shows a tooltip confirming the gene KO name and marker</li>
-<li><strong>Clicking an image</strong> opens it in the idetik viewer in a new browser tab for full-resolution viewing</li>
+<li><strong>Clicking an image</strong> opens it in the <a href="https://github.com/chanzuckerberg/idetik"><strong>idetik viewer</strong></a> in a new browser tab for full-resolution viewing</li>
 </ul>
+<p><strong>Image display modes</strong></p>
+<p>The images panel shows image crops of selected gene knockouts:</p>
+<p><img alt="Cards display mode: each KO row shown as individual image cards" src="../../assets/tutorial_imgs/Default_-_Annotations_Tab_-_Gene_KOs_Added.png" /></p>
+<!--![Grid display mode: compact grid of image crops arranged by KO row and marker column](../../assets/tutorial_imgs/OPS_Grid_(Light).png)
+
+<!--![Film strip display mode: horizontal scrolling strip of image crops per KO](../../assets/tutorial_imgs/OPS_Film_Strip_(Light).png)
+
+<!--![Dividers layout: KO rows separated by visible dividers for easier visual scanning](../../assets/tutorial_imgs/OPS_Dividers_(Light).png)
+
+<!--![Hovering a gene KO name in the left panel list highlights its row in the images panel and fades others](../../assets/tutorial_imgs/Hover_on_Gene_KO_in_list,_Images_Scrolled.png) -->
+
 <h3 id="ops-feature-volcano-plot">OPS Feature Volcano Plot<a class="headerlink" href="#ops-feature-volcano-plot" title="Permanent link">&para;</a></h3>
 <p>The OPS Feature Volcano Plot shows the morphological effect of every gene knockout in the screen for a chosen cellular feature. This is useful for identifying which perturbations have the strongest or most statistically significant effects.</p>
 <p><strong>What the dots represent:</strong></p>
 <ul>
-<li><strong>Each dot</strong> = one gene knockout (same as the Embedding Panel)</li>
-<li><strong>Selected gene knockouts</strong> are labeled on the plot</li>
-<li><strong>Dots</strong> can be colored by Annotations</li>
+<li>Each dot = one gene knockout (same as the <a href="#embedding-panel">Embedding Panel</a>)</li>
+<li>Selected gene knockouts are labeled on the plot</li>
+<li>Dots can be colored by <a href="#annotations-tab">Annotations</a></li>
 </ul>
 <p><strong>Axes:</strong></p>
 <ul>
-<li><strong>X-axis: Effect Size</strong> — magnitude of morphological change vs. non-targeting control for the selected feature</li>
-<li><strong>Y-axis: −log₁₀FDR</strong> — corrected p-value as a measure of statistical significance</li>
+<li><strong>X-axis: Effect Size</strong> - magnitude of morphological change vs. non-targeting control for the selected feature</li>
+<li><strong>Y-axis: −log₁₀FDR</strong> - false discovery rate corrected p-value as a measure of <a href="https://en.wikipedia.org/wiki/False_discovery_rate">statistical significance</a></li>
 </ul>
-<p><strong>Feature selector:</strong></p>
+<p><strong>Feature selector</strong></p>
 <ul>
-<li><strong>top-right dropdown</strong> — choose which morphological feature drives the x-axis (e.g. Nucleus Size, Nucleus Area, Mitochondria Intensity). The selected feature name also appears on the x-axis label.</li>
+<li><strong>top-right dropdown</strong> - choose which morphological feature drives the x-axis (e.g. <em>Nucleus Size</em>, <em>Nucleus Area</em>, <em>Mitochondria Intensity</em>). The selected feature name also appears on the x-axis label.</li>
 </ul>
+<p>For hover and click interactions, see <a href="#interacting-with-the-viewer">Interacting with the Viewer</a>.</p>
+<p><img alt="One-panel showing OPS Feature Volcano" src="../../assets/tutorial_imgs/viewer-volcano-plot.png" /></p>
 <h3 id="crop-seq-gene-expression-volcano-plot">CROP-seq Gene Expression Volcano Plot<a class="headerlink" href="#crop-seq-gene-expression-volcano-plot" title="Permanent link">&para;</a></h3>
 <p>The CROP-seq Gene Expression Volcano Plot shows which transcripts are differentially expressed for a chosen gene condition.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>Each dot here is a measured transcript (gene), not a gene knockout.</strong> There are approximately 20,000 dots, one per transcript in the CROP-seq dataset.</p>
-</div>
+<blockquote>
+<p><strong>Note:</strong> Each dot here is a <strong>measured transcript (gene)</strong>, not a gene knockout. There are approximately 20,000 dots, one per transcript in the CROP-seq dataset.</p>
+</blockquote>
+<p><strong>Comparison with the OPS Feature Volcano:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>OPS Feature Volcano</strong></th>
+<th><strong>CROP-seq Gene Expression Volcano</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each dot is</td>
+<td>A gene knockout</td>
+<td>A measured transcript</td>
+</tr>
+<tr>
+<td>Dot count</td>
+<td>~1,000–5,000</td>
+<td>~20,000</td>
+</tr>
+<tr>
+<td>Selected KOs labeled?</td>
+<td>Yes</td>
+<td>No - dots are different entities</td>
+</tr>
+<tr>
+<td>Colored by annotation?</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Selector changes</td>
+<td>Morphological feature</td>
+<td>Measured gene</td>
+</tr>
+<tr>
+<td>X-axis</td>
+<td>Effect Size</td>
+<td>Log₂ Fold Change</td>
+</tr>
+<tr>
+<td>Y-axis</td>
+<td>−log₁₀FDR</td>
+<td>−log₁₀(p-value)</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Gene selector</strong> (top-right dropdown): choose which <strong>measured gene</strong> to use to display a volcano plot. The plot then shows how the expression of all ~20,000 transcripts changes when that gene is knocked out.</p>
+<p><img alt="Four-panel image showing all four panel types: OPS UMAP (top-left), OPS Feature Volcano (top-right), CROP-seq UMAP (bottom-left), CROP-seq Gene Expression Volcano (bottom-right)" src="../../assets/tutorial_imgs/Screenshot_2026-04-27_at_2.15.15_PM.png" /></p>
 <h3 id="annotations-tab">Annotations Tab<a class="headerlink" href="#annotations-tab" title="Permanent link">&para;</a></h3>
 <p>The Annotations tab lets you color all eligible panels by a biological annotation, making it easy to see how gene knockouts group by cluster or control status. All annotations are supplied by the dataset authors.</p>
+<p><img alt="Annotations tab showing Shared Categories and per-dataset cluster sections with gene knockouts selected" src="../../assets/tutorial_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png" /></p>
 <p><strong>Shared Categories</strong> apply across all datasets in the collection:</p>
 <ul>
-<li><strong>control type</strong> — control and non-control, each with a cell count</li>
+<li><strong>control type</strong> - <em>control</em> and <em>non-control</em>, each with a cell count</li>
 </ul>
-<p><strong>Per-dataset sections</strong> appear below, one per embedding (e.g. <code>OPS pseudobulked IF7_432 / UMAP_marker_x, marker_y</code>):</p>
+<p><strong>Per-dataset sections</strong> appear below, one per embedding (e.g. <em>OPS pseudobulked IF7_432 / UMAP_marker_x, marker_y</em>):</p>
 <ul>
-<li><strong>clusters</strong> — cluster 1 through cluster 5+, each with a count and an <strong>ⓘ button</strong> that opens Cluster</li>
+<li><strong>clusters</strong> - cluster 1 through cluster 5+, each with a count and an <strong>ⓘ</strong> button that opens <a href="#cluster">Cluster</a></li>
 </ul>
-<p><strong>To apply a color:</strong> click the <strong>●</strong> filled-dot button next to any category or clusters label. All eligible panels update immediately.</p>
+<p><strong>To apply a color:</strong> click the <strong>●</strong> filled-dot button next to any category or <em>clusters</em> label. All eligible panels update immediately.</p>
 <p><strong>Which panels get colored:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Panel type</th>
-<th>Gets annotation color?</th>
+<th><strong>Panel type</strong></th>
+<th><strong>Gets annotation color?</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -1612,23 +1676,32 @@
 </tr>
 <tr>
 <td>CROP-seq Gene Expression Volcano Plot</td>
-<td>No—dots are measured genes, not knockouts</td>
+<td><strong>No</strong> - dots are measured genes, not knockouts</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Without annotation color:</strong> selected knockouts are labeled, all other dots are in default black.</p>
-<p><strong>With annotation color and hover active:</strong> hovering a dot highlights its cluster and fades all other clusters across all linked panels simultaneously.</p>
+<p><strong>Without annotation color:</strong></p>
+<p><img alt="Four-panel view with no annotation coloring: selected knockouts labeled, all other dots in default black" src="../../assets/tutorial_imgs/Visualizations_-_Color_By_Off.png" /></p>
+<p><strong>With annotation color and hover active:</strong></p>
+<p>Hovering a dot highlights its cluster and fades all other clusters across all linked panels simultaneously.</p>
+<p><img alt="Four-panel view with cluster color active: hovered dot's cluster highlighted, all others faded, tooltip visible" src="../../assets/tutorial_imgs/Visualizations_-_Color_By_On%2C_Interactions.png" /></p>
+<p><strong>With labels on:</strong></p>
+<p><img alt="Colored UMAP with gene knockout name labels visible on selected knockouts" src="../../assets/tutorial_imgs/Visualizations_-_Color_By_%28On%29_with_Label.png" /></p>
 <h3 id="gene-expression-tab">Gene Expression Tab<a class="headerlink" href="#gene-expression-tab" title="Permanent link">&para;</a></h3>
 <p>The Gene Expression tab lets you color panels by the expression level of a specific measured gene. This coloring applies <strong>only to CROP-seq panels</strong>.</p>
+<p><img alt="Gene Expression tab active: CROP-seq embedding colored continuously by expression; OPS panels show Limited badges" src="../../assets/tutorial_imgs/Gene_Expression.png" /></p>
 <p><strong>To add a gene expression overlay:</strong></p>
 <ol>
 <li>Click <strong>Add gene(s)</strong> and type a gene symbol.</li>
 <li>The gene appears as a row with a miniature expression histogram.</li>
-<li>Click the <strong>●</strong> color icon on that row to activate it as the color overlay.</li>
+<li>Click the <strong>● color</strong> icon on that row to activate it as the color overlay.</li>
 </ol>
 <p>CROP-seq embeddings are colored with a <strong>continuous (gradient) color scale</strong> based on expression level.</p>
-<p>OPS panels show an amber <strong>⚠ Limited</strong> badge. Hovering the badge shows: "Only available for CROP-seq data."</p>
-<p><strong>Switching back to the Annotations Tab</strong> restores annotation-based coloring across all eligible panels.</p>
+<p>OPS panels show an amber <strong>⚠ Limited</strong> badge. Hovering the badge shows:</p>
+<p><img alt="Tooltip reading &quot;Only available for CROP-seq data&quot; appearing on an OPS panel's Limited badge" src="../../assets/tutorial_imgs/GE_Tab_Disabled_Tooltip.png" /></p>
+<p><img alt="CROP-seq embedding with continuous gene expression coloring active, showing the gradient scale and OPS panels with Limited badges" src="../../assets/tutorial_imgs/Dataset_-_Continuous_Gene_Expression.png" /></p>
+<p>Switching back to the <a href="#annotations-tab">Annotations Tab</a> restores annotation-based coloring across all eligible panels.</p>
+<p><img alt="Colored UMAP with gene knockout name labels visible on selected knockouts" src="../../assets/tutorial_imgs/Visualizations_-_Color_By_%28On%29_with_Label.png" /></p>
 <h2 id="interacting-with-the-viewer">Interacting with the Viewer<a class="headerlink" href="#interacting-with-the-viewer" title="Permanent link">&para;</a></h2>
 <p>This section covers hover, click, and cross-panel behaviors that apply across all panel types.</p>
 <h3 id="hovering-a-dot">Hovering a Dot<a class="headerlink" href="#hovering-a-dot" title="Permanent link">&para;</a></h3>
@@ -1637,8 +1710,8 @@
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Description</th>
+<th><strong>Field</strong></th>
+<th><strong>Description</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -1660,32 +1733,43 @@
 </tr>
 </tbody>
 </table>
-<p><strong>CROP-seq Gene Expression Volcano:</strong> tooltip shows the <strong>transcript name</strong>, <strong>log₂FC</strong> (fold change), and <strong>−log₁₀FDR</strong> (false discovery rate = corrected p-value).</p>
-<p><strong>When annotation color is active:</strong> hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.</p>
-<p><strong>Hovering a name in the gene list:</strong> highlights that knockout's dot across all open panels and fades all other dots into the background.</p>
+<p><img alt="Hover tooltip on an embedding dot showing Gene KO, Cluster, Cells Observed, and Images count" src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images_-_Hover.png" /></p>
+<p><strong>When annotation color is active</strong>: hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.</p>
+<p><img alt="Colored UMAP with gene knockout name labels visible on selected knockouts" src="../../assets/tutorial_imgs/Visualizations_-_Color_By_On%2C_Interactions.png" /></p>
+<p><strong>CROP-seq Gene Expression Volcano</strong>: tooltip shows the transcript name, log₂FC (fold change), and −log₁₀FDR (false discovery rate = corrected p-value).</p>
+<p><img alt="OPS embedding with gene C selected, showing the highlighted dot and faded background dots" src="../../assets/tutorial_imgs/color-by-on-hover.png" /></p>
+<p><strong>Hovering a name in the gene list</strong>: highlights that knockout's dot across all open panels and fades all other dots into the background.</p>
+<p><img alt="OPS embedding with gene C selected, showing the highlighted dot" src="../../assets/tutorial_imgs/multimodal-embedding-hover.png" /></p>
 <h3 id="clicking-a-dot">Clicking a Dot<a class="headerlink" href="#clicking-a-dot" title="Permanent link">&para;</a></h3>
 <p>Clicking any dot in an embedding panel opens a context menu with the following actions:</p>
 <ul>
-<li><strong>Select Gene KO</strong> — adds it to the Gene Knockouts selection</li>
-<li><strong>View Gene Info</strong> — opens the Gene Info sidebar</li>
-<li><strong>View Images</strong> — jumps to the Images Panel for this KO</li>
-<li><strong>View Feature Volcano Plot</strong> — navigates to the OPS Feature Volcano Plot</li>
-<li><strong>View Cluster #</strong> — opens the Cluster Info sidebar for that cluster</li>
+<li><strong>Select Gene KO</strong> - adds it to the <a href="#gene-knockouts">Gene Knockouts</a> selection</li>
+<li><strong>View Gene Info</strong> - opens the <a href="#gene">Gene Info</a> sidebar</li>
+<li><strong>View Images</strong> - jumps to the <a href="#images-panel">Images Panel</a> for this KO</li>
+<li><strong>View Feature Volcano Plot</strong> - navigates to the <a href="#ops-feature-volcano-plot">OPS Feature Volcano Plot</a></li>
+<li><strong>View Cluster #</strong> - opens the <a href="#cluster">Cluster Info</a> sidebar for that cluster</li>
 </ul>
+<p><img alt="Click context menu on a dot showing all five action options" src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images_-_Select_Dot.png" /></p>
 <h3 id="cross-panel-sync">Cross-Panel Sync<a class="headerlink" href="#cross-panel-sync" title="Permanent link">&para;</a></h3>
 <p>When you hover a dot in any embedding or volcano panel, the <strong>same gene knockout is simultaneously highlighted in all other open panels</strong>. This lets you compare how the same perturbation appears across the OPS embedding, CROP-seq embedding, OPS volcano, and images without navigating away.</p>
-<p><strong>Orientation switcher</strong> — Icons at the top change the panel arrangement:</p>
+<!-- ![OPS embedding with a dot selected, showing the highlighted knockout and how selection propagates across linked panels](../../assets/tutorial_imgs/OPS_Embedding___OPS_Images_-_Select_Dot_(1).png) -->
+
+<p><img alt="Multi-panel view showing a hovered knockout highlighted simultaneously across the OPS embedding, CROP-seq embedding, and images panel" src="../../assets/tutorial_imgs/Multi-modal_Embeddings.png" /></p>
+<!-- ![Full four-panel view with a knockout selected, showing simultaneous highlighting across the OPS embedding, CROP-seq embedding, OPS volcano plot, and images panel](../../assets/tutorial_imgs/Multi-modal_Embeddings_(1).png) -->
+
+<p><strong>Orientation switcher</strong> - Icons at the top change the panel arrangement:</p>
+<p><img alt="Multi-panel view showing a various orientations for display" src="../../assets/tutorial_imgs/orientation_selector.png" /></p>
 <table>
 <thead>
 <tr>
-<th>Number of open panels</th>
-<th>Orientation options</th>
+<th><strong>Number of open panels</strong></th>
+<th><strong>Orientation options</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1</td>
-<td>Fixed—no choice</td>
+<td>Fixed - no choice</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1697,7 +1781,7 @@
 </tr>
 <tr>
 <td>4</td>
-<td>Fixed 2×2 grid—no choice</td>
+<td>Fixed 2×2 grid - no choice</td>
 </tr>
 </tbody>
 </table>
@@ -1705,78 +1789,74 @@
 <table>
 <thead>
 <tr>
-<th>Action</th>
-<th>What to do</th>
+<th><strong>Action</strong></th>
+<th><strong>What to do</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Open a dataset in the viewer</td>
-<td>Click <strong>Explore</strong> on the dataset row</td>
-</tr>
-<tr>
-<td>Find a knockout in the embedding</td>
-<td>Type the name in the <strong>Search for gene knockout(s)</strong> bar</td>
+<td>Find a gene knockout in the embedding</td>
+<td>Type the name in the <a href="#gene-knockouts">Gene Knockouts</a> search bar</td>
 </tr>
 <tr>
 <td>Select feature for OPS volcano</td>
 <td><strong>Feature selector</strong> dropdown in top right of volcano panel</td>
 </tr>
 <tr>
-<td>See microscopy images for a KO</td>
-<td>Add the KO and the <strong>Images panel</strong> will populate automatically</td>
-</tr>
-<tr>
-<td>Locate a knockout across all open panels</td>
-<td>Hover its name in the <strong>Gene Knockouts</strong> list, or its dot in any panel</td>
-</tr>
-<tr>
-<td>Color all panels by cluster</td>
-<td><strong>Annotations</strong> tab → click <strong>●</strong> next to <strong>clusters</strong></td>
-</tr>
-<tr>
-<td>Color CROP-seq panels by gene expression</td>
-<td><strong>Gene Expression</strong> tab → add a gene → click its <strong>●</strong> color icon</td>
+<td>See microscopy images for a knockout</td>
+<td>Add it to Gene Knockouts - images appear in the <a href="#images-panel">Images Panel</a></td>
 </tr>
 <tr>
 <td>Open an image at full resolution</td>
-<td>Click any image—opens the <strong>idetik viewer</strong> in a new tab</td>
+<td>Click any image in the Images Panel - opens in the <a href="https://github.com/chanzuckerberg/idetik">idetik viewer</a></td>
 </tr>
 <tr>
 <td>Identify knockouts with the largest morphological effect</td>
-<td>Look at the top edges of the <strong>OPS Feature Volcano Plot</strong></td>
+<td>Look at the top edges of the <a href="#ops-feature-volcano-plot">OPS Feature Volcano Plot</a></td>
 </tr>
 <tr>
 <td>Change which feature the volcano shows</td>
-<td>Use the <strong>Feature selector</strong> dropdown in the volcano panel header</td>
+<td>Use the Feature selector dropdown in the volcano panel header</td>
 </tr>
 <tr>
 <td>See which transcripts change for a knockout condition</td>
-<td>Open a <strong>CROP-seq Gene Expression Volcano</strong>; use the <strong>Gene selector</strong></td>
+<td>Open a <a href="#crop-seq-gene-expression-volcano-plot">CROP-seq Gene Expression Volcano</a>; use the Gene selector</td>
+</tr>
+<tr>
+<td>Color all panels by cluster</td>
+<td><a href="#annotations-tab">Annotations Tab</a> → click <strong>●</strong> next to <em>clusters</em></td>
 </tr>
 <tr>
 <td>See which knockouts share a cluster</td>
-<td>Hover any dot while <strong>annotation color is active</strong>—other clusters fade</td>
+<td>Hover any dot while annotation color is active - other clusters fade</td>
+</tr>
+<tr>
+<td>Locate a knockout across all open panels</td>
+<td>Hover its dot in one panel - all other panels highlight it simultaneously</td>
+</tr>
+<tr>
+<td>See all knockouts in a cluster</td>
+<td>Click <strong>ⓘ</strong> next to the cluster in the Annotations tab → <a href="#cluster">Cluster Info</a></td>
 </tr>
 <tr>
 <td>Look up external gene info</td>
-<td>Click <strong>ⓘ</strong> next to a name in the <strong>Gene Knockouts</strong> list → <strong>Gene Info</strong> sidebar</td>
+<td>Click <strong>ⓘ</strong> next to a name in the Gene Knockouts list → <a href="#gene">Gene Info</a></td>
 </tr>
 <tr>
 <td>Add a new panel</td>
-<td><strong>Layout</strong> tab → <strong>+ Add Visualization</strong></td>
+<td><a href="#layout-tab">Layout Tab</a> → + Add Visualization</td>
 </tr>
 <tr>
 <td>Swap two panels' positions</td>
-<td>Click the other rectangle in a panel's thumbnail in the <strong>Layout Tab</strong></td>
+<td>Click the other rectangle in a panel's thumbnail in the Layout Tab</td>
 </tr>
 <tr>
 <td>Download the collection</td>
-<td><strong>···</strong> menu → <strong>Download collection</strong></td>
+<td><strong>···</strong> menu → Download collection</td>
 </tr>
 <tr>
 <td>View collection publication and metadata</td>
-<td><strong>···</strong> menu → <strong>View collection details</strong></td>
+<td><strong>···</strong> menu → <a href="#collection-info-view">View collection details</a></td>
 </tr>
 </tbody>
 </table>
