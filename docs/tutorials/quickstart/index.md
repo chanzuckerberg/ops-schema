@@ -1,6 +1,6 @@
 # OPS Explorer Quickstart
 
-A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](../reference/tutorial.md).
+A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](visualization.md).
 
 
 ## Contents
@@ -18,7 +18,10 @@ From the **All Data page** or a **Collection Detail Page**, click **Explore** on
 
 The viewer is split into two regions:
 
-![Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels](../../assets/quickstart_imgs/Default_-_Layout_Tab.png)
+<p align="center">
+  <img src="../../assets/quickstart_imgs/Default_-_Layout_Tab.png"
+       alt="Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels">
+</p>
 
 | Region | What it does |
 |---|---|
@@ -34,7 +37,10 @@ Hovering or clicking a dot in any visualization panel highlights the same gene k
 
 The left panel has two regions:
 
-![Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression](../../assets/quickstart_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png)
+<p align="center">
+  <img src="../../assets/quickstart_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png"
+       alt="Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression">
+</p>
 
 **Top region - Gene Knockouts**
 
@@ -48,11 +54,17 @@ The left panel has two regions:
 - **Annotations** - color all eligible panels by a categorical annotation (e.g. cluster)
 - **Gene Expression** - color CROP-seq panels by a measured gene's expression level
 
-![Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot](../../assets/quickstart_imgs/Add_Visualization__Embedding.png)
+<p align="center">
+  <img src="../../assets/quickstart_imgs/Add_Visualization__Embedding.png"
+       alt="Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot">
+</p>
 
 A **··· menu** in the top-right of the left panel opens collection-level actions: **View collection details** or **Download collection**.
 
-![Three-dot overflow menu open showing View collection details and Download collection options](../../assets/quickstart_imgs/Collection_Overflow_Menu.png)
+<p align="center">
+  <img src="../../assets/quickstart_imgs/Collection_Overflow_Menu.png"
+       alt="Three-dot overflow menu open showing View collection details and Download collection options">
+</p>
 
 
 ### Visualization Panels
@@ -66,7 +78,10 @@ The right side of the viewer holds 1–4 panels of four possible types:
 | **OPS Feature Volcano** | One gene knockout | Finding KOs with the largest morphological effect |
 | **CROP-seq Gene Expression Volcano** | One **measured transcript** (~20K dots) | Finding differentially expressed genes for a chosen condition |
 
-![Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano](../../assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png)
+<p align="center">
+  <img src="../../assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png"
+       alt="Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano">
+</p>
 
 > **Important:** The CROP-seq Gene Expression Volcano is the only panel where dots are **not** gene knockouts. Annotation coloring and selection-from-list do not apply to it.
 
@@ -119,6 +134,6 @@ Minimum 1, maximum 4. Layout orientation options change based on how many you ha
 
 ## Next Steps
 
-- Read the full tutorial: [Visualizing Data in the OPS Explorer](docs/tutorial/reference/ops_explorer_tutorial.md)
+- Read the full tutorial: [Visualizing Data in the OPS Explorer](visualization.md)
 - Programmatic access: [Programmatic Data Access](api-access.md)
 - Browse datasets: [Browsing the All Data Page](all-data-page.md)
