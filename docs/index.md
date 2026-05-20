@@ -29,28 +29,28 @@ V1 capabilities include:
   <a href="tutorials/" class="tile">
     <h3 class="tile-title">Explorer Tutorial</h3>
     <p class="tile-tagline">
-      Learn how to navigate datasets, search genes, and interpret visualizations.
+      Comprehensive reference guides
     </p>
   </a>
 
   <a href="download/" class="tile">
     <h3 class="tile-title">Download Data</h3>
     <p class="tile-tagline">
-      Access processed images, feature tables, and raw data files.
+      Code snippets for downloading data
     </p>
   </a>
 
   <a href="cli/" class="tile">
     <h3 class="tile-title">CLI Reference</h3>
     <p class="tile-tagline">
-      Programmatic access and command-line tools for data retrieval.
+      Command-line tool for downloading data
     </p>
   </a>
 
   <a href="schema/" class="tile">
     <h3 class="tile-title">Data Schema</h3>
     <p class="tile-tagline">
-      Details on data structure, organization, and relationships.
+      Details on data formats and structure
     </p>
   </a>
 
@@ -61,12 +61,6 @@ For data contributor inquiries, contact: support@biohub.org
 
 ## Citation
 
-If you use data from the OPS Explorer, please cite please acknowledge the authors, cite associated publications, and cite the Portal. Example langauge is below:
-
-> Some of the data used in this work was provided by Irene de Teresa Trueba et al and Mallak Ali et al. The data are available through the OPS Explorer (Nat Methods 21, 2200–2202 (2024). https://doi.org/10.1038/s41592-024-02477-2) with the following metadata.
-> | Deposition ID | Entity Type | Entity ID(s) | Primary Author(s) | Associated Publication DOI(s) |
-> | ------------- | ----------- | ------------ | ----------------- | ----------------------------- |
-> | 10000 | Dataset | 10000, 10001 | Irene de Teresa Trueba | 10.1101/2022.04.12.488077, 10.1038/s41592-022-01746-2 |
-> | 10312 | Dataset | 10442 | Mallak Ali, Ariana Peck, Yue Yu, Jonathan Schwartz | None |
+If you use data from the OPS Explorer, please cite please acknowledge the authors, cite associated publications, and cite the OPS Explorer. Example langauge is below:
 
 
