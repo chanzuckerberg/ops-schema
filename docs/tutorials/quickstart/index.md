@@ -1,5 +1,11 @@
 # OPS Explorer Quickstart
 
+<div class="hero-buttons">
+  <a href="http://biohub.ai/ops-explorer/about" class="md-button hero-button">
+    Use the Explorer
+  </a>
+</div>
+
 A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](../reference/index.md).
 
 
