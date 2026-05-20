@@ -57,7 +57,7 @@ V1 capabilities include:
 </div>
 
 ## Contribute Your Data
-For data contributor inquiries, contact: support@biohub.org
+For data contributor inquiries, please fill out this form or contact: support@biohub.org.
 
 ## Citation
 
