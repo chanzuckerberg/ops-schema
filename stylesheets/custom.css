@@ -138,7 +138,7 @@ body {
 
   border-radius: 12px;
 
-  padding: 1.5rem;
+  padding: 0.5rem;
 
   text-decoration: none !important;
 
@@ -639,7 +639,7 @@ body {
 
   gap: 1rem;
 
-  margin: 1rem auto 1.5rem auto;
+  margin: 1rem auto 0.5rem auto;
 
   flex-wrap: wrap;
 }
