@@ -56,9 +56,7 @@ nav:
       - Processed Images: download/processed-images/index.md
       - Feature Tables: download/feature-tables/index.md
   - CLI Reference: cli/index.md
-  - Data Schema: 
-    - Overview: schema/index.md
-    - Schema Overview: schema/schema-overview/index.md
+  - Data Schema: https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops
 
 plugins:
   - search
