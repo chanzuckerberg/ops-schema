@@ -61,6 +61,6 @@ For data contributor inquiries, contact: support@biohub.org
 
 ## Citation
 
-If you use data from the OPS Explorer, please cite please acknowledge the authors, cite associated publications, and cite the OPS Explorer. Example langauge is below:
+If you use data from the OPS Explorer, please acknowledge the authors, cite associated publications, and cite the OPS Explorer Zenodo DOI. Example langauge is below:
 
 
