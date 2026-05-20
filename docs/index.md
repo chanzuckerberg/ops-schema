@@ -49,7 +49,7 @@ Use this link to join the OPS Community on Slack.
     </p>
   </a>
 
-  <a href="https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops" target="_blank" rel="noopener noreferrer" class="tile">
     <h3 class="tile-title">Data Schema</h3>
     <p class="tile-tagline">
       Details on data formats and structure in Github
