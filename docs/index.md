@@ -21,6 +21,8 @@ V1 capabilities include:
   * Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
   * Gene knockout search and exploration across 1,000 perturbations
   * All data is available for download either in-browser or via a CLI
+
+Use this link to join the OPS Community on Slack.
     
 ## Getting Started
 
