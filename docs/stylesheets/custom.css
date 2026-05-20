@@ -125,6 +125,8 @@ body {
 
   margin-top: 2rem;
   margin-bottom: 2rem;
+  grid-template-columns: 1fr;
+
 }
 
 /* Tile card */
@@ -180,15 +182,6 @@ body {
   line-height: 1.6;
 
   color: var(--biohub-text-secondary);
-}
-
-/* Mobile */
-
-@media screen and (max-width: 768px) {
-
-  .tile-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ==========================================================================
