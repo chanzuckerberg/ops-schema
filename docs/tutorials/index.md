@@ -2,6 +2,12 @@
 
 Welcome to the OPS Explorer tutorials. Here you'll learn how to navigate datasets, search genes, and interpret visualizations.
 
+<div class="hero-buttons">
+  <a href="https://biohub.ai/ops-explorer/about" class="md-button hero-button">
+    Use the Explorer
+  </a>
+</div>
+
 <div class="tile-grid">
 <a href="quickstart/" class="tile">
 <div class="tile-title">Quickstart</div>
