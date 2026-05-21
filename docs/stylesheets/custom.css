@@ -267,22 +267,6 @@ body {
   border-left: 3px solid black;
 }
 
-/* Adds OPS Explorer Documentation text */
-
-.md-header__topic:first-child::after {
-  content: "OPS Explorer Documentation";
-
-  margin-left: 1rem;
-
-  font-size: 20px;
-
-  font-weight: 700;
-
-  color: black;
-
-  letter-spacing: -0.01em;
-}
-
 /* Hide duplicate built-in title */
 
 .md-header__topic:last-child {
