@@ -215,23 +215,24 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-      const title = document.querySelector(".md-header__topic");
+      const container = document.querySelector(".md-header__title");
 
-      if (title && !document.querySelector(".ops-header-title")) {
+      if (!container) return;
 
-        const customTitle = document.createElement("div");
+      if (document.querySelector(".ops-custom-title")) return;
 
-        customTitle.className = "ops-header-title";
+      const title = document.createElement("div");
 
-        customTitle.innerHTML = `
-          <span class="ops-divider">|</span>
-          <span class="ops-title-text">
-            OPS Explorer Documentation
-          </span>
-        `;
+      title.className = "ops-custom-title";
 
-        title.parentNode.appendChild(customTitle);
-      }
+      title.innerHTML = `
+        <span class="ops-divider">|</span>
+        <span class="ops-title-text">
+          OPS Explorer Documentation
+        </span>
+      `;
+
+      container.appendChild(title);
     });
   </script>
 
