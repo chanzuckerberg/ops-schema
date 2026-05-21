@@ -256,59 +256,6 @@ body {
 }
 
 /* ==========================================================================
-   Custom Header Branding
-   ========================================================================== */
-
-/* Hide default text */
-
-.md-header__topic,
-.md-header__ellipsis {
-  display: none !important;
-}
-
-/* Header title container */
-
-.md-header__title {
-  display: flex;
-
-  align-items: center;
-
-  margin-left: 1rem;
-}
-
-/* Custom injected title */
-
-.ops-custom-title {
-  display: flex;
-
-  align-items: center;
-
-  gap: 1rem;
-}
-
-.ops-divider {
-  font-size: 32px;
-
-  font-weight: 700;
-
-  line-height: 1;
-
-  color: black;
-}
-
-.ops-title-text {
-  font-size: 22px;
-
-  font-weight: 700;
-
-  color: black;
-
-  letter-spacing: -0.01em;
-
-  white-space: nowrap;
-}
-
-/* ==========================================================================
    Header Title
    ========================================================================== */
 
@@ -740,34 +687,4 @@ body {
   opacity: 0.92;
 
   transform: translateY(-1px);
-}
-
-/* ==========================================================================
-   Footer Branding
-   ========================================================================== */
-
-.md-footer-meta__left {
-  display: flex;
-
-  align-items: center;
-
-  gap: 1rem;
-
-  color: white;
-
-  font-size: 22px;
-
-  font-weight: 700;
-}
-
-.md-footer-meta__left .ops-divider {
-  color: white;
-}
-
-.md-footer-meta__left .ops-title-text {
-  color: white;
-
-  font-size: 22px;
-
-  font-weight: 700;
 }
