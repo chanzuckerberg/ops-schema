@@ -88,7 +88,6 @@
     </div>
     
     
-  
       
 
 <header class="md-header" data-md-component="header">
@@ -209,31 +208,6 @@
   
 </header>
     
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-      const container = document.querySelector(".md-header__title");
-
-      if (!container) return;
-
-      if (document.querySelector(".ops-custom-title")) return;
-
-      const title = document.createElement("div");
-
-      title.className = "ops-custom-title";
-
-      title.innerHTML = `
-        <span class="ops-divider">|</span>
-        <span class="ops-title-text">
-          OPS Explorer Documentation
-        </span>
-      `;
-
-      container.appendChild(title);
-    });
-  </script>
-
     <div class="md-container" data-md-component="container">
       
       
@@ -836,37 +810,21 @@
       
 <footer class="md-footer">
   <div class="md-footer-meta">
-
     <div class="md-footer-meta__inner">
       <a href="https://biohub.org/privacy-policy/">Privacy Policy</a>
-
-      <span style="color: rgba(255,255,255,0.3);">|</span>
-
+      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
       <a href="https://biohub.org/terms-of-use/">Terms of Use</a>
-
-      <span style="color: rgba(255,255,255,0.3);">|</span>
-
+      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
       <a href="https://biohub.org/dmca-policy/">DMCA Policy</a>
-
-      <span style="color: rgba(255,255,255,0.3);">|</span>
-
+      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
       <a href="https://biohub.org/ethics/">Ethics</a>
-
-      <span style="color: rgba(255,255,255,0.3);">|</span>
-
-      <a href="https://biohub.org/acceptable-use-policy/">
-        Acceptable Use Policy
-      </a>
+      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
+      <a href="https://biohub.org/acceptable-use-policy/">Acceptable Use Policy</a>
     </div>
-
     <div class="md-footer-meta__inner md-footer-meta__left">
-      <img
-        src="../assets/biohub_logo_black.png"
-        alt="Biohub"
-        class="md-footer__logo"
-      >
+      <img src="../assets/biohub_logo_black.png" alt="Biohub" class="md-footer__logo">
+      <h2>| OPS Explorer Documentation</h2>
     </div>
-
   </div>
 </footer>
 
