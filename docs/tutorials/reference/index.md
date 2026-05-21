@@ -1,6 +1,12 @@
-# Visualizing Data in the OPS Explorer
+# Comprehensive Reference Guide for the OPS Explorer
 
-The CellxState viewer is a full-screen, multi-panel workspace for exploring OPS and CROP-seq datasets together. You can view embeddings, fluorescence image galleries, and volcano plots side by side. Everything is linked, so selecting a gene knockout highlights it across every open panel simultaneously.
+<div class="hero-buttons">
+  <a href="https://biohub.ai/ops-explorer/about?utm_source=docsite&utm_medium=banner&utm_campaign=ops-jun2026" class="md-button hero-button">
+    Use the Explorer
+  </a>
+</div>
+
+The OPS Explorer is a full-screen, multi-panel workspace for exploring OPS and CROP-seq datasets together. You can view embeddings, fluorescence image galleries, and volcano plots side by side. Everything is linked, so selecting a gene knockout highlights it across every open panel simultaneously.
 
 A collection may contain both OPS datasets (morphological imaging) and CROP-seq datasets (single-cell transcriptomics). The viewer can display panels from both modalities at once, and each panel type behaves slightly differently depending on the underlying data (see Visualization Panels).
 
@@ -127,7 +133,7 @@ A counter in the top-right shows how many are active.
 <p align="center">
   <img src="../../assets/tutorial_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png"
        alt="Left panel with 12 gene knockouts selected, showing the Annotations tab"
-	         width="70%">
+	         width="40%">
 </p>
 
 **Hovering a name in the list** highlights that knockout's dot across all open panels and fades all other dots into the background.
@@ -151,7 +157,7 @@ The sidebar shows:
 <p align="center">
   <img src="../../assets/tutorial_imgs/Trailing_Sidebar__Gene_Knockout_Info.png"
        alt="Gene info sidebar populated with gene description and external links"
-	   width="70%">
+	   width="40%">
 </p>
 
 Click **−** to minimize the sidebar or **×** to close it.
@@ -168,7 +174,7 @@ The sidebar shows a breadcrumb identifying the dataset, embedding, and cluster, 
 <p align="center">
   <img src="../../assets/tutorial_imgs/Trailing_Sidebar__Cluster_Info.png"
        alt="Cluster info sidebar showing a breadcrumb and a table of gene knockouts in the selected cluster"
-	   width="70%">
+	   width="40%">
 </p>
 
 ### Layout Tab
@@ -178,7 +184,7 @@ The Layout tab controls which panels are open and how they are arranged. It is t
 <p align="center">
   <img src="../../assets/tutorial_imgs/Main_Panel_-_Layout_-_No_Gene_KOs.png"
        alt="Left panel showing the Layout tab with two visualization rows and the + Add Visualization button"
-	   width="70%">
+	   width="40%">
 </p>
 
 **Visualization list** - each row represents one open panel and shows:
@@ -205,7 +211,7 @@ Click **+ Add Visualization** in the [Layout Tab](#layout-tab). A sidebar slides
 <p align="center">
   <img src="../../assets/tutorial_imgs/visualization-type.png"
        alt="Add Visualization sidebar at Step 1 showing three type buttons: Embedding, Images, Volcano Plot"
-	   width="70%">
+	   width="40%">
 </p>
 
 **Step 2 - Select a dataset** from the dropdown.
@@ -239,7 +245,7 @@ In the [Layout Tab](#layout-tab), hover any row to reveal action buttons:
 <p align="center">
   <img src="../../assets/tutorial_imgs/layout_panels.png"
        alt="Edit Visualization sidebar open and pre-filled, showing the Apply Changes button"
-	   width="80%">
+	   width="40%">
 </p>
 
 ## Visualization Panels
@@ -329,7 +335,7 @@ For hover and click interactions, see [Interacting with the Viewer](#interacting
 <p align="center">
   <img src="../../assets/tutorial_imgs/viewer-volcano-plot.png"
        alt="One-panel showing OPS Feature Volcano"
-	   width="70%">
+	   width="50%">
 </p>
 
 ### CROP-seq Gene Expression Volcano Plot
@@ -364,7 +370,7 @@ The Annotations tab lets you color all eligible panels by a biological annotatio
 <p align="center">
   <img src="../../assets/tutorial_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png"
        alt="Annotations tab showing Shared Categories and per-dataset cluster sections with gene knockouts selected"
-	   width="70%">
+	   width="40%">
 </p>
 
 **Shared Categories** apply across all datasets in the collection:

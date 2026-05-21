@@ -125,6 +125,8 @@ body {
 
   margin-top: 2rem;
   margin-bottom: 2rem;
+  grid-template-columns: 1fr;
+
 }
 
 /* Tile card */
@@ -138,7 +140,7 @@ body {
 
   border-radius: 12px;
 
-  padding: 1.5rem;
+  padding: 0.5rem;
 
   text-decoration: none !important;
 
@@ -180,15 +182,6 @@ body {
   line-height: 1.6;
 
   color: var(--biohub-text-secondary);
-}
-
-/* Mobile */
-
-@media screen and (max-width: 768px) {
-
-  .tile-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ==========================================================================
@@ -268,26 +261,6 @@ body {
 
 .md-header__title {
   margin-left: 0.5rem;
-
-  padding-left: 1rem;
-
-  border-left: 3px solid black;
-}
-
-/* Adds OPS Explorer Documentation text */
-
-.md-header__topic:first-child::after {
-  content: "OPS Explorer Documentation";
-
-  margin-left: 1rem;
-
-  font-size: 20px;
-
-  font-weight: 700;
-
-  color: black;
-
-  letter-spacing: -0.01em;
 }
 
 /* Hide duplicate built-in title */
@@ -332,6 +305,10 @@ body {
   justify-content: space-between;
 }
 
+.md-footer-meta__left {
+  color: white;
+  justify-content: left;
+}
 /* ==========================================================================
    Top Tabs
    ========================================================================== */
@@ -639,7 +616,7 @@ body {
 
   gap: 1rem;
 
-  margin: 1rem auto 1.5rem auto;
+  margin: 1rem auto 0.5rem auto;
 
   flex-wrap: wrap;
 }

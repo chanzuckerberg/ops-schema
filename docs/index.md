@@ -5,7 +5,7 @@ Optical Pooled Screening (OPS) combines CRISPR-based genetic perturbations with 
 The OPS Explorer is the first centralized location to visualize and interact with OPS data with a standardized schema and file formats accessible via CLI.
 
 <div class="hero-buttons">
-  <a href="https://biohub.ai/ops" class="md-button hero-button">
+  <a href="https://biohub.ai/ops-explorer/about?utm_source=docsite&utm_medium=banner&utm_campaign=ops-jun2026" class="md-button hero-button">
     Use the Explorer
   </a>
 
@@ -21,6 +21,11 @@ V1 capabilities include:
   * Visualizations of imaging and/or scRNAseq UMAP embeddings, feature tables, volcano plots, and inline representative cell images
   * Gene knockout search and exploration across 1,000 perturbations
   * All data is available for download either in-browser or via a CLI
+
+Stay in touch by joining our OPS Community Slack:
+1. [Use this link to join the Biohub Community Slack Workspace.](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q).
+2. Join the `#ops-explorer-community` channel ([Slack docs](https://slack.com/help/articles/205239967-Join-a-channel)).
+3. Send a message to introduce yourself.
     
 ## Getting Started
 
@@ -29,44 +34,37 @@ V1 capabilities include:
   <a href="tutorials/" class="tile">
     <h3 class="tile-title">Explorer Tutorial</h3>
     <p class="tile-tagline">
-      Learn how to navigate datasets, search genes, and interpret visualizations.
+      Comprehensive reference guides
     </p>
   </a>
 
   <a href="download/" class="tile">
     <h3 class="tile-title">Download Data</h3>
     <p class="tile-tagline">
-      Access processed images, feature tables, and raw data files.
+      Code snippets for downloading data
     </p>
   </a>
 
   <a href="cli/" class="tile">
     <h3 class="tile-title">CLI Reference</h3>
     <p class="tile-tagline">
-      Programmatic access and command-line tools for data retrieval.
+      Command-line tool for downloading data
     </p>
   </a>
 
-  <a href="schema/" class="tile">
+  <a href="https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops" target="_blank" rel="noopener noreferrer" class="tile">
     <h3 class="tile-title">Data Schema</h3>
     <p class="tile-tagline">
-      Details on data structure, organization, and relationships.
+      Details on data formats and structure in Github
     </p>
   </a>
-
 </div>
 
 ## Contribute Your Data
-For data contributor inquiries, contact: support@biohub.org
+For data contributor inquiries, please fill out this form or contact: support@biohub.org.
 
 ## Citation
 
-If you use data from the OPS Explorer, please cite please acknowledge the authors, cite associated publications, and cite the Portal. Example langauge is below:
-
-> Some of the data used in this work was provided by Irene de Teresa Trueba et al and Mallak Ali et al. The data are available through the OPS Explorer (Nat Methods 21, 2200–2202 (2024). https://doi.org/10.1038/s41592-024-02477-2) with the following metadata.
-> | Deposition ID | Entity Type | Entity ID(s) | Primary Author(s) | Associated Publication DOI(s) |
-> | ------------- | ----------- | ------------ | ----------------- | ----------------------------- |
-> | 10000 | Dataset | 10000, 10001 | Irene de Teresa Trueba | 10.1101/2022.04.12.488077, 10.1038/s41592-022-01746-2 |
-> | 10312 | Dataset | 10442 | Mallak Ali, Ariana Peck, Yue Yu, Jonathan Schwartz | None |
+If you use data from the OPS Explorer, please acknowledge the authors, cite associated publications, and cite the OPS Explorer Zenodo DOI. Example langauge is below:
 
 
