@@ -74,5 +74,5 @@ For data contributor inquiries, please fill out [this form](https://info.biohub.
 
 If you use data from the OPS Explorer, please acknowledge the authors, cite associated publications, and cite the OPS Explorer Zenodo DOI. Example langauge is below:
 
-> Some of the data used in this work was provided by Anna Le et al. The data were published in *Le et al., Cell Reports, 2025* are available through the OPS Explorer (DOI: ##) 
+> Some of the data used in this work was provided by Anna Le et al. The data were published in *Le et al., Cell Reports, 2025* and are available through the OPS Explorer (DOI: ##) 
 
