@@ -2,7 +2,7 @@
 
 Optical Pooled Screening (OPS) combines CRISPR-based genetic perturbations with high-content microscopy to reveal the relationship between genes and cell morphology.
  
-The OPS Explorer is the first centralized location to visualize and interact with OPS data with a standardized schema and file formats accessible via CLI.
+The OPS Explorer is the first centralized location to visualize and interact with OPS data with a standardized schema and file formats accessible via CLI. 
 
 <div class="hero-buttons">
   <a href="https://biohub.ai/ops-explorer/about?utm_source=docsite&utm_medium=banner&utm_campaign=ops-jun2026" class="md-button hero-button">
@@ -22,10 +22,17 @@ V1 capabilities include:
   * Gene knockout search and exploration across 1,000 perturbations
   * All data is available for download either in-browser or via a CLI
 
-Stay in touch by joining our OPS Community Slack:
+### Stay in touch by joining our OPS Community Slack
+
 1. [Use this link to join the Biohub Community Slack Workspace.](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q).
+   
 2. Join the `#ops-explorer-community` channel ([Slack docs](https://slack.com/help/articles/205239967-Join-a-channel)).
+ 
 3. Send a message to introduce yourself.
+
+### Submit Feedback
+
+Submit feedback using [this form](https://info.biohub.org/ops-feedback).
     
 ## Getting Started
 
@@ -61,7 +68,7 @@ Stay in touch by joining our OPS Community Slack:
 </div>
 
 ## Contribute Your Data
-For data contributor inquiries, please fill out this form or contact: support@biohub.org.
+For data contributor inquiries, please fill out [this form](https://info.biohub.org/ops-data-contribution) or contact: support@biohub.org.
 
 ## Citation
 
