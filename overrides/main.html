@@ -1,35 +1,66 @@
 {% extends "base.html" %}
 
 {% block header %}
-<header class="md-header" data-md-component="header">
-  <div class="md-header__inner">
-    <!-- Logo with divider -->
-    <a class="md-logo" href="{{ config.site_url }}" title="{{ config.site_name }}">
-      <img src="{{ config.theme.logo | url }}" alt="{{ config.site_name }}" />
-    </a>
-    <h2>| OPS Explorer Documentation</h2>
-  </div>
-</header>
+  {{ super() }}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const title = document.querySelector(".md-header__topic");
+
+      if (title && !document.querySelector(".ops-header-title")) {
+
+        const customTitle = document.createElement("div");
+
+        customTitle.className = "ops-header-title";
+
+        customTitle.innerHTML = `
+          <span class="ops-divider">|</span>
+          <span class="ops-title-text">
+            OPS Explorer Documentation
+          </span>
+        `;
+
+        title.parentNode.appendChild(customTitle);
+      }
+    });
+  </script>
 {% endblock %}
 
 {% block footer %}
 <footer class="md-footer">
   <div class="md-footer-meta">
+
     <div class="md-footer-meta__inner">
       <a href="https://biohub.org/privacy-policy/">Privacy Policy</a>
-      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
+
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+
       <a href="https://biohub.org/terms-of-use/">Terms of Use</a>
-      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
+
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+
       <a href="https://biohub.org/dmca-policy/">DMCA Policy</a>
-      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
+
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+
       <a href="https://biohub.org/ethics/">Ethics</a>
-      <span style="color: rgba(255, 255, 255, 0.3);">|</span>
-      <a href="https://biohub.org/acceptable-use-policy/">Acceptable Use Policy</a>
+
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+
+      <a href="https://biohub.org/acceptable-use-policy/">
+        Acceptable Use Policy
+      </a>
     </div>
+
     <div class="md-footer-meta__inner md-footer-meta__left">
-      <img src="{{ base_url }}/assets/biohub_logo_black.png" alt="Biohub" class="md-footer__logo">
-      <h2>| OPS Explorer Documentation</h2>
+      <img
+        src="{{ base_url }}/assets/biohub_logo_black.png"
+        alt="Biohub"
+        class="md-footer__logo"
+      >
     </div>
+
   </div>
 </footer>
 {% endblock %}
