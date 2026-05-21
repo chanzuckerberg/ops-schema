@@ -22,7 +22,10 @@ V1 capabilities include:
   * Gene knockout search and exploration across 1,000 perturbations
   * All data is available for download either in-browser or via a CLI
 
-Use this link to join the OPS Community on Slack.
+Stay in touch by joining our OPS Community Slack:
+1. [Use this link to join the Biohub Community Slack Workspace.](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q).
+2. Join the `#ops-explorer-community` channel ([Slack docs](https://slack.com/help/articles/205239967-Join-a-channel)).
+3. Send a message to introduce yourself.
     
 ## Getting Started
 
