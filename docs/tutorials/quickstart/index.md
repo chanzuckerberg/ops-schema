@@ -1,7 +1,7 @@
 # OPS Explorer Quickstart
 
 <div class="hero-buttons">
-  <a href="http://biohub.ai/ops-explorer/about" class="md-button hero-button">
+  <a href="https://biohub.ai/ops-explorer/about" class="md-button hero-button">
     Use the Explorer
   </a>
 </div>
