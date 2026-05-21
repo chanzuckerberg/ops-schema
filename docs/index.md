@@ -24,7 +24,7 @@ The OPS Explorer is the first centralized location to visualize and interact wit
 
 **Stay in touch by joining our OPS Community Slack**
 
-1. [Use this link to join the Biohub Community Slack Workspace.](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q).
+1. [Use this link](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q) to join the Biohub Community Slack Workspace.
    
 2. Join the `#ops-explorer-community` channel ([Slack docs](https://slack.com/help/articles/205239967-Join-a-channel)).
  
@@ -74,4 +74,5 @@ For data contributor inquiries, please fill out [this form](https://info.biohub.
 
 If you use data from the OPS Explorer, please acknowledge the authors, cite associated publications, and cite the OPS Explorer Zenodo DOI. Example langauge is below:
 
+> Some of the data used in this work was provided by Anna Le et al. The data were published in *Le et al., Cell Reports, 2025* are available through the OPS Explorer (DOI: ##) 
 
