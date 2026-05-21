@@ -14,7 +14,7 @@ The OPS Explorer is the first centralized location to visualize and interact wit
   </a>
 </div>
 
-V1 capabilities include:
+**V1 capabilities include:**
 
   * Dataset collection pages with experimental context and standardized schema
   * Interactive data explorer with synchronized imaging and scRNA-seq data
@@ -22,7 +22,7 @@ V1 capabilities include:
   * Gene knockout search and exploration across 1,000 perturbations
   * All data is available for download either in-browser or via a CLI
 
-### Stay in touch by joining our OPS Community Slack
+**Stay in touch by joining our OPS Community Slack**
 
 1. [Use this link to join the Biohub Community Slack Workspace.](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q).
    
@@ -30,7 +30,7 @@ V1 capabilities include:
  
 3. Send a message to introduce yourself.
 
-### Submit Feedback
+**Submit Feedback**
 
 Submit feedback using [this form](https://info.biohub.org/ops-feedback).
     
