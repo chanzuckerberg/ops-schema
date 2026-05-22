@@ -12,7 +12,7 @@ Visualize data in the OPS Explorer and download via the CLI tool. All data is st
     </p>
   </a>
 
-  <a href="inspect-data/" class="tile">
+  <a href="inspect-data/ops_analysis.ipynb" class="tile">
     <h3 class="tile-title">Inspect Data</h3>
 
     <p class="tile-tagline">
