@@ -54,16 +54,14 @@ nav:
   - Data Analysis:
       - Overview: analysis/index.md
       - Download Data: analysis/download-data/index.md
-      - Inspect Data: analysis/inspect-data/ops_analysis.ipynb
+      - Inspect Data: analysis/inspect-data/ops_analysis
   - CLI Reference: cli/index.md
   - Data Schema: https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops
 
 plugins:
   - search
   - awesome-pages
-  - mkdocs-jupyter: 
-      - execute: false 
-      - include_source: true
+  - mkdocs-jupyter
 
 markdown_extensions:
   - admonition
