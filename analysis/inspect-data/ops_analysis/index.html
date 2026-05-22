@@ -13,6 +13,10 @@
         <link rel="canonical" href="https://chanzuckerberg.github.io/ops-schema/analysis/inspect-data/ops_analysis/">
       
       
+        <link rel="prev" href="../../download-data/">
+      
+      
+        <link rel="next" href="../../../cli/">
       
       
         
@@ -259,10 +263,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../" class="md-tabs__link">
           
   
@@ -531,26 +537,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -568,7 +579,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -639,17 +650,44 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="." class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OPS Data Analysis Tutorial
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Inspect Data
+    OPS Data Analysis Tutorial
   
 
     
@@ -658,6 +696,246 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-ops-data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The OPS data model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-this-notebook-in-the-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run this notebook in the browser
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect-the-collection-in-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect the collection in S3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-the-collection-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load the collection metadata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-the-per-cell-feature-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load the per-cell feature table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-the-per-perturbation-aggregated-anndata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load the per-perturbation aggregated AnnData
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-all-cells-for-one-perturbation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: all cells for one perturbation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-all-non-targeting-control-cells" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: all non-targeting control cells
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-cells-by-cell-cycle-phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: cells by cell-cycle phase
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-perturbations-with-enough-cells-for-robust-per-cell-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: perturbations with enough cells for robust per-cell statistics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-perturbations-that-significantly-change-a-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: perturbations that significantly change a feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slice-features-most-affected-by-one-perturbation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slice: features most affected by one perturbation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-feature-distribution-perturbation-vs-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: feature distribution, perturbation vs control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-volcano-plot-for-one-perturbation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: volcano plot for one perturbation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-every-perturbation-for-one-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: every perturbation for one feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-perturbation-embedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: perturbation embedding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-heatmap-of-top-perturbations-top-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: heatmap of top perturbations × top features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualize-cluster-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualize: cluster composition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-it-together-pulling-a-local-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting it together: pulling a local copy
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
