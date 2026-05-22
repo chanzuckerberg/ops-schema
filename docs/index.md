@@ -45,10 +45,10 @@ Submit feedback using [this form](https://info.biohub.org/ops-feedback).
     </p>
   </a>
 
-  <a href="download/" class="tile">
-    <h3 class="tile-title">Download Data</h3>
+  <a href="analysis/" class="tile">
+    <h3 class="tile-title">Data Analysis</h3>
     <p class="tile-tagline">
-      Code snippets for downloading data
+      Notebooks for downloading and analyzing data
     </p>
   </a>
 
