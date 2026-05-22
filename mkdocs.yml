@@ -51,6 +51,7 @@ nav:
       - Overview: tutorials/index.md
       - Quickstart: tutorials/quickstart/index.md
       - Reference: tutorials/reference/index.md
+      - Test Notebook: tutorials/reference/CELL_Diff_Quickstart.ipynb
   - Data Analysis:
       - Overview: analysis/index.md
       - Download Data: analysis/download-data/index.md
