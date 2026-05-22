@@ -62,8 +62,8 @@ plugins:
   - search
   - awesome-pages
   - mkdocs-jupyter: 
-    execute: false 
-    include_source: true
+      - execute: false 
+      - include_source: true
 
 markdown_extensions:
   - admonition
