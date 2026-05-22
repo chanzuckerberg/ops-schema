@@ -47,14 +47,14 @@ theme:
 
 nav:
   - Home: index.md
-  - Tutorials:
+  - Explorer Tutorials:
       - Overview: tutorials/index.md
       - Quickstart: tutorials/quickstart/index.md
       - Reference: tutorials/reference/index.md
-  - Download Data:
-      - Overview: download/index.md
-      - Processed Images: download/processed-images/index.md
-      - Feature Tables: download/feature-tables/index.md
+  - Data Analysis:
+      - Overview: analysis/index.md
+      - Download Data: analysis/download-data/index.md
+      - Inspect Data: analysis/inspect-data/index.md
   - CLI Reference: cli/index.md
   - Data Schema: https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops
 
