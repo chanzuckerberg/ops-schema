@@ -1,7 +1,12 @@
 # OPS Explorer Quickstart
 
-A short, visual tour of the viewer for first-time users. For full reference detail, see [Visualizing Data in the OPS Explorer](visualization.md).
+<div class="hero-buttons">
+  <a href="https://biohub.ai/ops-explorer/about?utm_source=docsite&utm_medium=banner&utm_campaign=ops-jun2026" class="md-button hero-button">
+    Use the Explorer
+  </a>
+</div>
 
+A short, visual tour of the viewer for first-time users. For full reference detail, see the [Comprehensive Reference for the OPS Explorer](../reference/index.md).
 
 ## Contents
 
