@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#download-data" class="md-skip">
+        <a href="#explore-data-before-downloading" class="md-skip">
           Skip to content
         </a>
       
@@ -662,6 +662,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download Data
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -678,6 +696,64 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-click-through-preview-the-ops-explorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Click-through preview: the OPS Explorer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-programmatic-preview-the-analysis-notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Programmatic preview: the analysis notebook
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Programmatic preview: the analysis notebook">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run it yourself
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -793,6 +869,53 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-click-through-preview-the-ops-explorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Click-through preview: the OPS Explorer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-programmatic-preview-the-analysis-notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Programmatic preview: the analysis notebook
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Programmatic preview: the analysis notebook">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-it-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run it yourself
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -811,8 +934,37 @@
   
 
 
-<h1 id="download-data">Download Data<a class="headerlink" href="#download-data" title="Permanent link">&para;</a></h1>
-<p>Coming soon</p>
+<h1 id="explore-data-before-downloading">Explore Data Before Downloading<a class="headerlink" href="#explore-data-before-downloading" title="Permanent link">&para;</a></h1>
+<p>OPS collections can be tens to hundreds of gigabytes. Before committing to a download, you usually want to take a look at subsets of the data and confirm it covers the perturbations you care about, the cells are healthy, the effect sizes look reasonable, and the feature set matches what your downstream analysis needs. There are two complementary ways to do that without pulling the full collection.</p>
+<h2 id="1-click-through-preview-the-ops-explorer">1. Click-through preview: the OPS Explorer<a class="headerlink" href="#1-click-through-preview-the-ops-explorer" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://chanzuckerberg.github.io/ops-schema/">OPS Explorer</a> is the visual preview layer for every published OPS dataset. Without downloading anything you can:</p>
+<ul>
+<li>Browse collections and per-experiment metadata</li>
+<li>Open the <strong>volcano plot</strong> for any visualization to see which perturbations move which features</li>
+<li>Open the <strong>UMAP/embedding</strong> to see how perturbations cluster</li>
+<li>Pull up representative single-cell <strong>example crops</strong> for any perturbation</li>
+<li>Inspect the schema/feature definitions before you write code against them</li>
+</ul>
+<p>Use this when you want to look at data through processed figures and images. See the <a href="./viewer-quickstart.md">Explorer Tutorial</a> for a walk-through.</p>
+<h2 id="2-programmatic-preview-the-analysis-notebook">2. Programmatic preview: the analysis notebook<a class="headerlink" href="#2-programmatic-preview-the-analysis-notebook" title="Permanent link">&para;</a></h2>
+<p>When you want to slice the data and/or explore it in more depth, e.g., count cells per perturbation, rank features by significance, plot a custom feature distribution, test a hypothesis, you can use the OPS analysis code.</p>
+<blockquote>
+<p><strong>Open the notebook:</strong> <a href="../ops_analysis.ipynb">OPS Analysis</a> - view the code in your browser without running it locally, or download the source <code>.ipynb</code> from the same page to run it yourself.</p>
+</blockquote>
+<p><strong>What the notebook covers:</strong></p>
+<ul>
+<li>Load the collection's <code>collection_metadata.yaml</code>, <code>cell_data.parquet</code>, and <code>aggregated_data.h5ad</code></li>
+<li><strong>Slice</strong> cells by perturbation, by non-targeting control, by cell-cycle phase, by minimum cell count, etc.</li>
+<li><strong>Slice</strong> perturbations by significance on a chosen feature, and features most affected by a chosen perturbation</li>
+<li><strong>Visualize:</strong> feature distribution vs control, single-perturbation volcano, all-perturbation scatter for one feature, the perturbation embedding, top-perturbation × top-feature heatmap, cluster composition</li>
+</ul>
+<h3 id="run-it-yourself">Run it yourself<a class="headerlink" href="#run-it-yourself" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Install the analysis dependencies</span>
+pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>numpy<span class="w"> </span>anndata<span class="w"> </span>matplotlib<span class="w"> </span>seaborn<span class="w"> </span>pyyaml
+
+<span class="c1"># 2. Open the notebook</span>
+jupyter<span class="w"> </span>lab<span class="w"> </span>docs/ops_analysis.ipynb
+</code></pre></div>
 
 
 
