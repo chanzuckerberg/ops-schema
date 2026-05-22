@@ -1013,11 +1013,12 @@
 <li><a href="#quick-tips-and-faq">Quick Tips &amp; FAQ</a></li>
 </ul>
 <h2 id="tour-of-the-viewer">Tour of the Viewer<a class="headerlink" href="#tour-of-the-viewer" title="Permanent link">&para;</a></h2>
-<p>From the <strong>All Data page</strong> or a <strong>Collection Detail Page</strong>, click <strong>Explore</strong> on any dataset row to open the viewer full-screen.</p>
+<p>From the <strong>OPS Explorer about page</strong>, click <strong>Explore</strong> on any collection to open the viewer full-screen.</p>
 <p>The viewer is split into two regions:</p>
 <p align="center">
   <img src="../../assets/quickstart_imgs/Default_-_Layout_Tab.png"
-       alt="Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels">
+       alt="Default two-panel viewer layout: left control panel with Gene Knockouts and tabs, right visualization area with embedding and images panels"
+       width="70%">
 </p>
 
 <table>
@@ -1040,44 +1041,47 @@
 </table>
 <p>Hovering or clicking a dot in any visualization panel highlights the same gene knockout across <strong>every other open panel simultaneously</strong>.</p>
 <blockquote>
-<p><strong>Note:</strong> In this viewer, <strong>each dot is one gene knockout - not a cell.</strong> This is different from CellxGene, where each dot is one cell. Hovering on a dot will show how many cells there are for that gene KO.</p>
+<p><strong>Note:</strong> In this viewer, <strong>each dot is one gene knockout - not a cell.</strong> This is different from CellxGene, where each dot is one cell. Hovering on a dot will show how many cells there are for that gene KO. Only the volcano plot generated with CROP-seq data (shown below) is where each dot is a measured gene.</p>
 </blockquote>
 <h3 id="left-panel">Left Panel<a class="headerlink" href="#left-panel" title="Permanent link">&para;</a></h3>
 <p>The left panel has two regions:</p>
 <p align="center">
   <img src="../../assets/quickstart_imgs/Main_Panel_-_Annotations_-_Gene_KOs.png"
-       alt="Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression">
+       alt="Left panel with top region showing search and gene knockouts selected; bottom region with tabs for layout, annotations, and gene expression"
+       width="40%">
 </p>
 
 <p><strong>Top region - Gene Knockouts</strong></p>
 <ul>
 <li><strong>Search bar</strong> - find and add gene knockouts from the collection</li>
 <li><strong>Selected list</strong> - each row has an <strong>ⓘ</strong> (gene info) and a <strong>delete</strong> button</li>
-<li><strong>Counter</strong> in the top-right shows how many knockouts are active</li>
+<li><strong>Counter</strong> in the top-right shows how many knockouts are selected</li>
 </ul>
 <p><strong>Bottom region - Layout, Annotations, and Gene Expression</strong></p>
 <ul>
 <li><strong>Layout</strong> - add, remove, edit, and rearrange panels</li>
-<li><strong>Annotations</strong> - color all eligible panels by a categorical annotation (e.g. cluster)</li>
+<li><strong>Annotations</strong> - color all appropriate panels by a categorical annotation (e.g. cluster)</li>
 <li><strong>Gene Expression</strong> - color CROP-seq panels by a measured gene's expression level</li>
 </ul>
 <p align="center">
   <img src="../../assets/quickstart_imgs/Add_Visualization__Embedding.png"
-       alt="Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot">
+       alt="Add Visualization sidebar showing three options with buttons for Embedding, Images, Volcano Plot"
+       width="70%">
 </p>
 
-<p>A <strong>··· menu</strong> in the top-right of the left panel opens collection-level actions: <strong>View collection details</strong> or <strong>Download collection</strong>.</p>
+<p>The book icon in the top-right of the left panel next to the collection name opens a Resources drop down with <strong>Documentation</strong> or <strong>Learn about OPS Explorer</strong>.</p>
 <p align="center">
   <img src="../../assets/quickstart_imgs/Collection_Overflow_Menu.png"
-       alt="Three-dot overflow menu open showing View collection details and Download collection options">
+       alt="Three-dot overflow menu open showing Documentation and Learn about OPS Explorer"
+       width="90%">
 </p>
 
 <h3 id="visualization-panels">Visualization Panels<a class="headerlink" href="#visualization-panels" title="Permanent link">&para;</a></h3>
-<p>The right side of the viewer holds 1–4 panels of four possible types:</p>
+<p>The right side of the viewer holds 1–4 visualization panes of four possible types:</p>
 <table>
 <thead>
 <tr>
-<th>Panel type</th>
+<th>Pane type</th>
 <th>Each dot is</th>
 <th>Used for</th>
 </tr>
@@ -1091,7 +1095,7 @@
 <tr>
 <td><strong>Images</strong></td>
 <td>(No dots - image grid)</td>
-<td>Browsing 4 channel cell crops per knockout</td>
+<td>Browsing 3 channel cell crops per knockout x marker combination</td>
 </tr>
 <tr>
 <td><strong>OPS Feature Volcano</strong></td>
@@ -1107,7 +1111,8 @@
 </table>
 <p align="center">
   <img src="../../assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png"
-       alt="Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano">
+       alt="Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano"
+       width="100%">
 </p>
 
 <blockquote>
@@ -1123,8 +1128,8 @@
 </thead>
 <tbody>
 <tr>
-<td>Open a dataset in the viewer</td>
-<td>Click <strong>Explore</strong> on the dataset row</td>
+<td>Open a collection in the viewer</td>
+<td>Click <strong>Explore</strong> on the collection row</td>
 </tr>
 <tr>
 <td>Select feature for OPS volcano</td>
@@ -1136,7 +1141,7 @@
 </tr>
 <tr>
 <td>See microscopy images for a KO</td>
-<td>Add the KO and the Images panel will populate automatically</td>
+<td>With <strong>Images</strong> pane open in the viewer, select a gene knockout and the Images pane will populate automatically</td>
 </tr>
 <tr>
 <td>Locate a knockout across all open panels</td>
@@ -1144,7 +1149,7 @@
 </tr>
 <tr>
 <td>Color all panels by cluster</td>
-<td><strong>Annotations</strong> tab → click <strong>●</strong> next to <em>clusters</em></td>
+<td><strong>Annotations</strong> tab → click droplet icon button next to <em>annotation category</em></td>
 </tr>
 <tr>
 <td>Color CROP-seq panels by gene expression</td>
@@ -1152,7 +1157,7 @@
 </tr>
 <tr>
 <td>Open an image at full resolution</td>
-<td>Click any image - opens the <strong>idetik viewer</strong> in a new tab</td>
+<td>Click any image → opens the <strong>idetik viewer</strong> in a new tab</td>
 </tr>
 <tr>
 <td>Add a new panel</td>
@@ -1164,7 +1169,7 @@
 </tr>
 <tr>
 <td>See all KOs in a cluster</td>
-<td>Click <strong>ⓘ</strong> next to a cluster in the Annotations tab → Cluster Info sidebar</td>
+<td>Click <strong>ⓘ</strong> next to an annotation category in the Annotations tab → Cluster Info sidebar</td>
 </tr>
 <tr>
 <td>View collection metadata</td>
@@ -1172,7 +1177,7 @@
 </tr>
 <tr>
 <td>Download a collection</td>
-<td><strong>···</strong> menu → <strong>Download collection</strong></td>
+<td>Click <strong>⤓</strong> next to collection name → <strong>Download collection</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1190,13 +1195,14 @@ Click any image in the Images panel. It opens in the <a href="https://github.com
 <p><strong>Can I undo a change to my panel layout or knockout selection?</strong>
 No, the viewer does not have undo/redo. Re-do the change manually.</p>
 <p><strong>Where are images coming from?</strong>
-Each gene knockout shows ~3 representative image crops per imaging marker, chosen by the dataset authors. The CONTROL row at the top is sticky for visual comparison with the KO images.</p>
+Each gene knockout shows ~3 representative image crops per imaging marker, chosen by the dataset authors. The CONTROL row at the top is pinned at the top for visual comparison with the KO images. Viewers can access all images by downloading the entire collection.</p>
 <p><strong>How many panels can I open at once?</strong>
 Minimum 1, maximum 4. Layout orientation options change based on how many you have open.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Read the full tutorial: <a href="../reference/">Visualizing Data in the OPS Explorer</a></li>
-<li>Programmatic access: <a href=".../download/">Programmatic Data Access</a></li>
+<li>Read the full tutorial: <a href="visualization.md">Visualizing Data in the OPS Explorer</a></li>
+<li>Programmatic access: <a href="api-access.md">Programmatic Data Access</a></li>
+<li>Browse datasets: <a href="all-data-page.md">Browsing the All Data Page</a></li>
 </ul>
 
 
