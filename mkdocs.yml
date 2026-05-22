@@ -62,6 +62,7 @@ nav:
 plugins:
   - search
   - awesome-pages
+  - mkdocs-jupyter
 
 markdown_extensions:
   - admonition
