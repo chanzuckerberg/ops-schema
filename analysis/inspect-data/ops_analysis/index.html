@@ -13,10 +13,6 @@
         <link rel="canonical" href="https://chanzuckerberg.github.io/ops-schema/analysis/inspect-data/ops_analysis/">
       
       
-        <link rel="prev" href="../../download-data/">
-      
-      
-        <link rel="next" href="../../../cli/">
       
       
         
@@ -27,7 +23,7 @@
     
     
       
-        <title>Inspect Data - | OPS Explorer Documentation</title>
+        <title>OPS Data Analysis Tutorial - | OPS Explorer Documentation</title>
       
     
     
@@ -80,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#inspect-data" class="md-skip">
+        <a href="#ops-data-analysis-tutorial" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Inspect Data
+              OPS Data Analysis Tutorial
             
           </span>
         </div>
@@ -263,12 +259,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../../" class="md-tabs__link">
           
   
@@ -537,31 +531,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -579,7 +568,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -650,37 +639,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Inspect Data
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="." class="md-nav__link">
         
   
   
@@ -696,246 +658,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-ops-data-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The OPS data model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run-this-notebook-in-the-browser" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run this notebook in the browser
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inspect-the-collection-in-s3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inspect the collection in S3
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#load-the-collection-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load the collection metadata
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#load-the-per-cell-feature-table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load the per-cell feature table
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#load-the-per-perturbation-aggregated-anndata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load the per-perturbation aggregated AnnData
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-all-cells-for-one-perturbation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: all cells for one perturbation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-all-non-targeting-control-cells" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: all non-targeting control cells
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-cells-by-cell-cycle-phase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: cells by cell-cycle phase
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-perturbations-with-enough-cells-for-robust-per-cell-statistics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: perturbations with enough cells for robust per-cell statistics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-perturbations-that-significantly-change-a-feature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: perturbations that significantly change a feature
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#slice-features-most-affected-by-one-perturbation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slice: features most affected by one perturbation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-feature-distribution-perturbation-vs-control" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: feature distribution, perturbation vs control
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-volcano-plot-for-one-perturbation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: volcano plot for one perturbation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-every-perturbation-for-one-feature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: every perturbation for one feature
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-perturbation-embedding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: perturbation embedding
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-heatmap-of-top-perturbations-top-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: heatmap of top perturbations × top features
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualize-cluster-composition" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualize: cluster composition
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-it-together-pulling-a-local-copy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting it together: pulling a local copy
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1995,30 +1717,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="inspect-data">Inspect Data<a class="anchor-link" href="#inspect-data">¶</a></h1><p>Below are code snippets for common tasks on OPS (Optical Pooled Screening) data,
-using the <a href="../../ops-schema/ops-schema-main/standards/ops/0.1.0/schema.md">OPS Data Standard v0.1.0</a>.
-Examples run end-to-end on the Brieflow test collection bundled under
-<code>ops-data/cxs_test_data/</code>. Add an example you'd like to share by opening an
-issue and including "Example:" in the title.</p>
-<h2 id="the-ops-data-model">The OPS data model<a class="anchor-link" href="#the-ops-data-model">¶</a></h2><p>OPS datasets are organized in a four-level hierarchy:</p>
-<pre><code>Collection                      # one per submission; groups experiments from a single publication
-└── Experiment (Screen)         # one or more per collection
-    └── Visualization (Subset)  # one or more per experiment
-</code></pre>
-<p>Per-experiment artifacts:</p>
+<h1 id="ops-data-analysis-tutorial">OPS Data Analysis Tutorial<a class="anchor-link" href="#ops-data-analysis-tutorial">¶</a></h1><p>Below are code snippets for common tasks on OPS data</p>
+<h2 id="the-ops-data-model">The OPS data model<a class="anchor-link" href="#the-ops-data-model">¶</a></h2><p>OPS datasets include a parquet file of morphological cell features, and a processed .h5ad of single cell sequencing data, e.g.:</p>
 <ul>
-<li><code>cell_data.parquet</code> — one row per cell, with morphological feature columns</li>
-<li><code>{screen_name}.zarr</code> — primary OME-NGFF HCS image store</li>
+<li><code>cell_data.parquet</code> - one row per cell, with morphological feature columns</li>
+<li><code>aggregated_data.h5ad</code> - <code>(n_perturbations, n_features)</code> AnnData with effect sizes in <code>.X</code>, significance in <code>.layers["neg_log10_fdr"]</code>, and a 2D embedding in <code>.obsm</code></li>
 </ul>
-<p>Per-visualization artifacts:</p>
-<ul>
-<li><code>aggregated_data.h5ad</code> — <code>(n_perturbations, n_features)</code> AnnData with effect
-sizes in <code>.X</code>, significance in <code>.layers["neg_log10_fdr"]</code>, and a 2D embedding
-in <code>.obsm</code></li>
-<li><code>examples.zarr</code> — representative single-cell image crops</li>
-</ul>
-<p>The snippets below operate on the per-cell and per-perturbation tables. The
-image stores are out of scope for this tutorial.</p>
+<p>The snippets below operate on the per-cell and per-perturbation tables</p>
 </div>
 </div>
 </div>
