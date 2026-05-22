@@ -54,7 +54,7 @@ nav:
   - Data Analysis:
       - Overview: analysis/index.md
       - Download Data: analysis/download-data/index.md
-      - Inspect Data: analysis/inspect-data/ops_analysis
+      - Inspect Data: analysis/inspect-data/ops_analysis.ipynb
   - CLI Reference: cli/index.md
   - Data Schema: https://github.com/chanzuckerberg/ops-schema/tree/main/standards/ops
 
