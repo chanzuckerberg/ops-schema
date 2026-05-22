@@ -61,7 +61,9 @@ nav:
 plugins:
   - search
   - awesome-pages
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
 
 markdown_extensions:
   - admonition
