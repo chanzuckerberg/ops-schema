@@ -12,6 +12,8 @@ dependencies = [
     "pydantic-zarr>=0.7",
     "zarr>=3.0",
     "numpy>=2.0",
+    "ome-zarr-models>=1.7",
+    "s3fs",
 ]
 
 [project.optional-dependencies]
@@ -33,7 +35,14 @@ ops-validate = "ops_validator.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["ops_validator", "ops_validator.validators", "ops_validator.models"]
+packages = [
+    "ops_validator",
+    "ops_validator.validators",
+    "ops_validator.models",
+    "ops_validator.zarr",
+    "ops_validator.zarr.spec",
+    "ops_validator.zarr.spec.v0_1",
+]
 
 [tool.ruff]
 line-length = 100
