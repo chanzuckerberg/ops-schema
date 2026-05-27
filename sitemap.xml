@@ -2,38 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/analysis/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/analysis/download-data/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/analysis/inspect-data/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/analysis/inspect-data/ops_analysis/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/cli/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/tutorials/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/tutorials/quickstart/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://chanzuckerberg.github.io/ops-schema/tutorials/reference/</loc>
-         <lastmod>2026-05-22</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
 </urlset>
