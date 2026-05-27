@@ -6,16 +6,16 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## Zarr Images
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** Zarr v3, OME-NGFF v0.5 HCS
-**File path:** `{screen_name}.zarr`
+**File path:** `{aggregation_name}.zarr`
 
 This is the primary image store for phenotype imaging data. It follows the OME-NGFF HCS plate convention with OPS-specific metadata extensions. A `.json` metadata file MUST exist at each level (excluding chunk/shard data).
 
 ### Zarr Hierarchy
 
 ```
-{screen_name}.zarr/                     Level 0: Plate root
+{aggregation_name}.zarr/                     Level 0: Plate root
 ├── A/                                  Level 1: Row group
 │   └── 1/                              Level 2: Column of Row A (Well group)
 │       └── 0/                          Level 3: Image group (multiscales)
@@ -27,7 +27,7 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 
 ### Level 0 — Plate Root
 
-`{screen_name}.zarr/`
+`{aggregation_name}.zarr/`
 
 <table>
 <thead>
@@ -133,13 +133,13 @@ This is the primary image store for phenotype imaging data. It follows the OME-N
 
 ### Level 1 — Row Group
 
-`{screen_name}.zarr/A/`
+`{aggregation_name}.zarr/A/`
 
 No required metadata beyond OME-NGFF row group conventions.
 
 ### Level 2 — Well Group
 
-`{screen_name}.zarr/A/1/`
+`{aggregation_name}.zarr/A/1/`
 
 <table>
 <thead>
@@ -165,7 +165,7 @@ No required metadata beyond OME-NGFF row group conventions.
 
 ### Level 3 — Image Group (Multiscales)
 
-`{screen_name}.zarr/A/1/0/`
+`{aggregation_name}.zarr/A/1/0/`
 
 <table>
 <thead>
@@ -226,7 +226,7 @@ No required metadata beyond OME-NGFF row group conventions.
 
 ### Level 4 — Resolution Arrays
 
-`{screen_name}.zarr/A/1/0/0/` through `.../4/`
+`{aggregation_name}.zarr/A/1/0/0/` through `.../4/`
 
 At least one resolution level is REQUIRED. Multiple levels (e.g., full resolution through 16x downsampled) are RECOMMENDED for large merged-well images but not required for per-tile stores.
 
@@ -271,7 +271,7 @@ At least one resolution level is REQUIRED. Multiple levels (e.g., full resolutio
 
 ### Level 5 — Labels Container
 
-`{screen_name}.zarr/A/1/0/labels/`
+`{aggregation_name}.zarr/A/1/0/labels/`
 
 <table>
 <thead>
@@ -292,7 +292,7 @@ At least one resolution level is REQUIRED. Multiple levels (e.g., full resolutio
 
 ### Level 6 — Label Group (per segmentation)
 
-`{screen_name}.zarr/A/1/0/labels/cell_seg/`
+`{aggregation_name}.zarr/A/1/0/labels/cell_seg/`
 
 <table>
 <thead>
@@ -311,7 +311,7 @@ At least one resolution level is REQUIRED. Multiple levels (e.g., full resolutio
 <tr>
 <td><code>segmentation_metadata.annotation_type</code></td>
 <td>REQUIRED</td>
-<td>Type of biological structure annotated. See Pending Item #8 for exhaustive enum definition. Current examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code></td>
+<td>Type of biological structure annotated. Examples: <code>"cell"</code>, <code>"nucleus"</code>, <code>"cytoplasm"</code>, <code>"mitochondria"</code>, <code>"endoplasmic_reticulum"</code>, <code>"golgi"</code>, <code>"lysosome"</code>, <code>"lipid_droplet"</code></td>
 </tr>
 <tr>
 <td><code>segmentation_metadata.is_ome_label</code></td>
@@ -378,7 +378,7 @@ At least one resolution level is REQUIRED. Multiple levels (e.g., full resolutio
 
 ### Level 7 — Label Resolution Array
 
-`{screen_name}.zarr/A/1/0/labels/cell_seg/0/`
+`{aggregation_name}.zarr/A/1/0/labels/cell_seg/0/`
 
 <table>
 <thead>

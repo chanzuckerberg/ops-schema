@@ -1,5 +1,5 @@
 """
-Validator for {screen_name}.zarr (OPS plate store).
+Validator for {aggregation_name}.zarr (OPS plate store).
 
 Walks all 7 hierarchy levels, validating group attributes with Pydantic models
 and array specs with pydantic-zarr (following the DCA pattern).
