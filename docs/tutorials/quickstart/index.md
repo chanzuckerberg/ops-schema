@@ -67,12 +67,12 @@ The left panel has two regions:
        width="70%">
 </p>
 
-The book icon in the top-right of the left panel next to the collection name opens a Resources drop down with **Documentation** or **Learn about OPS Explorer**.
+The book (📖) icon in the top-right of the left panel next to the collection name opens a Resources drop down with **Documentation** or **Learn about OPS Explorer**.
 
 <p align="center">
   <img src="../../assets/quickstart_imgs/Collection_Overflow_Menu.png"
        alt="Three-dot overflow menu open showing Documentation and Learn about OPS Explorer"
-       width="90%">
+       width="30%">
 </p>
 
 
@@ -90,7 +90,7 @@ The right side of the viewer holds 1–4 visualization panes of four possible ty
 <p align="center">
   <img src="../../assets/quickstart_imgs/Visualizations_-_Color_By_On,_Interactions.png"
        alt="Multi-panel view with all four panel types visible at once: OPS UMAP, OPS volcano, CROP-seq UMAP, CROP-seq gene expression volcano"
-       width="100%">
+       width="90%">
 </p>
 
 > **Important:** The CROP-seq Gene Expression Volcano is the only panel where dots are **not** gene knockouts. Annotation coloring and selection-from-list do not apply to it.
@@ -144,6 +144,7 @@ Minimum 1, maximum 4. Layout orientation options change based on how many you ha
 
 ## Next Steps
 
-- Read the full tutorial: [Visualizing Data in the OPS Explorer](visualization.md)
-- Programmatic access: [Programmatic Data Access](api-access.md)
-- Browse datasets: [Browsing the All Data Page](all-data-page.md)
+- Read the full tutorial: [Visualizing Data in the OPS Explorer](https://chanzuckerberg.github.io/ops-schema/tutorials/reference/)
+- Programmatic access: [CLI Programmatic Data Access](https://chanzuckerberg.github.io/ops-schema/cli/)
+- Explore and download datasets: [Data Analysis Notebooks](https://chanzuckerberg.github.io/ops-schema/analysis/)
+
