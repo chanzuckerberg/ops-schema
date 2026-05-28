@@ -17,7 +17,7 @@ logging.getLogger("asyncio").setLevel(logging.CRITICAL)
 
 
 # File-based artifact types. Each entry: (description, module path, class name).
-# Zarr artifacts are handled separately via the ops_validator.zarr framework.
+# Zarr artifacts are handled separately via the ops_validator.zarr_validation framework.
 ARTIFACT_TYPES = {
     "aggregated": (
         "Aggregated data (.h5ad)",
@@ -184,7 +184,7 @@ def _detect_type(path: Path) -> str | None:
 
 def _print_zarr_run(run, label: str | None = None) -> tuple[int, int, int]:
     """Print a ValidationRun in text form. Returns (n_pass, n_fail, n_warnings)."""
-    from ops_validator.zarr.result import Severity
+    from ops_validator.zarr_validation.result import Severity
 
     if label:
         print(f"--- {label} ---")
@@ -213,7 +213,7 @@ def _validate_zarr_single(
     path: Path, *, spec_version: str, strict: bool
 ) -> int:
     """Validate a single Zarr store path. Returns exit code."""
-    from ops_validator.zarr import validate
+    from ops_validator.zarr_validation import validate
 
     run = validate(str(path), spec_version=spec_version)
     _, n_fail, n_warn = _print_zarr_run(run)
@@ -227,7 +227,7 @@ def _validate_submission(submission_dir: Path, *, spec_version: str) -> int:
     import importlib
 
     from ops_validator.submission import check_ops_submission
-    from ops_validator.zarr import validate as zarr_validate
+    from ops_validator.zarr_validation import validate as zarr_validate
 
     print(f"Validating submission directory: {submission_dir}\n")
     print("=" * 70)

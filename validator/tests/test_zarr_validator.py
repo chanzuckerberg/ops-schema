@@ -6,13 +6,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from ops_validator.zarr.result import Severity
-from ops_validator.zarr.validator import (
+from ops_validator.zarr_validation.result import Severity
+from ops_validator.zarr_validation.validator import (
     _extract_level,
     _get_compression,
     validate_zarr_node,
 )
-from ops_validator.zarr.zarr_node import ZarrNodeType
+from ops_validator.zarr_validation.zarr_node import ZarrNodeType
 
 
 def make_array_spec(shape, chunk_shape, codecs, dtype="uint16"):
@@ -121,17 +121,17 @@ class TestImageLabelNodeNoModelButHasMetadata:
         mock_group.attrs = attrs
 
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.zarr.open_group",
+            "ops_validator.zarr_validation.validator.zarr.open_group",
             lambda *a, **kw: mock_group,
         )
         mock_ome = MagicMock()
         mock_ome.ome_zarr_version = "0.5"
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.open_ome_zarr",
+            "ops_validator.zarr_validation.validator.open_ome_zarr",
             lambda *a, **kw: mock_ome,
         )
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.classify_group",
+            "ops_validator.zarr_validation.validator.classify_group",
             lambda *a, **kw: ZarrNodeType.IMAGE_LABEL,
         )
         MockModel = MagicMock()
@@ -184,21 +184,21 @@ class TestNodeTypeStamping:
         mock_group = MagicMock()
         mock_group.attrs = {"ome": {}}
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.zarr.open_group",
+            "ops_validator.zarr_validation.validator.zarr.open_group",
             lambda *a, **kw: mock_group,
         )
         mock_ome = MagicMock()
         mock_ome.ome_zarr_version = "0.5"
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.open_ome_zarr",
+            "ops_validator.zarr_validation.validator.open_ome_zarr",
             lambda *a, **kw: mock_ome,
         )
         monkeypatch.setattr(
-            "ops_validator.zarr.validator.classify_group",
+            "ops_validator.zarr_validation.validator.classify_group",
             lambda *a, **kw: ZarrNodeType.IMAGE,
         )
         monkeypatch.setattr(
-            "ops_validator.zarr.validator._build_node_dict",
+            "ops_validator.zarr_validation.validator._build_node_dict",
             lambda *a, **kw: {
                 "axes": ["T", "C", "Z", "Y", "X"],
                 "levels": [],

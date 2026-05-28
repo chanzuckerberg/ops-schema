@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from ops_validator.zarr.spec.v0_1.models import (
+from ops_validator.zarr_validation.spec.v0_1.models import (
     OPSChannelMetadata,
     OPSScaleLevelSpec,
     OPSSegmentationMetadata,

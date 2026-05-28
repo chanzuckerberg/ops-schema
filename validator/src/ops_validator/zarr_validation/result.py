@@ -5,7 +5,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ops_validator.zarr.zarr_node import ZarrNodeType
+    from ops_validator.zarr_validation.zarr_node import ZarrNodeType
 
 
 class Severity(str, Enum):

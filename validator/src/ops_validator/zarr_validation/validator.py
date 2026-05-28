@@ -23,15 +23,15 @@ from ome_zarr_models import open_ome_zarr
 from ome_zarr_models.v05.hcs import HCS, WellGroupNotFoundError
 from ome_zarr_models.v05.image import Image
 
-from ops_validator.zarr.registry import (
+from ops_validator.zarr_validation.registry import (
     UnsupportedSpecVersionError,
     get_label_metadata_validator,
     get_label_model,
     get_model,
     get_plate_metadata_validator,
 )
-from ops_validator.zarr.result import Issue, Severity, ZarrNodeValidationResult
-from ops_validator.zarr.zarr_node import ZarrNodeType, classify_group
+from ops_validator.zarr_validation.result import Issue, Severity, ZarrNodeValidationResult
+from ops_validator.zarr_validation.zarr_node import ZarrNodeType, classify_group
 
 if TYPE_CHECKING:
     from pydantic import BaseModel

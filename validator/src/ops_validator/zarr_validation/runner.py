@@ -3,7 +3,7 @@ Top-level runner: discover stores, run validation, return results.
 
 Usage
 -----
-from ops_validator.zarr import validate
+from ops_validator.zarr_validation import validate
 
 # Validate a single store directly (fast — no discovery):
 results = validate("s3://my-bucket/datasets/plate.ome.zarr")
@@ -22,16 +22,16 @@ from __future__ import annotations
 import time
 from typing import Literal
 
-from ops_validator.zarr.discovery import discover_zarr_stores, is_zarr_store
-from ops_validator.zarr.registry import UnsupportedSpecVersionError, get_model
-from ops_validator.zarr.result import (
+from ops_validator.zarr_validation.discovery import discover_zarr_stores, is_zarr_store
+from ops_validator.zarr_validation.registry import UnsupportedSpecVersionError, get_model
+from ops_validator.zarr_validation.result import (
     Issue,
     Severity,
     ValidationRun,
     ValidationSummary,
     ZarrNodeValidationResult,
 )
-from ops_validator.zarr.validator import validate_zarr_node
+from ops_validator.zarr_validation.validator import validate_zarr_node
 
 _DEFAULT_SPEC_VERSION = "ops-0.1"
 

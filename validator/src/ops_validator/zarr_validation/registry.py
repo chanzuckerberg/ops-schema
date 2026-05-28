@@ -17,8 +17,8 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
-from ops_validator.zarr.result import Issue
-from ops_validator.zarr.spec.v0_1.models import (
+from ops_validator.zarr_validation.result import Issue
+from ops_validator.zarr_validation.spec.v0_1.models import (
     OPSStoreSpecV0_1,
     validate_ops_label_metadata,
     validate_ops_plate_metadata,

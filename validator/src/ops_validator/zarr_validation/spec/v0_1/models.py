@@ -30,7 +30,7 @@ import numpy as np
 import pydantic
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-from ops_validator.zarr.constants import (
+from ops_validator.zarr_validation.constants import (
     ALLOWED_CODECS,
     CHUNK_MIN_BYTES,
     CHUNK_REC_BYTES,
@@ -47,7 +47,7 @@ from ops_validator.zarr.constants import (
     TIME_SHARD_MIN_RECOMMENDED,
     _nbytes,
 )
-from ops_validator.zarr.result import Issue, Severity
+from ops_validator.zarr_validation.result import Issue, Severity
 
 AXES_REQUIRED = ["T", "C", "Z", "Y", "X"]
 MULTISCALE_LEVEL_COUNT_REQUIRED = 5  # full res → 16x downsampled

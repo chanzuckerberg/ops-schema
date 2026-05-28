@@ -32,6 +32,7 @@ dev = [
 
 [project.scripts]
 ops-validate = "ops_validator.cli:main"
+ops-validate2 = "ops_validator.cli2:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -39,9 +40,9 @@ packages = [
     "ops_validator",
     "ops_validator.validators",
     "ops_validator.models",
-    "ops_validator.zarr",
-    "ops_validator.zarr.spec",
-    "ops_validator.zarr.spec.v0_1",
+    "ops_validator.zarr_validation",
+    "ops_validator.zarr_validation.spec",
+    "ops_validator.zarr_validation.spec.v0_1",
 ]
 
 [tool.ruff]

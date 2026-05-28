@@ -10,14 +10,14 @@ Two complementary validator surfaces:
        CollectionValidator(path).validate()
 
 2. Zarr-image validation framework (Pydantic + ome-zarr-models) for OME-Zarr
-   stores and HCS plates. Imported eagerly via the ``ops_validator.zarr``
+   stores and HCS plates. Imported eagerly via the ``ops_validator.zarr_validation``
    subpackage:
 
        from ops_validator import validate
        run = validate("s3://bucket/plate.ome.zarr")
 """
 
-from ops_validator.zarr import (
+from ops_validator.zarr_validation import (
     Issue,
     Severity,
     ValidationRun,
