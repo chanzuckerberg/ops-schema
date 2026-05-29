@@ -26,7 +26,7 @@ The OPS Explorer is the first centralized location to visualize and interact wit
 
 **Stay in touch by joining our OPS Community Slack**
 
-1. [Use this link](https://join.slack.com/t/cziscience/shared_invite/zt-3yr8omv38-~PlTThsE~uKB4AjPcCy1_Q) to join the Biohub Community Slack Workspace.
+1. [Use this link](https://join.slack.com/t/biohub-community/shared_invite/zt-3yxdy77dv-rJHI97SprbDXwEYP3Y1tqQ) to join the Biohub Community Slack Workspace.
    
 2. Join the `#ops-explorer-community` channel ([Slack docs](https://slack.com/help/articles/205239967-Join-a-channel)).
  
