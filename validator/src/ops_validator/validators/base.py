@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+
+from cloudpathlib import AnyPath, CloudPath
 
 
 @dataclass
@@ -19,8 +21,10 @@ class ValidationIssue:
 
 
 class BaseValidator:
-    def __init__(self, path: str | Path):
-        self.path = Path(path)
+    def __init__(self, path: str | Path | CloudPath):
+        self.path: Path | CloudPath = (
+            path if isinstance(path, (Path, CloudPath)) else AnyPath(path)
+        )
         self.errors: list[ValidationIssue] = []
         self.warnings: list[ValidationIssue] = []
 

@@ -5,7 +5,9 @@ Rules are derived from standards/ops/0.1.0/zarr-images.md.
 
 Array storage rules (OPSStoreSpecV0_1 / OPSScaleLevelSpec):
   - Axes must be uppercase ["T", "C", "Z", "Y", "X"]
-  - Exactly 5 resolution levels required (full res → 16x downsampled)
+  - At least one resolution level is REQUIRED; multiple levels
+    (full res → 16x downsampled) are RECOMMENDED for large merged-well
+    images but not required for per-tile stores
   - Sharding is RECOMMENDED (not MUST) — per-tile stores use flat chunking
   - sharding_indexed index_codecs MUST include 'crc32c'
   - Chunk/shard size limits and compression rules are the same as DCA v0.1
@@ -42,15 +44,11 @@ from ops_validator.zarr_validation.constants import (
     RECOMMENDED_LEVEL_MAX,
     SHARD_MAX_BYTES,
     SHARD_REC_BYTES,
-    SPATIAL_SHARD_MAX_RECOMMENDED,
-    TC_CHUNK_RECOMMENDED,
-    TIME_SHARD_MIN_RECOMMENDED,
     _nbytes,
 )
 from ops_validator.zarr_validation.result import Issue, Severity
 
 AXES_REQUIRED = ["T", "C", "Z", "Y", "X"]
-MULTISCALE_LEVEL_COUNT_REQUIRED = 5  # full res → 16x downsampled
 INDEX_CODECS_REQUIRED = {"crc32c"}
 
 
@@ -104,19 +102,6 @@ class OPSScaleLevelSpec(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def check_chunk_shape_recommendations(self) -> "OPSScaleLevelSpec":
-        _t, c, _z, _y, _x = self.chunk_shape
-
-        warnings: list[str] = []
-        if c != TC_CHUNK_RECOMMENDED:
-            warnings.append(
-                f"[SHOULD] Channel chunk size should be {TC_CHUNK_RECOMMENDED}; got {c}"
-            )
-        if warnings:
-            raise ValueError("\n".join(warnings))
-        return self
-
-    @model_validator(mode="after")
     def check_shard_size(self) -> "OPSScaleLevelSpec":
         """
         Shard size checks for OPS. Sharding is recommended for merged-well stores
@@ -141,20 +126,6 @@ class OPSScaleLevelSpec(BaseModel):
             warnings.append(
                 f"[SHOULD] Uncompressed shard size {shard_bytes / 1024**3:.1f} GB "
                 f"exceeds the recommended 5 GB"
-            )
-
-        _t, _c, z, y, x = self.shard_shape
-        for dim_name, dim_val in (("z", z), ("y", y), ("x", x)):
-            if dim_val > SPATIAL_SHARD_MAX_RECOMMENDED:
-                warnings.append(
-                    f"[SHOULD] Shard size in {dim_name} ({dim_val}) exceeds "
-                    f"the recommended maximum of {SPATIAL_SHARD_MAX_RECOMMENDED}"
-                )
-
-        if _t < TIME_SHARD_MIN_RECOMMENDED:
-            warnings.append(
-                f"[SHOULD] Time shard size ({_t}) is below the recommended "
-                f"minimum of {TIME_SHARD_MIN_RECOMMENDED}"
             )
 
         if warnings:
@@ -254,11 +225,13 @@ class OPSStoreSpecV0_1(BaseModel):
 
     @field_validator("multiscale_level_count")
     @classmethod
-    def must_have_5_levels(cls, v: int) -> int:
-        if v != MULTISCALE_LEVEL_COUNT_REQUIRED:
+    def must_have_at_least_one_level(cls, v: int) -> int:
+        if v < 1:
             raise ValueError(
-                f"Exactly {MULTISCALE_LEVEL_COUNT_REQUIRED} resolution levels are required "
-                f"(full resolution through 16x downsampled); found {v}"
+                f"At least one resolution level is REQUIRED; found {v}. "
+                "Multiple levels (full resolution through 16x downsampled) are "
+                "RECOMMENDED for large merged-well images but not required for "
+                "per-tile stores."
             )
         return v
 

@@ -39,15 +39,6 @@ SPATIAL_AXES = {"z", "y", "x"}
 NON_SPATIAL_AXES = {"t", "c"}
 
 # ---------------------------------------------------------------------------
-# Chunk / shard shape recommendations
-# ---------------------------------------------------------------------------
-
-SPATIAL_CHUNK_RECOMMENDED = 128  # SHOULD — each spatial dim
-TC_CHUNK_RECOMMENDED = 1  # SHOULD — time and channel dims
-SPATIAL_SHARD_MAX_RECOMMENDED = 2048  # SHOULD — each spatial shard dim
-TIME_SHARD_MIN_RECOMMENDED = 16  # SHOULD — time shard dim
-
-# ---------------------------------------------------------------------------
 # Dtype recommendations
 # ---------------------------------------------------------------------------
 

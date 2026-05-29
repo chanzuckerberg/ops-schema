@@ -98,20 +98,28 @@ class TestStoreSpecAxes:
 
 
 class TestStoreSpecLevelCount:
+    def test_one_level_passes(self):
+        shapes = _five_level_shapes()[:1]
+        OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], shapes))
+
+    def test_four_levels_pass(self):
+        shapes = _five_level_shapes()[:4]
+        OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], shapes))
+
     def test_five_levels_pass(self):
         OPSStoreSpecV0_1.model_validate(
             _store(["T", "C", "Z", "Y", "X"], _five_level_shapes())
         )
 
-    def test_four_levels_fail(self):
-        shapes = _five_level_shapes()[:4]
-        with pytest.raises(ValidationError, match="Exactly 5"):
-            OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], shapes))
+    def test_six_levels_pass(self):
+        # Use a bigger Z base so the 6th level can still halve every spatial dim
+        # (otherwise the downsampling SHOULD rule fires, unrelated to level count).
+        shapes = _five_level_shapes(base=[1, 1, 32, 1024, 1024]) + [[1, 1, 1, 32, 32]]
+        OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], shapes))
 
-    def test_six_levels_fail(self):
-        shapes = _five_level_shapes() + [[1, 1, 1, 32, 32]]
-        with pytest.raises(ValidationError, match="Exactly 5"):
-            OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], shapes))
+    def test_zero_levels_fail(self):
+        with pytest.raises(ValidationError, match="At least one resolution level"):
+            OPSStoreSpecV0_1.model_validate(_store(["T", "C", "Z", "Y", "X"], []))
 
 
 class TestStoreSpecDownsampling:
@@ -129,8 +137,6 @@ class TestStoreSpecDownsampling:
 
 
 class TestIndexCodecs:
-    # Shard time dim = TIME_SHARD_MIN_RECOMMENDED to keep the test focused on
-    # crc32c behaviour without firing the unrelated time-shard SHOULD warning.
     def test_crc32c_present_passes(self):
         OPSScaleLevelSpec.model_validate(
             _level(

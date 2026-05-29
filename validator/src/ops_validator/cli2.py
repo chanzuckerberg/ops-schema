@@ -7,10 +7,22 @@ Usage:
 """
 
 import argparse
+import logging
 import sys
+import warnings
+
 from cloudpathlib import AnyPath
 from pydantic import BaseModel
+
 from ops_validator.validators import aggregated_data, cell_data, collection, experimental, feature_definitions, perturbation_library
+from ops_validator.zarr_validation import validate as validate_zarr
+
+# Suppress ResourceWarnings from unclosed aiohttp sessions/connectors emitted
+# on GC by zarr/s3fs internals — not actionable from user code.
+# Two paths: warnings.warn (filtered here) and loop.call_exception_handler
+# (silenced via the asyncio logger).
+warnings.filterwarnings("ignore", category=ResourceWarning, message="Unclosed.*")
+logging.getLogger("asyncio").setLevel(logging.CRITICAL)
 
 class OPSVisualizations(BaseModel):
     id: str
@@ -35,9 +47,11 @@ class OPSSubmissionStructure(BaseModel):
         ok &= _run("perturbation", perturbation_library.PerturbationLibraryValidator(path=self.perturbation_metadata))
         if self.feature_definitions is not None:
             ok &= _run("features", feature_definitions.FeatureDefinitionsValidator(path=self.feature_definitions))
-        ok &= _run("cell_data", cell_data.CellDataValidator(path=self.cell_data))
+        ok &= _run("cell_data", cell_data.CellDataValidator(path=self.cell_data, sample_limit=None))
         for viz in self.visualizations:
             ok &= _run(f"aggregated/{viz.id}", aggregated_data.AggregatedDataValidator(path=viz.aggregated_data))
+        for zarr_path in self.zarr_files:
+            ok &= _run_zarr(f"zarr/{zarr_path.name}", zarr_path)
         return ok
 
 
@@ -53,6 +67,24 @@ def _run(label: str, validator) -> bool:
         for err in validator.errors:
             print(f"        {err}")
     return validator.is_valid
+
+
+def _run_zarr(label: str, path: AnyPath) -> bool:
+    """Run zarr-store validation and print PASS/FAIL per discovered store."""
+    run = validate_zarr(str(path))
+    for r in run:
+        if r.passed:
+            nw = len(r.warnings)
+            suffix = f" ({nw} warnings)" if nw else ""
+            print(f"  PASS  {r.node_path}{suffix}")
+        else:
+            print(f"  FAIL  {r.node_path}  ({len(r.errors)} errors)")
+            for err in r.errors:
+                print(f"        {err.message}")
+    s = run.summary
+    total = s.stores_passed + s.stores_failed
+    print(f"  [{label}] {s.stores_passed} passed, {s.stores_failed} failed of {total}, {s.duration_seconds:.1f}s")
+    return s.stores_failed == 0
 
 
 def validate_structure(collection_root: AnyPath) -> OPSSubmissionStructure:
