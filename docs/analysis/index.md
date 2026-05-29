@@ -8,7 +8,7 @@ Visualize data in the OPS Explorer and download via the CLI tool. All data is st
     <h3 class="tile-title">Download Data</h3>
 
     <p class="tile-tagline">
-      Download cropped fluorescence images and cell identity CSVs for each gene knockout.
+      Options for exploring data before committing to a download.
     </p>
   </a>
 
@@ -16,7 +16,7 @@ Visualize data in the OPS Explorer and download via the CLI tool. All data is st
     <h3 class="tile-title">Inspect Data</h3>
 
     <p class="tile-tagline">
-      Access standardized CellProfiler features and author-implemented analysis features.
+      Code snippets for common tasks on OPS data to explore datasets in detail.
     </p>
   </a>
 
