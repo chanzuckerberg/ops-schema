@@ -1,6 +1,6 @@
-# OPS Schema v0.1.0 — Zarr Example: `example_screen.zarr`
+# OPS Schema v0.1.0 — Zarr Example: `example_aggregation.zarr`
 
-**Source path:** `/path/to/example_screen.zarr`
+**Source path:** `/path/to/example_aggregation.zarr`
 
 Zarr v3 OME-NGFF (v0.5) HCS plate store with 7 hierarchy levels. See [zarr-images.md](zarr-images.md) for the full field specification.
 
@@ -8,7 +8,7 @@ Zarr v3 OME-NGFF (v0.5) HCS plate store with 7 hierarchy levels. See [zarr-image
 
 ## Level 0 — Plate Root
 
-**File:** `example_screen.zarr/zarr.json`
+**File:** `example_aggregation.zarr/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -19,7 +19,7 @@ attributes:
     version: "0.5"
     plate:
       version: "0.5"
-      name: "example_screen"
+      name: "example_aggregation"
       field_count: 1
       acquisitions:
         - id: 0
@@ -114,7 +114,7 @@ attributes:
 
 ## Level 1 — Row Group
 
-**File:** `example_screen.zarr/A/zarr.json`
+**File:** `example_aggregation.zarr/A/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -127,7 +127,7 @@ attributes: {}
 
 ## Level 2 — Column of Row A (Well Group)
 
-**File:** `example_screen.zarr/A/1/zarr.json`
+**File:** `example_aggregation.zarr/A/1/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -233,7 +233,7 @@ attributes:
       co2_percentage: null
     cell_product_lot_id: null
     passage_number: null
-  acquisition_uid: null                  # e.g., "acq_example_screen_000"
+  acquisition_uid: null                  # e.g., "acq_example_aggregation_000"
   acquisition_timestamp: null            # e.g., "2025-04-24T00:00:00Z" (ISO 8601)
 ```
 
@@ -241,7 +241,7 @@ attributes:
 
 ## Level 3 — Image Group (Multiscales)
 
-**File:** `example_screen.zarr/A/1/0/zarr.json`
+**File:** `example_aggregation.zarr/A/1/0/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -478,7 +478,7 @@ attributes:
 
 ## Level 4 — Resolution Array
 
-**File:** `example_screen.zarr/A/1/0/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
+**File:** `example_aggregation.zarr/A/1/0/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
 
 ```yaml
 zarr_format: 3
@@ -524,7 +524,7 @@ codecs:
 
 ## Level 5 — Labels Container
 
-**File:** `example_screen.zarr/A/1/0/labels/zarr.json`
+**File:** `example_aggregation.zarr/A/1/0/labels/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -554,7 +554,7 @@ attributes:
 
 ## Level 6 — Label Group (per segmentation)
 
-**File:** `example_screen.zarr/A/1/0/labels/cell_seg/zarr.json`
+**File:** `example_aggregation.zarr/A/1/0/labels/cell_seg/zarr.json`
 
 ```yaml
 zarr_format: 3
@@ -594,7 +594,7 @@ attributes:
 
 ## Level 7 — Label Resolution Array
 
-**File:** `example_screen.zarr/A/1/0/labels/cell_seg/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
+**File:** `example_aggregation.zarr/A/1/0/labels/cell_seg/0/zarr.json` (full-resolution; levels 1–4 follow same schema)
 
 ```yaml
 zarr_format: 3

@@ -32,7 +32,7 @@ class ISSChannel(BaseModel):
 
 
 class ExperimentBlock(BaseModel):
-    screen_title: str
+    title: str
     pseudobulk: list[str] | None = None
     crop_seq_anndata: str | None = None
     organism_ontology_term_id: str
@@ -57,11 +57,11 @@ class ExperimentBlock(BaseModel):
             )
         return v
 
-    @field_validator("screen_title")
+    @field_validator("title")
     @classmethod
-    def screen_title_not_empty(cls, v: str) -> str:
+    def title_not_empty(cls, v: str) -> str:
         if not v.strip():
-            raise ValueError("experiment.screen_title must not be empty")
+            raise ValueError("experiment.title must not be empty")
         return v
 
 

@@ -6,7 +6,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 ## Feature Definitions
 
-**Scope:** Per experiment
+**Scope:** Per pseudobulk aggregation
 **File format:** CSV
 **File path:** `metadata/feature_definitions.csv`
 

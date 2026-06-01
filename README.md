@@ -11,6 +11,16 @@ The OPS Data Standard defines the structure, format, and requirements for organi
 - Data sharing and reproducibility
 - Integration with the CELLxGENE ecosystem
 
+### Data Model
+
+OPS submissions are organized in a three-level hierarchy:
+
+- **Collection** — one per submission; groups pseudobulk aggregations from a single publication.
+- **Pseudobulk Aggregation** — the lab-defined dataset that the perturbation library, single-cell features, and image store hang off of. Not necessarily one physical screen run: a lab may pool cells from multiple runs into a single aggregation.
+- **Visualization (Embedding)** — one or more per aggregation. Each visualization renders the aggregation through one or more embeddings (UMAP, PHATE, t-SNE, …) carried in a single `aggregated_data.h5ad`.
+
+See the [schema specification](standards/ops/0.1.0/schema.md) for the full data model and field-level requirements.
+
 ## Documentation
 
 The schema specification is available in the `standards/` directory:
