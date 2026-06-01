@@ -6,13 +6,15 @@ Usage:
     ops-validate2 PATH [--type TYPE] [--spec-version VERSION]
 """
 
-import argparse
 import logging
 import sys
 import warnings
 
+import typer
 from cloudpathlib import AnyPath
 from pydantic import BaseModel
+
+app = typer.Typer(add_completion=False)
 
 from ops_validator.validators import aggregated_data, cell_data, collection, experimental, feature_definitions, perturbation_library
 from ops_validator.zarr_validation import validate as validate_zarr
@@ -23,6 +25,7 @@ from ops_validator.zarr_validation import validate as validate_zarr
 # (silenced via the asyncio logger).
 warnings.filterwarnings("ignore", category=ResourceWarning, message="Unclosed.*")
 logging.getLogger("asyncio").setLevel(logging.CRITICAL)
+
 
 class OPSVisualizations(BaseModel):
     id: str
@@ -87,107 +90,96 @@ def _run_zarr(label: str, path: AnyPath) -> bool:
     return s.stores_failed == 0
 
 
-def validate_structure(collection_root: AnyPath) -> OPSSubmissionStructure:
-    # Placeholder for actual validation logic.
-    print(f"Validating structure of: {collection_root}")
+def validate_structure(required: list[str], root: AnyPath) -> list[str]:
+    """Return entries from `required` (relative paths) that don't exist under `root`."""
+    return [p for p in required if not (root / p).exists()]
 
-    errors = []
-    structure = {
-        "collection_root": collection_root
-    }
-
-    ## Check collection metadata
-    if not (collection_root / "collection_metadata.yaml").is_file():
-        errors.append(f"Missing expected collection_metadata.yaml file in collection root: {collection_root}")
-    else:            
-        structure["collection_metadata"] = collection_root / "collection_metadata.yaml"    
-    
-    for screen_name in collection_root.iterdir():
-        if screen_name.name == "collection_metadata.yaml":
-            continue
-
-        if not screen_name.is_dir():
-            errors.append(f"Expected directory for screen_name, found file: {screen_name}")
-            continue
-        structure["screen_name"] = screen_name
-
-        ## Check metadata
-        metadata = screen_name / "metadata"
-        if not metadata.is_dir():
-            errors.append(f"Expected directory for metadata, found file: {metadata}")
-        else:
-            for expected_file in [{"experimental_metadata": "experimental_metadata.yaml", "perturbation_metadata": "perturbation_library.csv", "feature_definitions": "feature_definitions.csv"}]:
-                for key, filename in expected_file.items():
-                    expected_path = metadata / filename
-                    if not expected_path.is_file():
-                        errors.append(f"Missing expected metadata file: {expected_path}")
-                    else:
-                        structure[key] = expected_path
-
-        ## Check cell_data
-        cell_data = screen_name / "cell_data.parquet"
-        if not cell_data.is_file():
-            errors.append(f"Missing expected cell_data file: {cell_data}")
-        else:
-            structure["cell_data"] = cell_data
-        
-
-        ## Check visualizations
-        visualizations_dir = screen_name / "visualizations"
-        if not visualizations_dir.is_dir():
-            errors.append(f"Missing expected visualizations directory: {visualizations_dir}")
-        else:
-            visualizations = []
-            for viz in visualizations_dir.iterdir():
-                if not viz.is_dir():
-                    errors.append(f"Expected directory for visualization, found file: {viz}")
-                    continue
-                viz_id = viz.name
-                aggregated_data = viz / "aggregated_data.h5ad"
-                if not aggregated_data.is_file():
-                    errors.append(f"Missing expected aggregated_data file: {aggregated_data}")
-                    continue
-                examples = []
-                examples_dir = viz / "examples"
-                if not examples_dir.is_dir():
-                    errors.append(f"Missing expected examples directory: {examples_dir}")
-                    continue
-                for example in examples_dir.iterdir():
-                    examples.append(example)
-                visualizations.append(
-                    {"id": viz_id, "aggregated_data": aggregated_data, "examples": examples}
-                )
-            structure["visualizations"] = visualizations
-        
-        ## Check zarr files
-        zarr_dir = list(screen_name.glob(f"{screen_name.name}*.zarr"))
-        if len(zarr_dir) == 0:
-            errors.append(f"Missing expected zarr file(s) for screen_name: {screen_name}")
-        else:
-            structure["zarr_files"] = zarr_dir
-        
-        
-        print(errors)
-    return OPSSubmissionStructure.model_validate(structure)
 
 def validator(path: AnyPath):
-    structure = validate_structure(path)
-    structure.validate_ops()
+    print(f"Validating structure of: {path}")
+    screens = sorted(c for c in path.iterdir() if c.is_dir())
+    if len(screens) != 1:
+        print(f"  STRUCT  expected 1 screen dir; found {len(screens)}")
+        sys.exit(1)
+    s = screens[0]
+    vis_root = s / "visualizations"
+    vizs = sorted(c for c in vis_root.iterdir() if c.is_dir()) if vis_root.is_dir() else []
+    zarrs = sorted(s.glob("*.zarr"))
 
+    required = [
+        "collection_metadata.yaml",
+        f"{s.name}/metadata/experimental_metadata.yaml",
+        f"{s.name}/metadata/perturbation_library.csv",
+        f"{s.name}/cell_data.parquet",
+        *(f"{s.name}/visualizations/{v.name}/aggregated_data.h5ad" for v in vizs),
+    ]
+    missing = validate_structure(required, path)
+    for m in missing:
+        print(f"  STRUCT  missing: {m}")
+    if not zarrs:
+        print(f"  STRUCT  no *.zarr in {s.name}")
+    if missing or not zarrs:
+        sys.exit(1)
+
+    feat = s / "metadata/feature_definitions.csv"
+    OPSSubmissionStructure.model_validate({
+        "collection_root": path,
+        "collection_metadata": path / "collection_metadata.yaml",
+        "screen_name": s,
+        "experimental_metadata": s / "metadata/experimental_metadata.yaml",
+        "perturbation_metadata": s / "metadata/perturbation_library.csv",
+        "feature_definitions": feat if feat.is_file() else None,
+        "cell_data": s / "cell_data.parquet",
+        "visualizations": [
+            {"id": v.name, "aggregated_data": v / "aggregated_data.h5ad", "examples": []}
+            for v in vizs
+        ],
+        "zarr_files": zarrs,
+    }).validate_ops()
+
+
+
+@app.command()
+def _cli(
+    path: str = typer.Argument(..., help="Path to submission or single artifact"),
+    type_: str | None = typer.Option(
+        None,
+        "--type",
+        "-t",
+        help=(
+            "Artifact type. One of: collection, experimental, perturbation, "
+            "features, cell-data, aggregated, zarr. "
+            "If omitted, PATH is treated as a full submission directory."
+        ),
+    ),
+) -> None:
+    p = AnyPath(path)
+    if type_ is None:
+        validator(p)
+        return
+    if type_ == "collection":
+        ok = _run(type_, collection.CollectionValidator(path=p))
+    elif type_ == "experimental":
+        ok = _run(type_, experimental.ExperimentalValidator(path=p))
+    elif type_ == "perturbation":
+        ok = _run(type_, perturbation_library.PerturbationLibraryValidator(path=p))
+    elif type_ == "features":
+        ok = _run(type_, feature_definitions.FeatureDefinitionsValidator(path=p))
+    elif type_ == "cell-data":
+        ok = _run(type_, cell_data.CellDataValidator(path=p))
+    elif type_ == "aggregated":
+        ok = _run(type_, aggregated_data.AggregatedDataValidator(path=p))
+    elif type_ == "zarr":
+        ok = _run_zarr(f"zarr/{p.name}", p)
+    else:
+        typer.echo(f"Unknown --type {type_!r}", err=True)
+        raise typer.Exit(2)
+    raise typer.Exit(0 if ok else 1)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        prog="ops-validate2",
-        description="Validate OPS data artifacts (next-gen entry point).",
-    )
-    parser.add_argument(
-        "path",
-        type=AnyPath,
-        help="Path to submission. Local path or s3://bucket/prefix URL.",
-    )
-    args = parser.parse_args()
-    validator(args.path)
+    """Entry point — typer parses argv."""
+    app()
 
 
 

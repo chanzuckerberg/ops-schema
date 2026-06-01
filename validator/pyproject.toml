@@ -16,6 +16,7 @@ dependencies = [
     "s3fs",
     "polars>=1.0",
     "cloudpathlib[s3]>=0.18",
+    "typer>=0.12",
 ]
 
 [project.optional-dependencies]

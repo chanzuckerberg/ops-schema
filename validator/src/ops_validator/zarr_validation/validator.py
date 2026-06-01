@@ -15,12 +15,12 @@ Flow for one Zarr store:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import TYPE_CHECKING
 
 import pydantic
 import zarr
 from ome_zarr_models import open_ome_zarr
-from ome_zarr_models.v05.hcs import HCS, WellGroupNotFoundError
 from ome_zarr_models.v05.image import Image
 
 from ops_validator.zarr_validation.registry import (
@@ -136,70 +136,48 @@ def _build_node_dict(img: Image) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _iter_field_paths(hcs: HCS) -> Iterator[str]:
-    """
-    Yield field_path for every field declared in the plate.
-
-    field_path is relative to the plate root, e.g. "D/4/r04c04f01_0".
-    Well groups missing from disk are silently skipped (WellGroupNotFoundError).
-    Field paths absent from well.members are also skipped.
-    """
-    for i, well_meta in enumerate(hcs.ome_attributes.plate.wells):
-        try:
-            well = hcs.get_well_group(i)
-        except WellGroupNotFoundError:
-            continue
-        for img_meta in well.ome_attributes.well.images:
-            if img_meta.path not in (well.members or {}):
-                continue
-            yield f"{well_meta.path}/{img_meta.path}"
-
-
-def _check_plate_structure(
-    hcs: HCS,
+def _gather_plate_fields(
     node_path: str,
-    ngff_version: str | None,
-    spec_version: str,
-    raw_plate_attrs: dict | None = None,
-) -> ZarrNodeValidationResult:
+    plate_wells: list[dict],
+    plate_acquisitions: "list[dict] | None" = None,
+) -> "tuple[list[Issue], list[str]]":
     """
-    Cross-field structural checks for an HCS plate.
+    Open each declared well zarr.json once and return:
+      - issues for wells / fields that fail per-well traversal checks
+      - field paths for all declared fields that exist on disk
 
-    Returns a single ZarrNodeValidationResult for the plate root carrying
-    issues that span multiple wells or fields. Per-field OPS array checks
-    are handled separately by _validate_hcs_plate.
+    Uses raw zarr attrs rather than ome-zarr-models Well objects to avoid
+    Well.from_zarr(), which eagerly opens all Image sub-groups via
+    get_optional_group_paths() — O(N_fields) sequential I/O calls.
 
-    ome-zarr-models gap
-    -------------------
-    HCSAttrs and WellAttrs both declare their sub-groups (wells and field
-    images respectively) via get_optional_group_paths(). _from_zarr_v3
-    catches FileNotFoundError for optional paths and silently skips them,
-    so a declared well or field that is missing from disk does not cause
-    open_ome_zarr() to raise. These missing-group cases must be checked
-    here explicitly.
-
-    Note: acquisition ID cross-references ARE validated by ome-zarr-models
-    (HCS._check_valid_acquisitions), so that check is not repeated here.
-
-    Checks
-    ------
-    MUST  — declared well has no group on disk
-    MUST  — declared field has no group on disk
-    SHOULD — axes not uniform across all fields
-    SHOULD — level-0 chunk shape not uniform across all fields
+    Checks (raised as ERRORs)
+    -------------------------
+    MUST — every declared well has a group on disk
+    MUST — every declared field has a group on disk
+    MUST — field acquisition ID must be in plate.acquisitions (if acquisitions
+           are declared); only checked for fields that exist on disk
     """
     issues: list[Issue] = []
+    field_paths: list[str] = []
 
-    # MUST: every declared well exists on disk
-    for i, well_meta in enumerate(hcs.ome_attributes.plate.wells):
+    valid_aq_ids: set[int] | None = None
+    if plate_acquisitions is not None:
+        valid_aq_ids = {
+            aq["id"]
+            for aq in plate_acquisitions
+            if isinstance(aq.get("id"), int) and aq["id"] >= 0
+        }
+
+    for well_meta in plate_wells:
+        well_path = well_meta["path"]
         try:
-            well = hcs.get_well_group(i)
-        except WellGroupNotFoundError:
+            well_group = zarr.open_group(f"{node_path}/{well_path}", mode="r")
+        except Exception:
             issues.append(
                 Issue(
-                    loc=("plate", "wells", well_meta.path),
+                    loc=("plate", "wells", well_path),
                     message=(
-                        f"Well '{well_meta.path}' is declared in "
+                        f"Well '{well_path}' is declared in "
                         f"ome.plate.wells but has no group on disk"
                     ),
                     severity=Severity.ERROR,
@@ -207,71 +185,128 @@ def _check_plate_structure(
             )
             continue
 
-        # MUST: every declared field exists on disk
-        for img_meta in well.ome_attributes.well.images:
-            if img_meta.path not in (well.members or {}):
+        well_ome = dict(well_group.attrs).get("ome", {})
+        well_images = well_ome.get("well", {}).get("images", [])
+        try:
+            well_keys = set(well_group.keys())
+        except Exception:
+            well_keys = set()
+
+        for img_meta in well_images:
+            img_path = img_meta.get("path", "")
+            if not img_path:
+                continue
+            if img_path not in well_keys:
                 issues.append(
                     Issue(
-                        loc=("plate", "wells", well_meta.path, img_meta.path),
+                        loc=("plate", "wells", well_path, img_path),
                         message=(
-                            f"Field '{well_meta.path}/{img_meta.path}' is declared in "
+                            f"Field '{well_path}/{img_path}' is declared in "
                             f"ome.well.images but has no group on disk"
                         ),
                         severity=Severity.ERROR,
                     )
                 )
+                continue
+            field_paths.append(f"{well_path}/{img_path}")
+            aq_id = img_meta.get("acquisition")
+            if (
+                valid_aq_ids is not None
+                and aq_id is not None
+                and aq_id not in valid_aq_ids
+            ):
+                issues.append(
+                    Issue(
+                        loc=("plate", "wells", well_path, img_path, "acquisition"),
+                        message=(
+                            f"Acquisition ID {aq_id!r} for field "
+                            f"'{well_path}/{img_path}' is not in "
+                            f"ome.plate.acquisitions: {sorted(valid_aq_ids)}"
+                        ),
+                        severity=Severity.ERROR,
+                    )
+                )
 
-    # SHOULD: axes and level-0 chunk shape uniform across all fields
-    seen_axes: list[tuple] = []
-    seen_chunks: list[tuple] = []
-    for field_path in _iter_field_paths(hcs):
-        try:
-            field_zarr_group = zarr.open_group(f"{node_path}/{field_path}", mode="r")
-            field_img = open_ome_zarr(field_zarr_group)
-            nd = _build_node_dict(field_img)
-        except Exception:
-            continue
-        seen_axes.append(tuple(nd["axes"]))
-        if nd["levels"]:
-            seen_chunks.append(tuple(nd["levels"][0]["chunk_shape"]))
+    return issues, field_paths
 
-    if len(set(seen_axes)) > 1:
-        issues.append(
-            Issue(
-                loc=("plate", "axes"),
-                message=(
-                    f"Axes are not uniform across all plate fields: "
-                    f"{set(seen_axes)}"
-                ),
-                severity=Severity.WARNING,
-            )
+
+def _validate_field(
+    node_path: str,
+    field_path: str,
+    spec_version: str,
+    ngff_version: str | None,
+    ModelClass: "type[BaseModel]",
+) -> "tuple[ZarrNodeValidationResult, tuple | None, tuple | None]":
+    """
+    Open and validate one HCS field image.
+
+    Returns (result, axes, level-0 chunk_shape). axes and chunk_shape are
+    None when the field could not be opened, so the caller can skip them
+    in uniformity accumulation.
+    """
+    full_path = f"{node_path}/{field_path}"
+    try:
+        field_zarr_group = zarr.open_group(full_path, mode="r")
+        dca = dict(field_zarr_group.attrs).get("dca")
+        field_img = open_ome_zarr(field_zarr_group)
+        node_dict = _build_node_dict(field_img)
+    except Exception as exc:
+        return (
+            ZarrNodeValidationResult(
+                node_path=full_path,
+                parent_path=node_path,
+                spec_version=spec_version,
+                passed=False,
+                ngff_version=ngff_version,
+                issues=[
+                    Issue(
+                        loc=("plate", field_path, "metadata_extraction"),
+                        message=str(exc),
+                        severity=Severity.ERROR,
+                    )
+                ],
+            ),
+            None,
+            None,
         )
 
-    if len(set(seen_chunks)) > 1:
-        issues.append(
-            Issue(
-                loc=("plate", "chunk_shape"),
-                message=(
-                    f"Level-0 chunk shapes are not uniform across all "
-                    f"plate fields: {set(seen_chunks)}"
-                ),
-                severity=Severity.WARNING,
-            )
-        )
-
-    # Spec-specific plate root metadata validation (OPS channels_metadata)
-    plate_meta_validator = get_plate_metadata_validator(spec_version)
-    if plate_meta_validator and raw_plate_attrs is not None:
-        issues.extend(plate_meta_validator(raw_plate_attrs))
-
-    errors = [i for i in issues if i.severity == Severity.ERROR]
-    return ZarrNodeValidationResult(
-        node_path=node_path,
-        spec_version=spec_version,
-        passed=len(errors) == 0,
-        ngff_version=ngff_version,
-        issues=issues,
+    axes = tuple(node_dict["axes"])
+    chunk_shape = (
+        tuple(node_dict["levels"][0]["chunk_shape"]) if node_dict["levels"] else None
     )
+    level_count = node_dict["multiscale_level_count"]
+    node_dict["spec_version"] = spec_version
+    node_dict["dca"] = dca
+    try:
+        ModelClass.model_validate(node_dict)
+        return (
+            ZarrNodeValidationResult(
+                node_path=full_path,
+                parent_path=node_path,
+                spec_version=spec_version,
+                passed=True,
+                ngff_version=ngff_version,
+                multiscale_level_count=level_count,
+            ),
+            axes,
+            chunk_shape,
+        )
+    except pydantic.ValidationError as exc:
+        issues = _convert_errors(exc)
+        errors = [i for i in issues if i.severity == Severity.ERROR]
+        return (
+            ZarrNodeValidationResult(
+                node_path=full_path,
+                parent_path=node_path,
+                spec_version=spec_version,
+                passed=len(errors) == 0,
+                ngff_version=ngff_version,
+                multiscale_level_count=level_count,
+                issues=issues,
+            ),
+            axes,
+            chunk_shape,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -398,82 +433,101 @@ def _validate_image(
 
 def _validate_hcs_plate(
     node_path: str,
-    ome_obj: HCS,
+    raw_attrs: dict,
     ngff_version: str | None,
     spec_version: str,
     ModelClass: "type[BaseModel]",
-    raw_plate_attrs: dict | None = None,
 ) -> list[ZarrNodeValidationResult]:
     """
     Run plate-level structural checks and per-field OPS validation.
 
     Returns one result for the plate root (structural issues) plus one
-    result per field image.
+    result per field image. Fields are validated concurrently via a thread
+    pool — each field's I/O is independent.
 
-    Note: each field is opened independently (zarr.open_group + open_ome_zarr),
-    separate from the open_ome_zarr call in _check_plate_structure — two opens
-    per field per validate() call.
+    `raw_attrs` is the full plate-root attrs dict from zarr_group.attrs
+    (carries both `ome.plate` and top-level OPS keys like `channels_metadata`).
+    We work from this dict rather than an ome-zarr-models HCS object to avoid
+    HCS.from_zarr(), which recursively opens all well and field sub-groups
+    at construction time.
+
+    Checks
+    ------
+    MUST   — declared well has a group on disk (via _gather_plate_fields)
+    MUST   — declared field has a group on disk (via _gather_plate_fields)
+    MUST   — field acquisition ID is in plate.acquisitions
+    SHOULD — axes uniform across all fields
+    SHOULD — level-0 chunk shape uniform across all fields
+    + spec-specific OPS plate metadata validation (channels_metadata)
     """
-    results = [
-        _check_plate_structure(
-            ome_obj, node_path, ngff_version, spec_version, raw_plate_attrs
+    raw_plate_attrs = raw_attrs.get("ome", {}).get("plate", {})
+
+    gather_issues, field_paths = _gather_plate_fields(
+        node_path,
+        raw_plate_attrs.get("wells", []),
+        raw_plate_attrs.get("acquisitions"),
+    )
+
+    plate_meta_validator = get_plate_metadata_validator(spec_version)
+    schema_issues: list[Issue] = []
+    if plate_meta_validator is not None:
+        schema_issues = plate_meta_validator(raw_attrs)
+
+    plate_issues = schema_issues + gather_issues
+
+    seen_axes: list[tuple] = []
+    seen_chunks: list[tuple] = []
+    field_results: list[ZarrNodeValidationResult] = []
+
+    with ThreadPoolExecutor() as executor:
+        futures = {
+            executor.submit(
+                _validate_field, node_path, fp, spec_version, ngff_version, ModelClass
+            ): fp
+            for fp in field_paths
+        }
+        for future in as_completed(futures):
+            result, axes, chunk_shape = future.result()
+            field_results.append(result)
+            if axes is not None:
+                seen_axes.append(axes)
+            if chunk_shape is not None:
+                seen_chunks.append(chunk_shape)
+
+    if len(set(seen_axes)) > 1:
+        plate_issues.append(
+            Issue(
+                loc=("plate", "axes"),
+                message=(
+                    f"Axes are not uniform across all plate fields: "
+                    f"{set(seen_axes)}"
+                ),
+                severity=Severity.WARNING,
+            )
         )
-    ]
-    for field_path in _iter_field_paths(ome_obj):
-        full_path = f"{node_path}/{field_path}"
-        try:
-            field_zarr_group = zarr.open_group(full_path, mode="r")
-            dca = dict(field_zarr_group.attrs).get("dca")
-            field_img = open_ome_zarr(field_zarr_group)
-            node_dict = _build_node_dict(field_img)
-        except Exception as exc:
-            results.append(
-                ZarrNodeValidationResult(
-                    node_path=full_path,
-                    parent_path=node_path,
-                    spec_version=spec_version,
-                    passed=False,
-                    ngff_version=ngff_version,
-                    issues=[
-                        Issue(
-                            loc=("plate", field_path, "metadata_extraction"),
-                            message=str(exc),
-                            severity=Severity.ERROR,
-                        )
-                    ],
-                )
+
+    if len(set(seen_chunks)) > 1:
+        plate_issues.append(
+            Issue(
+                loc=("plate", "chunk_shape"),
+                message=(
+                    f"Level-0 chunk shapes are not uniform across all "
+                    f"plate fields: {set(seen_chunks)}"
+                ),
+                severity=Severity.WARNING,
             )
-            continue
-        level_count = node_dict["multiscale_level_count"]
-        node_dict["spec_version"] = spec_version
-        node_dict["dca"] = dca
-        try:
-            ModelClass.model_validate(node_dict)
-            results.append(
-                ZarrNodeValidationResult(
-                    node_path=full_path,
-                    parent_path=node_path,
-                    spec_version=spec_version,
-                    passed=True,
-                    ngff_version=ngff_version,
-                    multiscale_level_count=level_count,
-                )
-            )
-        except pydantic.ValidationError as exc:
-            issues = _convert_errors(exc)
-            errors = [i for i in issues if i.severity == Severity.ERROR]
-            results.append(
-                ZarrNodeValidationResult(
-                    node_path=full_path,
-                    parent_path=node_path,
-                    spec_version=spec_version,
-                    passed=len(errors) == 0,
-                    ngff_version=ngff_version,
-                    multiscale_level_count=level_count,
-                    issues=issues,
-                )
-            )
-    return results
+        )
+
+    errors = [i for i in plate_issues if i.severity == Severity.ERROR]
+    plate_result = ZarrNodeValidationResult(
+        node_path=node_path,
+        spec_version=spec_version,
+        passed=len(errors) == 0,
+        ngff_version=ngff_version,
+        issues=plate_issues,
+    )
+
+    return [plate_result] + field_results
 
 
 def _validate_labels_list(
@@ -540,7 +594,24 @@ def validate_zarr_node(
             )
         ]
 
-    # Step 2: OME NGFF structural validation.
+    # Step 1a: HCS fast path — bypass open_ome_zarr for plates.
+    # open_ome_zarr on an HCS root calls HCS.from_zarr(), which recursively
+    # opens every well via Well.from_zarr(), which in turn opens every field
+    # image via Image.from_zarr() — O(N_fields) sequential I/O calls before
+    # any validation. We detect the plate from raw attrs and validate
+    # directly from the metadata dict, parallelizing per-field validation
+    # inside _validate_hcs_plate.
+    if "plate" in raw_ome_attrs and "multiscales" not in raw_ome_attrs:
+        ngff_version = str(raw_ome_attrs.get("version", "0.5"))
+        results = _validate_hcs_plate(
+            node_path, raw_attrs, ngff_version, spec_version, ModelClass
+        )
+        for r in results:
+            if r.node_type is None:
+                r.node_type = ZarrNodeType.HCS_PLATE
+        return results
+
+    # Step 2: OME NGFF structural validation (non-HCS stores).
     try:
         ome_obj = open_ome_zarr(zarr_group)  # pass already-opened group — no double I/O
     except Exception as exc:
@@ -581,16 +652,9 @@ def validate_zarr_node(
             )
         ]
 
-    # Step 4: dispatch by node type.
-    if node_type == ZarrNodeType.HCS_PLATE:
-        results = _validate_hcs_plate(
-            node_path, ome_obj, ngff_version, spec_version, ModelClass, raw_attrs
-        )
-        for r in results:
-            if r.node_type is None:
-                r.node_type = node_type
-        return results
-
+    # Step 4: dispatch by node type. HCS plates were handled by the Step 1a
+    # fast path above; if classify_group still returns HCS_PLATE here the
+    # root didn't carry a 'plate' attr (shouldn't happen), so fall through.
     if node_type == ZarrNodeType.LABELS_LIST:
         results = _validate_labels_list(node_path, ngff_version, spec_version)
         for r in results:

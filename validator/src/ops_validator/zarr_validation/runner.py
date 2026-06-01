@@ -20,13 +20,12 @@ for r in results:
 from __future__ import annotations
 
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Literal
 
 from ops_validator.zarr_validation.discovery import discover_zarr_stores, is_zarr_store
-from ops_validator.zarr_validation.registry import UnsupportedSpecVersionError, get_model
+from ops_validator.zarr_validation.registry import get_model
 from ops_validator.zarr_validation.result import (
-    Issue,
-    Severity,
     ValidationRun,
     ValidationSummary,
     ZarrNodeValidationResult,
@@ -40,6 +39,7 @@ def validate(
     path: str,
     spec_version: str = _DEFAULT_SPEC_VERSION,
     strategy: Literal["glob", "walk"] = "glob",
+    max_workers: int | None = None,
 ) -> ValidationRun:
     """
     Validate Zarr stores at or under `path`.
@@ -51,6 +51,10 @@ def validate(
     This means `path` can be the root of a single store, a subdirectory within a
     dataset, or any ancestor directory containing multiple stores.
 
+    Discovered stores are validated concurrently on a thread pool — the work is
+    I/O-bound (each store issues many small `zarr.json` GETs against the
+    underlying store), so threads let those requests overlap.
+
     OME NGFF structural validation and OPS spec validation are performed in a
     single pass via open_ome_zarr().
 
@@ -58,42 +62,32 @@ def validate(
     ----------
     path         : local path or s3://bucket/prefix — any level of the hierarchy
     spec_version : OPS spec version to validate against. Defaults to "ops-0.1".
+    max_workers  : worker-thread cap. None uses ThreadPoolExecutor's default
+                   (min(32, os.cpu_count() + 4)).
 
     Returns
     -------
     ValidationRun — iterable collection of ZarrNodeValidationResult with summary metrics
     """
+    ModelClass = get_model(spec_version)
     stores = (
         [path.rstrip("/")]
         if is_zarr_store(path)
         else discover_zarr_stores(path, strategy=strategy)
     )
     stores_discovered = len(stores)
-    results: list[ZarrNodeValidationResult] = []
 
     t0 = time.monotonic()
-
-    for node_path in stores:
-        try:
-            ModelClass = get_model(spec_version)
-        except UnsupportedSpecVersionError as exc:
-            results.append(
-                ZarrNodeValidationResult(
-                    node_path=node_path,
-                    spec_version=spec_version,
-                    passed=False,
-                    issues=[
-                        Issue(
-                            loc=("spec_version",),
-                            message=str(exc),
-                            severity=Severity.ERROR,
-                        )
-                    ],
-                )
-            )
-            continue
-
-        results.extend(validate_zarr_node(node_path, spec_version, ModelClass))
+    results: list[ZarrNodeValidationResult] = []
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {
+            executor.submit(
+                validate_zarr_node, node_path, spec_version, ModelClass
+            ): node_path
+            for node_path in stores
+        }
+        for future in as_completed(futures):
+            results.extend(future.result())
 
     duration = time.monotonic() - t0
     summary = ValidationSummary.from_results(
