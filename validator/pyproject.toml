@@ -35,7 +35,6 @@ dev = [
 
 [project.scripts]
 ops-validate = "ops_validator.cli:main"
-ops-validate2 = "ops_validator.cli2:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
