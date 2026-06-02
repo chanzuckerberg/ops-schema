@@ -12,8 +12,6 @@ import typer
 from cloudpathlib import AnyPath
 from pydantic import BaseModel
 
-app = typer.Typer(add_completion=False)
-
 from ops_validator.validators import aggregated_data, cell_data, collection, experimental, feature_definitions, perturbation_library
 from ops_validator.zarr_validation import validate as validate_zarr
 
@@ -24,6 +22,8 @@ from ops_validator.zarr_validation import validate as validate_zarr
 warnings.filterwarnings("ignore", category=ResourceWarning, message="Unclosed.*")
 logging.getLogger("asyncio").setLevel(logging.CRITICAL)
 
+app = typer.Typer(add_completion=False)
+
 
 class OPSVisualizations(BaseModel):
     id: str
@@ -31,6 +31,11 @@ class OPSVisualizations(BaseModel):
     examples: list[AnyPath]
 
 class OPSSubmissionStructure(BaseModel):
+    # Models one screen's slice of a submission. `validator()` loops and
+    # instantiates this once per {aggregation_name}/ subdirectory. The
+    # collection-level fields (collection_root / collection_metadata) get
+    # repeated per screen — slight redundancy, but keeps the model shape
+    # simple. A proper Collection → list[Screen] reshape is a future task.
     collection_root: AnyPath
     collection_metadata: AnyPath
     screen_name: AnyPath
@@ -96,44 +101,56 @@ def validate_structure(required: list[str], root: AnyPath) -> list[str]:
 def validator(path: AnyPath):
     print(f"Validating structure of: {path}")
     screens = sorted(c for c in path.iterdir() if c.is_dir())
-    if len(screens) != 1:
-        print(f"  STRUCT  expected 1 screen dir; found {len(screens)}")
+    if not screens:
+        print("  STRUCT  no screen directories found")
         sys.exit(1)
-    s = screens[0]
-    vis_root = s / "visualizations"
-    vizs = sorted(c for c in vis_root.iterdir() if c.is_dir()) if vis_root.is_dir() else []
-    zarrs = sorted(s.glob("*.zarr"))
 
-    required = [
-        "collection_metadata.yaml",
-        f"{s.name}/metadata/experimental_metadata.yaml",
-        f"{s.name}/metadata/perturbation_library.csv",
-        f"{s.name}/cell_data.parquet",
-        *(f"{s.name}/visualizations/{v.name}/aggregated_data.h5ad" for v in vizs),
-    ]
+    # Walk each screen once to collect its expected files + viz/zarr discovery.
+    required = ["collection_metadata.yaml"]
+    layouts: list[tuple[AnyPath, list[AnyPath], list[AnyPath]]] = []
+    for s in screens:
+        vis_root = s / "visualizations"
+        vizs = sorted(c for c in vis_root.iterdir() if c.is_dir()) if vis_root.is_dir() else []
+        zarrs = sorted(s.glob("*.zarr"))
+        required += [
+            f"{s.name}/metadata/experimental_metadata.yaml",
+            f"{s.name}/metadata/perturbation_library.csv",
+            f"{s.name}/cell_data.parquet",
+            *(f"{s.name}/visualizations/{v.name}/aggregated_data.h5ad" for v in vizs),
+        ]
+        layouts.append((s, vizs, zarrs))
+
+    # Aggregated structural check across all screens.
     missing = validate_structure(required, path)
     for m in missing:
         print(f"  STRUCT  missing: {m}")
-    if not zarrs:
-        print(f"  STRUCT  no *.zarr in {s.name}")
-    if missing or not zarrs:
+    no_zarr_screens = [s.name for s, _, zarrs in layouts if not zarrs]
+    for n in no_zarr_screens:
+        print(f"  STRUCT  no *.zarr in {n}")
+    if missing or no_zarr_screens:
         sys.exit(1)
 
-    feat = s / "metadata/feature_definitions.csv"
-    OPSSubmissionStructure.model_validate({
-        "collection_root": path,
-        "collection_metadata": path / "collection_metadata.yaml",
-        "screen_name": s,
-        "experimental_metadata": s / "metadata/experimental_metadata.yaml",
-        "perturbation_metadata": s / "metadata/perturbation_library.csv",
-        "feature_definitions": feat if feat.is_file() else None,
-        "cell_data": s / "cell_data.parquet",
-        "visualizations": [
-            {"id": v.name, "aggregated_data": v / "aggregated_data.h5ad", "examples": []}
-            for v in vizs
-        ],
-        "zarr_files": zarrs,
-    }).validate_ops()
+    # Per-screen validation. Header only when there's more than one so
+    # single-screen output stays the same.
+    multi = len(layouts) > 1
+    for s, vizs, zarrs in layouts:
+        if multi:
+            print(f"\n[{s.name}]")
+        feat = s / "metadata/feature_definitions.csv"
+        OPSSubmissionStructure.model_validate({
+            "collection_root": path,
+            "collection_metadata": path / "collection_metadata.yaml",
+            "screen_name": s,
+            "experimental_metadata": s / "metadata/experimental_metadata.yaml",
+            "perturbation_metadata": s / "metadata/perturbation_library.csv",
+            "feature_definitions": feat if feat.is_file() else None,
+            "cell_data": s / "cell_data.parquet",
+            "visualizations": [
+                {"id": v.name, "aggregated_data": v / "aggregated_data.h5ad", "examples": []}
+                for v in vizs
+            ],
+            "zarr_files": zarrs,
+        }).validate_ops()
 
 
 

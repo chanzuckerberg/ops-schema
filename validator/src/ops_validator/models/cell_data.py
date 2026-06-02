@@ -85,7 +85,7 @@ def validate_dataframe_structure(
 
     null_counts = (
         lf.select([pl.col(s.name).null_count().alias(s.name) for s in present])
-        .collect(streaming=True)
+        .collect(engine="streaming")
         .row(0, named=True)
     )
     for name, n_null in null_counts.items():
@@ -122,13 +122,13 @@ def _check_regex(
     errors: list[str],
 ) -> None:
     bad = lf.filter(~pl.col(column).str.contains(pattern))
-    total = bad.select(pl.len()).collect(streaming=True).item()
+    total = bad.select(pl.len()).collect(engine="streaming").item()
     if not total:
         return
     samples_q = bad.select(pl.col(column).unique())
     if sample_limit is not None:
         samples_q = samples_q.head(sample_limit)
-    samples = samples_q.collect(streaming=True)[column].to_list()
+    samples = samples_q.collect(engine="streaming")[column].to_list()
     errors.append(
         f"cell_data.parquet: '{column}' {requirement}. "
         f"Found {total} invalid value(s).{_format_samples(samples, sample_limit)}"
@@ -143,7 +143,7 @@ def _count_and_sample_duplicates(
             pl.col(column).len().alias("total"),
             pl.col(column).n_unique().alias("unique"),
         )
-        .collect(streaming=True)
+        .collect(engine="streaming")
         .row(0, named=True)
     )
     n_dupes = counts["total"] - counts["unique"]
@@ -157,7 +157,7 @@ def _count_and_sample_duplicates(
     )
     if sample_limit is not None:
         dup_q = dup_q.head(sample_limit)
-    samples = dup_q.collect(streaming=True)[column].to_list()
+    samples = dup_q.collect(engine="streaming")[column].to_list()
     return n_dupes, samples
 
 
