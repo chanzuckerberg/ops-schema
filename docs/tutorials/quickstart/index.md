@@ -105,13 +105,13 @@ The right side of the viewer holds 1–4 visualization panes of four possible ty
 | Find a knockout in the embedding | Type the name in the *Search for gene knockout(s)* bar |
 | See microscopy images for a KO | With **Images** pane open in the viewer, select a gene knockout and the Images pane will populate automatically |
 | Locate a knockout across all open panels | Hover its name in the Gene Knockouts list, or its dot in any panel |
-| Color all panels by cluster | **Annotations** tab → click droplet icon button next to *annotation category* |
-| Color CROP-seq panels by gene expression | **Gene Expression** tab → add a gene → click its **● color** icon |
+| Color all panels by cluster | **Annotations** tab → click droplet icon (**💧**) button next to *annotation category* |
+| Color CROP-seq panels by gene expression | **Gene Expression** tab → add a gene → click its **💧 droplet** icon |
 | Open an image at full resolution | Click any image → opens the **idetik viewer** in a new tab |
 | Add a new panel | **Layout** tab → **+ Add Visualization** |
 | Look up gene info | Click **ⓘ** next to a KO name → Gene Info sidebar |
 | See all KOs in a cluster | Click **ⓘ** next to an annotation category in the Annotations tab → Cluster Info sidebar |
-| View collection metadata | **···** menu → **View collection details** |
+| View collection metadata | Click **ⓘ** to the right of collection name at top of Layout panel |
 | Download a collection | Click **⤓** next to collection name → **Download collection** |
 
 
@@ -147,4 +147,3 @@ Minimum 1, maximum 4. Layout orientation options change based on how many you ha
 - Read the full tutorial: [Visualizing Data in the OPS Explorer](https://chanzuckerberg.github.io/ops-schema/tutorials/reference/)
 - Programmatic access: [CLI Programmatic Data Access](https://chanzuckerberg.github.io/ops-schema/cli/)
 - Explore and download datasets: [Data Analysis Notebooks](https://chanzuckerberg.github.io/ops-schema/analysis/)
-
