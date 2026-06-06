@@ -51,7 +51,7 @@ Click **Explore** on one of the collections surfaced on the **OPS Explorer About
 
 - **Collection details ⓘ** - replaces left panel content with a [collection summary](#collection-info-view)
 - **Download collection ⤓** - provides code snippet to download the collection via CLI
-- **Resources 📖** - opens a dropdown with 2 actions
+- **Resources 📖** - opens a dropdown with 2 actions:
 
 <p align="center">
   <img src="../../assets/quickstart_imgs/Collection_Overflow_Menu.png"
@@ -132,7 +132,7 @@ Once added, each knockout appears as a row with:
 
 - The gene name
 - An **ⓘ** button - opens the [Gene Info](#gene) sidebar
-- A **delete** button - removes it from the selection
+- A **🗑️** button - removes it from the selection
 
 A counter in the top-right shows how many are active.
 
@@ -176,7 +176,6 @@ Click **−** to minimize the sidebar or **×** to close it.
 
 Clicking an **ⓘ** button next to a cluster in the [Annotations Tab](#annotations-tab) opens a cluster info sidebar.
 
-After clicking ⓘ next to a cluster in the Annotations tab:
 
 The sidebar shows a breadcrumb identifying the dataset, embedding, and cluster, followed by a table listing all gene knockouts assigned to that cluster.
 
@@ -201,7 +200,7 @@ The Layout tab controls which panels are open and how they are arranged. It is t
 - A **thumbnail** indicating the panel's position in the layout
 - A **chip** label: **Embedding**, **Images**, or **Volcano Plot**
 - The dataset name as a subtitle
-- **Edit** and **Delete** buttons on hover
+- **Edit (✏️)** and **Delete (🗑️)** buttons
 
 <p align="center">
   <img src="../../assets/tutorial_imgs/Visualization_Info.png"
@@ -225,7 +224,7 @@ Click **+ Add Visualization** in the [Layout Tab](#layout-tab). A sidebar slides
 
 **Step 2 - Select a dataset** from the dropdown.
 
-**Step 3 - Select an embedding** (Embedding and Volcano Plot types only). Multiple embeddings may be available per dataset. For the Embedding type, a **live preview** appears in the sidebar before you confirm.
+**Step 3 - Select an embedding** (Embedding and Volcano Plot types only). Multiple embeddings may be available per dataset.
 
 <p align="center">
   <img src="../../assets/tutorial_imgs/Add_Visualization__Embedding.png"
@@ -233,7 +232,7 @@ Click **+ Add Visualization** in the [Layout Tab](#layout-tab). A sidebar slides
 	   width="90%">
 </p>
 
-> **Images panes** are available for OPS datasets only. No embedding selection is needed. Just choose the dataset and click Add.
+> **Note:** Image panes are available for OPS datasets only. No embedding selection is needed.
 
 Once all required fields are complete, click **Add Visualization**. The sidebar closes and the new pane appears in the layout.
 
@@ -264,7 +263,7 @@ The right side of the viewer shows one to four panels. This section covers what 
 
 ### Embedding Panel
 
-The Embedding panel shows a scatter plot where **each dot is one gene knockout**, positioned according to the dataset authors' chosen embedding. For OPS datasets, positions typically come from morphological imaging features (e.g. computed with CellProfiler or a deep learning model; e.g. nucleus size). For CROP-seq datasets, positions come from transcriptomic profiles.
+The Embedding panel shows a scatter plot where **each dot is one gene knockout**, positioned according to the dataset authors' chosen embedding. For OPS datasets, positions typically come from morphological imaging features (typically computed with CellProfiler or a deep learning model; e.g. nucleus size). For CROP-seq datasets, positions come from transcriptomic profiles.
 
 <!-- <p align="center">
   <img src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images.png"
@@ -298,17 +297,16 @@ When gene knockouts are selected:
 
 - **Column headers** - each column is one fluorescent marker, a stain highlighting a specific cellular structure (e.g. DAPI for DNA, ConA for cell membranes, phalloidin for actin)
 
-- **CONTROL row** - always **pinned at the top**: it stays fixed as you scroll down, so you always have control images as a visual reference
-- **Gene KO rows** - one row per selected knockout, with approximately **3 representative image crops per marker**
+- **CONTROL** row - always **pinned at the top**: it stays fixed as you scroll down, so you always have control images as a visual reference
+- **Gene KO** rows - one row per selected knockout, with approximately **3 representative image crops per marker**
 - Each row can be **collapsed or expanded** with the arrow on its header
 
-**Controls:**
+**Image display modes**
 
 - **Markers: N ▾** dropdown (top-right) - select how many markers to show as columns. Up to **20 markers** can be displayed at once. Scroll horizontally to see all columns.
 - **Hovering an individual image** shows information confirming the gene KO name and marker
 - **Clicking an image** opens it in the [**idetik viewer**](https://github.com/chanzuckerberg/idetik) in a new browser tab for full-resolution viewing
 
-**Image display modes**
 
 The images pane shows image crops of selected gene knockouts:
 
@@ -391,7 +389,7 @@ The Annotations tab lets you color all eligible panels by a biological annotatio
 
 - **clusters** - cluster 1 through cluster 5+, each with a count and an **ⓘ** button that opens [Cluster](#cluster)
 
-**To apply a color:** click the filled dot (**⬤**) button next to any category or *clusters* label. All eligible panels update immediately.
+**To apply a color:** click the filled droplet (**💧**) button next to any *category* or *clusters* label. All eligible panels update immediately.
 
 **Which panels get colored:**
 
@@ -419,7 +417,7 @@ Hovering a dot highlights its cluster and fades all other clusters across all li
 	   width="90%">
 </p>
 
-**With labels on:**
+**With cluster labels on:**
 
 <p align="center">
   <img src="../../assets/tutorial_imgs/Visualizations_-_Color_By_(On)_with_Label.png"
@@ -442,7 +440,7 @@ The Gene Expression tab lets you color panels by the expression level of a speci
 
 1. Click **Add gene(s)** and type a gene symbol.
 2. The gene appears as a row with a miniature expression histogram.
-3. Click the **⬤ color** icon on that row to activate it as the color overlay.
+3. Click the **💧 droplet** icon on that row to activate it as the color overlay.
 
 CROP-seq embeddings are colored with a **continuous (gradient) color scale** based on expression level.
 
@@ -487,10 +485,6 @@ Hovering any dot in an embedding or volcano panel shows a tooltip. The fields sh
 | Images | Number of representative images available (embeddings only) |
 
 
-<!-- <p align="center">
-  <img src="../../assets/tutorial_imgs/OPS_Embedding___OPS_Images_-_Hover.png"
-       alt="Hover tooltip on an embedding dot showing Gene KO, Cluster, Cells Observed, and Images count">
-</p> -->
 
 **When annotation color is active**: hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.
 
@@ -574,12 +568,12 @@ When you hover a dot in any embedding or volcano panel, the **same gene knockout
 | Identify knockouts with the largest morphological effect | Look at the top edges of the [OPS Feature Volcano Plot](#ops-feature-volcano-plot) |
 | Change which feature the volcano shows | Use the Feature selector dropdown in the volcano panel header |
 | See which transcripts change for a knockout condition | Open a [CROP-seq Gene Expression Volcano](#crop-seq-gene-expression-volcano-plot); use the Gene selector |
-| Color all panels by cluster | [Annotations Tab](#annotations-tab) → click droplet icon (**⬤**) next to *clusters* |
+| Color all panels by cluster | [Annotations Tab](#annotations-tab) → click droplet icon (**💧**) next to *clusters* |
 | See which knockouts share a cluster | Hover any dot while annotation color is active - other clusters fade |
 | Locate a knockout across all open panels | Hover its dot in one panel - all other panels highlight it simultaneously |
 | See all knockouts in a cluster | Click **ⓘ** next to an annotation category in the **Annotations** tab → Cluster Info sidebar |
-| Look up external gene info | Click **ⓘ** next to a name in the Gene Knockouts list → [Gene](#gene) |
+| Look up external gene info | Click **ⓘ** next to a name in the Gene Knockouts list → Gene Info sidebar |
 | Add a new panel | [Layout Tab](#layout-tab) → + Add Visualization |
 | Swap two panels' positions | Click the other rectangle in a panel's thumbnail in the Layout Tab |
-| Download the collection | Click **⤓** next to collection name → **Download collection** |
-| View collection publication and metadata | **···** menu → [View collection details](#collection-info-view) |
+| Download the collection | Click **⤓** next to collection name → command to **Download data via our CLI** |
+| View collection publication and metadata | Click **ⓘ** to the right of collection name at top of Layout panel |
