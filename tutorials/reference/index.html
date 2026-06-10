@@ -774,6 +774,34 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-the-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with the Viewer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interacting with the Viewer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hovering-a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hovering a Dot
+      
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#cross-panel-sync" class="md-nav__link">
     <span class="md-ellipsis">
@@ -1239,6 +1267,34 @@
     <span class="md-ellipsis">
       
         Gene Expression Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-the-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with the Viewer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interacting with the Viewer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hovering-a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hovering a Dot
       
     </span>
   </a>
@@ -1729,7 +1785,7 @@
 <p align="center">
   <img src="../../assets/tutorial_imgs/Gene_Expression.png"
        alt="Gene Expression tab active: CROP-seq embedding colored continuously by expression; OPS panels show Limited badges"
-       width="90">
+       width="90%">
 </p>
 
 <p><strong>To add a gene expression overlay:</strong></p>
@@ -1755,34 +1811,42 @@
 <p align="center">
   <img src="../../assets/tutorial_imgs/Max_Gene_Knockouts_Selected.png"
        alt="Colored UMAP with gene knockout name labels visible on selected knockouts"
-       width="90%>
+       width="90%">
 </p>
 
-
-## Interacting with the Viewer
-
-This section covers hover, click, and cross-panel behaviors that apply across all panel types.
-
-
-### Hovering a Dot
-
-Hovering any dot in an embedding or volcano panel shows a tooltip. The fields shown depend on the panel type:
-
-**OPS or CROP-seq Embedding, OPS Feature Volcano:**
-
-| **Field** | **Description** |
-|---|---|
-| Gene KO | Name of the gene knockout |
-| Cluster | Cluster assignment |
-| # Cells Observed | Number of cells that received this perturbation |
-| Images | Number of representative images available (embeddings only) |
-
-
-
-**When annotation color is active**: hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.
-
-**CROP-seq Gene Expression Volcano**: tooltip shows the transcript name, log₂FC (fold change), and −log₁₀FDR (false discovery rate = corrected p-value).
-
+<h2 id="interacting-with-the-viewer">Interacting with the Viewer<a class="headerlink" href="#interacting-with-the-viewer" title="Permanent link">&para;</a></h2>
+<p>This section covers hover, click, and cross-panel behaviors that apply across all panel types.</p>
+<h3 id="hovering-a-dot">Hovering a Dot<a class="headerlink" href="#hovering-a-dot" title="Permanent link">&para;</a></h3>
+<p>Hovering any dot in an embedding or volcano panel shows a tooltip. The fields shown depend on the panel type:</p>
+<p><strong>OPS or CROP-seq Embedding, OPS Feature Volcano:</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>Field</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gene KO</td>
+<td>Name of the gene knockout</td>
+</tr>
+<tr>
+<td>Cluster</td>
+<td>Cluster assignment</td>
+</tr>
+<tr>
+<td># Cells Observed</td>
+<td>Number of cells that received this perturbation</td>
+</tr>
+<tr>
+<td>Images</td>
+<td>Number of representative images available (embeddings only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When annotation color is active</strong>: hovering also fades all dots not in the same cluster, isolating the hovered cluster across all eligible linked panels at the same time.</p>
+<p><strong>CROP-seq Gene Expression Volcano</strong>: tooltip shows the transcript name, log₂FC (fold change), and −log₁₀FDR (false discovery rate = corrected p-value).</p>
 <p align="center">
   <img src="../../assets/tutorial_imgs/hover_old.png"
        alt="Colored UMAP with gene knockout name labels visible on selected knockouts"
