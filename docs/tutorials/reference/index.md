@@ -433,7 +433,7 @@ The Gene Expression tab lets you color panels by the expression level of a speci
 <p align="center">
   <img src="../../assets/tutorial_imgs/Gene_Expression.png"
        alt="Gene Expression tab active: CROP-seq embedding colored continuously by expression; OPS panels show Limited badges"
-	   width="90">
+	   width="90%">
 </p>
 
 **To add a gene expression overlay:**
@@ -462,7 +462,7 @@ Switching back to the [Annotations Tab](#annotations-tab) restores annotation-ba
 <p align="center">
   <img src="../../assets/tutorial_imgs/Max_Gene_Knockouts_Selected.png"
        alt="Colored UMAP with gene knockout name labels visible on selected knockouts"
-	   width="90%>
+	   width="90%">
 </p>
 
 
