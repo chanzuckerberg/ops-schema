@@ -27,7 +27,7 @@
     
     
       
-        <title>OPS Data Analysis Tutorial - | OPS Explorer Documentation</title>
+        <title>Explore Data Before Downloading - | OPS Explorer Documentation</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ops-data-analysis-tutorial" class="md-skip">
+        <a href="#explore-data-before-downloading" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              OPS Data Analysis Tutorial
+              Explore Data Before Downloading
             
           </span>
         </div>
@@ -669,7 +669,7 @@
   <span class="md-ellipsis">
     
   
-    OPS Data Analysis Tutorial
+    Explore Data Before Downloading
   
 
     
@@ -687,7 +687,7 @@
   <span class="md-ellipsis">
     
   
-    OPS Data Analysis Tutorial
+    Explore Data Before Downloading
   
 
     
@@ -711,17 +711,6 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-ops-data-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The OPS data model
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#run-this-notebook" class="md-nav__link">
@@ -1028,17 +1017,6 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-ops-data-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The OPS data model
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#run-this-notebook" class="md-nav__link">
@@ -1997,13 +1975,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="ops-data-analysis-tutorial">OPS Data Analysis Tutorial<a class="anchor-link" href="#ops-data-analysis-tutorial">¶</a></h1><p>Explore an OPS collection remotely from a public S3 bucket, without downloading whole datasets first.</p>
-<h2 id="the-ops-data-model">The OPS data model<a class="anchor-link" href="#the-ops-data-model">¶</a></h2><p>A published OPS collection is typically split into 2 main types of artifacts:</p>
+<h1 id="explore-data-before-downloading">Explore Data Before Downloading<a class="anchor-link" href="#explore-data-before-downloading">¶</a></h1><p>OPS collections can be tens to hundreds of gigabytes. Before committing to a download, you usually want to take a look at subsets of the data and confirm it covers the perturbations you care about, the cells are healthy, the effect sizes look reasonable, and the feature set matches what your downstream analysis needs.</p>
+<p>When you want to slice the data and/or explore it in more depth, e.g., count cells per perturbation, rank features by significance, plot a custom feature distribution, test a hypothesis, you can use the OPS analysis code.</p>
+<blockquote>
+<p><strong>Download and run the notebook locally:</strong> <a href="https://github.com/chanzuckerberg/ops-schema/blob/main/docs/analysis/inspect-data/ops_analysis.ipynb">OPS Analysis</a></p>
+</blockquote>
+<p><strong>What the notebook covers:</strong></p>
 <ul>
-<li><p><strong><code>atlas/aggregated_data.h5ad</code></strong> — the visualization layer. One row per <em>perturbation</em>, columns are the standardized morphological feature set. <code>.X</code> holds effect sizes, <code>.layers["neg_log10_fdr"]</code>/<code>["p_values"]</code> hold significance, <code>.obsm</code> holds 2D embeddings (<code>X_umap</code>, <code>X_phate</code>), and <code>.obs</code> carries gene/cluster annotations.</p>
-</li>
-<li><p><strong><code>datasets/&lt;screen&gt;/cell_data.parquet</code></strong> — one row per <em>cell</em>, with identifier + positional columns (<code>cell_uid</code>, <code>plate</code>, <code>well_row</code>, <code>well_col</code>, <code>tile</code>, <code>x</code>, <code>y</code>, <code>barcode</code>, <code>perturbation_id</code>, <code>bounding_box</code>).</p>
-</li>
+<li>Load the collection's <code>collection_metadata.yaml</code>, <code>cell_data.parquet</code>, and <code>aggregated_data.h5ad</code></li>
+<li><strong>Slice</strong> cells by perturbation, by non-targeting control, by cell-cycle phase, by minimum cell count, etc.</li>
+<li><strong>Slice</strong> perturbations by significance on a chosen feature, and features most affected by a chosen perturbation</li>
+<li><strong>Visualize:</strong> feature distribution vs control, single-perturbation volcano, all-perturbation scatter for one feature, the perturbation embedding, top-perturbation × top-feature heatmap, cluster composition</li>
 </ul>
 </div>
 </div>
@@ -2015,7 +1997,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="run-this-notebook">Run this notebook<a class="anchor-link" href="#run-this-notebook">¶</a></h2><p>This notebook streams an OPS collection directly from the public S3 bucket, which lets you explore a collection from a Jupyter environment without downloading entire collections locally.</p>
+<h3 id="run-this-notebook">Run this notebook<a class="anchor-link" href="#run-this-notebook">¶</a></h3><p>This notebook streams an OPS collection directly from the public S3 bucket, which lets you explore a collection from a Jupyter environment without downloading entire collections locally.</p>
 <p>If you decide a collection is worth downloading, the <a href="#downloading-a-local-copy"><strong>Downloading a local copy</strong></a> section at the end shows how to get the whole collection with the <code>biohub-data-cli</code> in a single command.</p>
 </div>
 </div>
