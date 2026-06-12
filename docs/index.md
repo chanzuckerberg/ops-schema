@@ -70,7 +70,7 @@ Submit feedback using [this form](https://info.biohub.org/ops-feedback).
 </div>
 
 ## Contribute Your Data
-For data contributor inquiries, please fill out [this form](https://info.biohub.org/ops-data-contribution) or contact: support@biohub.org.
+For data contributor inquiries, please fill out [this form](https://info.biohub.org/ops-data-contribution) or contact: opsdata@biohub.org.
 
 ### **Submitting Data to OPS Explorer**
 
