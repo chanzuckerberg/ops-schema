@@ -10,6 +10,14 @@ The OPS Explorer is a full-screen, multi-panel workspace for exploring OPS and C
 
 A collection may contain both OPS datasets (morphological imaging) and CROP-seq datasets (single-cell transcriptomics). The viewer can display panels from both modalities at once, and each panel type behaves slightly differently depending on the underlying data (see Visualization Panels).
 
+Without downloading anything you can:
+
+- Browse collections and per-experiment metadata
+- Open the **volcano plot** for any visualization to see which perturbations move which features
+- Open the **UMAP/embedding** to see how perturbations cluster
+- Pull up representative single-cell **example crops** for any perturbation
+- Inspect the schema/feature definitions before you write code against them
+
 
 ## Contents
 
