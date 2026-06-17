@@ -28,6 +28,7 @@ class ZarrNodeType(Enum):
     IMAGE_LABEL = auto()  # group with ome.multiscales + ome.image-label
     HCS_PLATE = auto()  # group with ome.plate
     LABELS_LIST = auto()  # group with ome.labels (container listing label names)
+    EXAMPLES_ROOT = auto()  # examples.zarr container root carrying channel_combos
 
 
 def classify_group(path: str, ome_obj, raw_ome_attrs: dict) -> ZarrNodeType:
