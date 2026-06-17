@@ -14,7 +14,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 
 **What is an "example image"?** An example image is a representative single-cell image crop selected for visualization purposes — it is a small, lightweight preview of what a perturbation looks like phenotypically. Example images are NOT a complete record of all cells; they are a curated subset (1–30 per barcode) chosen to illustrate the perturbation effect.
 
-**Why doesn't this follow full OME-NGFF HCS plate conventions?** The `examples.zarr` store is a visualization artifact, not the primary image data. It uses a simple Zarr group hierarchy keyed by `channel_combo`, `perturbation_id`, and `barcode`, without the full OME-NGFF HCS plate/row/well/image nesting. Validators MUST NOT apply OME-NGFF HCS compliance checks to this artifact.
+**Why doesn't this follow full OME-NGFF HCS plate conventions?** The `examples.zarr` store is a visualization artifact, not the primary image data. It uses a simple Zarr group hierarchy keyed by `channel_combo`, `perturbation_id`, and `barcode`, without the full OME-NGFF HCS plate/row/well/image nesting. Validators MUST NOT apply OME-NGFF HCS compliance checks to this artifact. The root group's `zarr.json` MAY additionally carry optional per-panel [channel-combinations metadata](#channel-combinations-metadata).
 
 This file contains representative single-cell image crops used for visualization, organized hierarchically by perturbation and cell.
 
@@ -72,6 +72,83 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <tr>
 <td><strong>Root metadata</strong></td>
 <td>Zarr metadata at the root MUST include a <code>perturbation_id</code> key. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>.</td>
+</tr>
+<tr>
+<td><strong>Channel combinations metadata</strong></td>
+<td>OPTIONAL. The root group MAY carry per-panel display metadata under <code>channel_combos</code> (see <a href="#channel-combinations-metadata">Channel Combinations Metadata</a>). When present it MUST satisfy the constraints in that section.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### Channel Combinations Metadata
+
+OPTIONAL. The `examples.zarr` root group's `zarr.json` MAY carry a `channel_combos` array under `attributes`, describing — **per channel combination** — which single channel best represents that panel and the order in which panels should be displayed. (Some datasets name this container `examples/` without the `.zarr` suffix; consumers SHOULD accept either.)
+
+This lets a viewer render one representative channel per panel — e.g. a multi-panel grid with one column per channel combination — and order those panels, without opening a leaf to guess. It is purely presentational and entirely OPTIONAL: when absent, viewers fall back to their own channel selection and ordering (e.g. by reading a leaf's `omero.channels`). Single-panel visualizations typically omit it.
+
+```jsonc
+// examples.zarr/zarr.json
+{
+  "zarr_format": 3,
+  "node_type": "group",
+  "attributes": {
+    "channel_combos": [
+      { "name": "Phase2D",   "primary_channel": "Phase2D_labelfree", "priority": 1 },
+      { "name": "5xUPRE",    "primary_channel": "5xUPRE_GFP",        "priority": 2 },
+      { "name": "ER_SEC61B", "primary_channel": "ER_SEC61B_mCherry" }   // priority omitted → sorts last
+    ]
+  }
+}
+```
+
+Each entry in `channel_combos` has the following fields:
+
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (REQUIRED)</td>
+<td>The channel combination. MUST match exactly one <code>{channel_combo}</code> subdirectory under the container.</td>
+</tr>
+<tr>
+<td><code>primary_channel</code> (REQUIRED)</td>
+<td>The representative channel for this panel. MUST equal an <code>omero.channels[*].label</code> that is present in <strong>every</strong> leaf under the matching <code>{channel_combo}</code> subdirectory. A single combination MAY aggregate crops from multiple source screens whose channel sets differ; the chosen channel MUST therefore be one common to all of them, otherwise a consumer filtering crops by this label would silently drop those from screens that lack it.</td>
+</tr>
+<tr>
+<td><code>priority</code> (OPTIONAL)</td>
+<td>Non-negative integer giving the panel's display order, ascending (<code>1</code> = first). Combinations without a <code>priority</code> sort after those with one, ordered lexicographically by <code>name</code>. Need not be unique or contiguous.</td>
+</tr>
+</tbody>
+</table>
+
+**Constraints**
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Entries map to subdirectories</strong></td>
+<td>Every entry's <code>name</code> MUST correspond to an existing <code>{channel_combo}</code> subdirectory under the container. Names MUST be unique within <code>channel_combos</code> (at most one entry per combination).</td>
+</tr>
+<tr>
+<td><strong>Coverage is not required</strong></td>
+<td>A <code>{channel_combo}</code> subdirectory need not have a corresponding entry. Combinations without one fall back to viewer defaults; they are not an error.</td>
+</tr>
+<tr>
+<td><strong>Primary channel is common to the panel</strong></td>
+<td><code>primary_channel</code> MUST be a channel label present in every leaf of its combination (see the field description above).</td>
 </tr>
 </tbody>
 </table>

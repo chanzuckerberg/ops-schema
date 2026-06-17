@@ -33,6 +33,7 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 **Example Images**
 - Reorganized Zarr hierarchy from `{gene_symbol}/{barcode}/{1..N}` to `{perturbation_id}/{barcode}/{1..N}/`
 - Required `examples.zarr` to mirror the `observation_unit` grouping of the sibling `aggregated_data.h5ad`: when `uns['observation_unit']` has more than one column, the extra columns MUST be nested between `{perturbation_id}` and `{barcode}`, in the order declared, so every `aggregate_id` resolves to a subset-accurate group of crops (see V-13).
+- Added OPTIONAL `channel_combos` metadata on the `examples.zarr` root group's `zarr.json`: a per-panel array of `{name, primary_channel, priority?}` declaring the representative channel and display order for each channel combination. `primary_channel` MUST be a channel label present in every leaf of its combination. Additive and optional — absent metadata falls back to viewer defaults.
 
 **Validation rules**
 - Added V-1b: `tissue_type = "cell line"` requires Cellosaurus (`CVCL_XXXXX`) term for `tissue_ontology_term_id` and `development_stage_ontology_term_id` MUST be `"na"`
