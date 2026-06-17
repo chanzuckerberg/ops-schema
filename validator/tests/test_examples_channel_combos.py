@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 
+import zarr
+
 from ops_validator.zarr_validation.examples import (
     check_primary_channels,
     default_sample_leaves,
@@ -140,17 +142,18 @@ def _write_json(path, obj):
 def _build_examples(tmp_path, channel_combos, leaves):
     """leaves: iterable of (combo, pert, barcode, idx, source_screen, [labels])."""
     root = tmp_path / "examples.zarr"
-    _write_json(
-        root / "zarr.json",
+    # Write the root group via the zarr API (not hand-rolled JSON) so its
+    # zarr.json is exactly what the installed zarr writes — `validate_zarr_node`
+    # opens it with `zarr.open_group`, and a hand-written file isn't guaranteed
+    # to round-trip across zarr versions/platforms. Leaves stay hand-written:
+    # the cross-leaf sampler reads them via fsspec/json, not zarr.
+    g = zarr.open_group(str(root), mode="w")
+    g.attrs.update(
         {
-            "zarr_format": 3,
-            "node_type": "group",
-            "attributes": {
-                "ome": {"version": "0.5"},
-                "dca_examples_version": "0.1",
-                "channel_combos": channel_combos,
-            },
-        },
+            "ome": {"version": "0.5"},
+            "dca_examples_version": "0.1",
+            "channel_combos": channel_combos,
+        }
     )
     for combo, pert, barcode, idx, screen, labels in leaves:
         leaf = root / combo / pert / barcode / f"{idx}.zarr"
