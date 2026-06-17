@@ -19,7 +19,6 @@ from ops_validator.zarr_validation.spec.v0_1.models import (
 from ops_validator.zarr_validation.validator import validate_zarr_node
 from ops_validator.zarr_validation.zarr_node import ZarrNodeType
 
-
 # ---------------------------------------------------------------------------
 # Shape validation (validate_ops_examples_channel_combos_metadata)
 # ---------------------------------------------------------------------------
