@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 
-import zarr
-
 from ops_validator.zarr_validation.examples import (
     check_primary_channels,
     default_sample_leaves,
@@ -18,6 +16,7 @@ from ops_validator.zarr_validation.spec.v0_1.models import (
 )
 from ops_validator.zarr_validation.validator import validate_zarr_node
 from ops_validator.zarr_validation.zarr_node import ZarrNodeType
+
 
 # ---------------------------------------------------------------------------
 # Shape validation (validate_ops_examples_channel_combos_metadata)
@@ -141,18 +140,17 @@ def _write_json(path, obj):
 def _build_examples(tmp_path, channel_combos, leaves):
     """leaves: iterable of (combo, pert, barcode, idx, source_screen, [labels])."""
     root = tmp_path / "examples.zarr"
-    # Write the root group via the zarr API (not hand-rolled JSON) so its
-    # zarr.json is exactly what the installed zarr writes — `validate_zarr_node`
-    # opens it with `zarr.open_group`, and a hand-written file isn't guaranteed
-    # to round-trip across zarr versions/platforms. Leaves stay hand-written:
-    # the cross-leaf sampler reads them via fsspec/json, not zarr.
-    g = zarr.open_group(str(root), mode="w")
-    g.attrs.update(
+    _write_json(
+        root / "zarr.json",
         {
-            "ome": {"version": "0.5"},
-            "dca_examples_version": "0.1",
-            "channel_combos": channel_combos,
-        }
+            "zarr_format": 3,
+            "node_type": "group",
+            "attributes": {
+                "ome": {"version": "0.5"},
+                "dca_examples_version": "0.1",
+                "channel_combos": channel_combos,
+            },
+        },
     )
     for combo, pert, barcode, idx, screen, labels in leaves:
         leaf = root / combo / pert / barcode / f"{idx}.zarr"
@@ -274,12 +272,6 @@ class TestValidateExamplesRoot:
             leaves=[("Phase2D", "G1", "b1", 0, "S1", ["Phase2D_labelfree", "x"])],
         )
         results = validate_zarr_node(str(root), "ops-0.1")
-        debug = {
-            "zarr": zarr.__version__,
-            "raw_attrs_keys": list(dict(zarr.open_group(str(root), mode="r").attrs)),
-            "node_type": results[0].node_type,
-            "issues": [(i.severity.value, i.message) for i in results[0].issues],
-        }
-        assert len(results) == 1, debug
-        assert results[0].node_type == ZarrNodeType.EXAMPLES_ROOT, debug
-        assert results[0].passed, debug
+        assert len(results) == 1
+        assert results[0].node_type == ZarrNodeType.EXAMPLES_ROOT
+        assert results[0].passed
