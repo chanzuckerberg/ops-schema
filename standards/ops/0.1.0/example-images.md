@@ -7,30 +7,32 @@ Part of the [OPS Data Standard](schema.md) v0.1.0.
 ## Example Images
 
 **Scope:** Per visualization
-**Container format:** Plain directory tree
+**Container format:** Zarr group (root `zarr.json`)
 **Per-leaf format:** OME-Zarr (`.zarr`)
-**File path:** `visualizations/{visualization_id}/examples/`
+**File path:** `visualizations/{visualization_id}/examples.zarr/`
 
 > **[PENDING — Item #6]** This section requires further specification. The structure below reflects current understanding.
 
 **What is an "example image"?** An example image is a representative single-cell image crop selected for visualization purposes — it is a small, lightweight preview of what a perturbation looks like phenotypically. Example images are NOT a complete record of all cells; they are a curated subset (1–30 per barcode) chosen to illustrate the perturbation effect.
 
+**Why doesn't this follow full OME-NGFF HCS plate conventions?** The `examples.zarr` store is a visualization artifact, not the primary image data. It uses a simple Zarr group hierarchy keyed by `channel_combo`, `perturbation_id`, and `barcode` (with each leaf crop a self-contained OME-Zarr store), without the full OME-NGFF HCS plate/row/well/image nesting. Validators MUST NOT apply OME-NGFF HCS compliance checks to this artifact.
+
 ### File Structure
 
 ```
-examples/
+examples.zarr/
 └── {channel_combo}/        # One subdirectory per channel combination (e.g., "DAPI_COXIV_CENPA_WGA")
     └── {perturbation_id}/  # One subdirectory per perturbation; MUST match a perturbation_id in perturbation_library.csv
         └── {barcode}/      # One subdirectory per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
             └── 0.zarr/ ... N.zarr/   # 1–30 OME-Zarr stores; each is one single-cell crop
 ```
 
-> **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one subdirectory at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples/` directory per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
+> **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one subdirectory at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples.zarr` per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
 
 When the sibling `aggregated_data.h5ad` uses an `observation_unit` with more than one column (e.g., `["gene_id", "cell_cycle_phase"]`), every column in `observation_unit` that is not already represented by `{perturbation_id}` or `{barcode}` MUST appear as an additional level nested between `{perturbation_id}` and `{barcode}`, in the order declared in `uns['observation_unit']`:
 
 ```
-examples/
+examples.zarr/
 └── {channel_combo}/
     └── {perturbation_id}/
         └── {cell_cycle_phase}/   # one nested level per additional observation_unit column, in declared order
@@ -54,7 +56,7 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <tbody>
 <tr>
 <td><strong>Mirrors aggregated_data.h5ad grouping</strong></td>
-<td>The directory hierarchy of <code>examples/</code> MUST mirror the aggregation grouping declared in the sibling <code>aggregated_data.h5ad</code>'s <code>uns['observation_unit']</code>. Any <code>observation_unit</code> column other than <code>perturbation_id</code> and <code>barcode</code> MUST be nested between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to at least one crop zarr whose path matches all of its <code>observation_unit</code> values.</td>
+<td>The directory hierarchy of <code>examples.zarr</code> MUST mirror the aggregation grouping declared in the sibling <code>aggregated_data.h5ad</code>'s <code>uns['observation_unit']</code>. Any <code>observation_unit</code> column other than <code>perturbation_id</code> and <code>barcode</code> MUST be nested between <code>{perturbation_id}</code> and <code>{barcode}</code>, in the order declared. Every <code>aggregate_id</code> in <code>aggregated_data.h5ad</code> MUST resolve to at least one crop zarr whose path matches all of its <code>observation_unit</code> values.</td>
 </tr>
 <tr>
 <td><strong>Barcodes per perturbation</strong></td>
