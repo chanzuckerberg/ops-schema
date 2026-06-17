@@ -274,6 +274,12 @@ class TestValidateExamplesRoot:
             leaves=[("Phase2D", "G1", "b1", 0, "S1", ["Phase2D_labelfree", "x"])],
         )
         results = validate_zarr_node(str(root), "ops-0.1")
-        assert len(results) == 1
-        assert results[0].node_type == ZarrNodeType.EXAMPLES_ROOT
-        assert results[0].passed
+        debug = {
+            "zarr": zarr.__version__,
+            "raw_attrs_keys": list(dict(zarr.open_group(str(root), mode="r").attrs)),
+            "node_type": results[0].node_type,
+            "issues": [(i.severity.value, i.message) for i in results[0].issues],
+        }
+        assert len(results) == 1, debug
+        assert results[0].node_type == ZarrNodeType.EXAMPLES_ROOT, debug
+        assert results[0].passed, debug
