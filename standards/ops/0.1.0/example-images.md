@@ -84,9 +84,9 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 
 ### Channel Combinations Metadata
 
-OPTIONAL. The `examples.zarr` root group's `zarr.json` MAY carry a `channel_combos` array under `attributes`, describing — **per channel combination** — which single channel best represents that panel and the order in which panels should be displayed. (Some datasets name this container `examples/` without the `.zarr` suffix; consumers SHOULD accept either.)
+OPTIONAL. The `examples.zarr` root group's `zarr.json` MAY carry a `channel_combos` array under `attributes`, describing — **per channel combination** — which channels to display for that panel and the order in which panels should be displayed. (Some datasets name this container `examples/` without the `.zarr` suffix; consumers SHOULD accept either.)
 
-This lets a viewer render one representative channel per panel — e.g. a multi-panel grid with one column per channel combination — and order those panels, without opening a leaf to guess. It is purely presentational and entirely OPTIONAL: when absent, viewers fall back to their own channel selection and ordering (e.g. by reading a leaf's `omero.channels`). Single-panel visualizations typically omit it.
+This lets a viewer render a chosen subset of channels per panel — e.g. a multi-panel grid with a column per channel combination — and order those panels, without opening a leaf to guess. When a combination omits `display_channels`, **all** of its channels are shown (the default). It is purely presentational and entirely OPTIONAL: when absent, viewers fall back to their own channel selection and ordering (e.g. by reading a leaf's `omero.channels`). Single-panel visualizations typically omit it.
 
 ```jsonc
 // examples.zarr/zarr.json
@@ -95,9 +95,9 @@ This lets a viewer render one representative channel per panel — e.g. a multi-
   "node_type": "group",
   "attributes": {
     "channel_combos": [
-      { "name": "Phase2D",   "primary_channel": "Phase2D_labelfree", "priority": 1 },
-      { "name": "5xUPRE",    "primary_channel": "5xUPRE_GFP",        "priority": 2 },
-      { "name": "ER_SEC61B", "primary_channel": "ER_SEC61B_mCherry" }   // priority omitted → sorts last
+      { "name": "Phase2D",   "display_channels": ["Phase2D_labelfree"], "priority": 1 },
+      { "name": "5xUPRE",    "display_channels": ["5xUPRE_GFP", "ER_SEC61B_mCherry"], "priority": 2 },
+      { "name": "ER_SEC61B" }   // display_channels omitted → all channels; priority omitted → sorts last
     ]
   }
 }
@@ -118,8 +118,8 @@ Each entry in `channel_combos` has the following fields:
 <td>The channel combination. MUST match exactly one <code>{channel_combo}</code> subdirectory under the container.</td>
 </tr>
 <tr>
-<td><code>primary_channel</code> (REQUIRED)</td>
-<td>The representative channel for this panel. MUST equal an <code>omero.channels[*].label</code> that is present in <strong>every</strong> leaf under the matching <code>{channel_combo}</code> subdirectory. A single combination MAY aggregate crops from multiple source screens whose channel sets differ; the chosen channel MUST therefore be one common to all of them, otherwise a consumer filtering crops by this label would silently drop those from screens that lack it.</td>
+<td><code>display_channels</code> (OPTIONAL)</td>
+<td>Ordered list of channels to display for this panel, each an <code>omero.channels[*].label</code>. Omit (or null) to display <strong>all</strong> of the panel's channels — the default. The order is the display order (a viewer showing a single channel uses the first). Each listed label MUST be present in <strong>every</strong> leaf under the matching <code>{channel_combo}</code> subdirectory: a combination MAY aggregate crops from multiple source screens whose channel sets differ, so a listed channel must be common to all of them, otherwise a consumer filtering crops by it would silently drop those from screens that lack it.</td>
 </tr>
 <tr>
 <td><code>priority</code> (OPTIONAL)</td>
@@ -147,8 +147,8 @@ Each entry in `channel_combos` has the following fields:
 <td>A <code>{channel_combo}</code> subdirectory need not have a corresponding entry. Combinations without one fall back to viewer defaults; they are not an error.</td>
 </tr>
 <tr>
-<td><strong>Primary channel is common to the panel</strong></td>
-<td><code>primary_channel</code> MUST be a channel label present in every leaf of its combination (see the field description above).</td>
+<td><strong>Display channels are common to the panel</strong></td>
+<td>Every label in <code>display_channels</code> MUST be present in every leaf of its combination (see the field description above).</td>
 </tr>
 </tbody>
 </table>
