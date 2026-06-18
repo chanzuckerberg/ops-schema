@@ -2,22 +2,22 @@
 Validation for the example-images container's `channel_combos` metadata.
 
 The `examples.zarr` container is a Zarr group whose root `zarr.json` MAY carry
-an OPTIONAL `channel_combos` array — per channel combination, the representative
-`primary_channel` (an OMERO label) and a display `priority`. Per
+an OPTIONAL `channel_combos` array — per channel combination, the channels to
+display (`display_channels`; omit ⇒ all) and a display `priority`. Per
 standards/ops/0.1.0/example-images.md, this artifact is NOT validated as an
 OME-NGFF HCS store; only its `channel_combos` metadata is checked, in two parts:
 
   shape  (spec/v0_1/models.validate_ops_examples_channel_combos_metadata)
-    - names non-empty + unique, primary_channel non-empty, priority >= 0
+    - names non-empty + unique, display_channels labels non-empty, priority >= 0
 
   cross-leaf  (this module)
     - every entry's `name` resolves to a {channel_combo} subdirectory
-    - `primary_channel` is present in every leaf of that combo
+    - each `display_channels` label is present in every leaf of that combo
 
 A single combination MAY aggregate crops from multiple source screens whose
-channel sets differ, so the primary MUST be common to all of them. The channel
-set is uniform within a source screen, so the cross-leaf check samples one leaf
-per distinct `source_screen` rather than reading every leaf.
+channel sets differ, so every display channel MUST be common to all of them.
+The channel set is uniform within a source screen, so the cross-leaf check
+samples one leaf per distinct `source_screen` rather than reading every leaf.
 """
 
 from __future__ import annotations
@@ -60,16 +60,18 @@ def labels_from_attrs(attrs: dict) -> list[str]:
     return [c["name"] for c in channels_metadata if c.get("name")]
 
 
-def check_primary_channels(
+def check_display_channels(
     channel_combos: Iterable[dict],
     samples_by_combo: dict[str, list[LeafSample]],
 ) -> list[Issue]:
-    """Cross-leaf rule: every combo resolves to leaves, and `primary_channel`
-    is present in each sampled (per-source-screen) leaf.
+    """Cross-leaf rule: every combo resolves to leaves, and each
+    `display_channels` label is present in each sampled (per-source-screen) leaf.
 
     `samples_by_combo[name]` is the leaf samples for that combo (one per
     distinct source_screen); an empty/missing list means the combo's
-    subdirectory was absent or held no readable leaves.
+    subdirectory was absent or held no readable leaves. A combo that omits
+    `display_channels` (shows all channels) only needs its subdirectory to
+    exist — there are no specific labels to verify.
 
     Pure function — I/O is done by the caller's sampler so the rule is unit
     testable without a store.
@@ -77,9 +79,8 @@ def check_primary_channels(
     issues: list[Issue] = []
     for entry in channel_combos:
         name = entry.get("name")
-        primary = entry.get("primary_channel")
         # Malformed entries are already reported by the shape validator.
-        if not isinstance(name, str) or not name or not primary:
+        if not isinstance(name, str) or not name:
             continue
 
         samples = samples_by_combo.get(name) or []
@@ -96,21 +97,24 @@ def check_primary_channels(
             )
             continue
 
-        missing_screens = sorted(
-            {str(screen) for screen, labels in samples if primary not in labels}
-        )
-        if missing_screens:
-            issues.append(
-                Issue(
-                    loc=("channel_combos", name, "primary_channel"),
-                    message=(
-                        f"primary_channel '{primary}' for combo '{name}' is absent "
-                        f"from leaf channels in source screen(s): {missing_screens}. "
-                        f"It MUST be present in every leaf of the combo."
-                    ),
-                    severity=Severity.ERROR,
-                )
+        for label in entry.get("display_channels") or []:
+            if not isinstance(label, str) or not label:
+                continue  # shape validator owns malformed labels
+            missing_screens = sorted(
+                {str(screen) for screen, labels in samples if label not in labels}
             )
+            if missing_screens:
+                issues.append(
+                    Issue(
+                        loc=("channel_combos", name, "display_channels"),
+                        message=(
+                            f"display channel '{label}' for combo '{name}' is absent "
+                            f"from leaf channels in source screen(s): {missing_screens}. "
+                            f"Every display channel MUST be present in every leaf."
+                        ),
+                        severity=Severity.ERROR,
+                    )
+                )
     return issues
 
 
@@ -172,7 +176,7 @@ def validate_examples_root(
 ) -> list[ZarrNodeValidationResult]:
     """Validate the `channel_combos` metadata on an examples container root.
 
-    Runs the shape validator (registry) then the cross-leaf primary-channel
+    Runs the shape validator (registry) then the cross-leaf display-channels
     check. `sample_leaves` is injectable for testing; it defaults to
     `default_sample_leaves`. Returns a single result tagged EXAMPLES_ROOT.
     """
@@ -190,7 +194,7 @@ def validate_examples_root(
             name = entry.get("name") if isinstance(entry, dict) else None
             if isinstance(name, str) and name and name not in samples_by_combo:
                 samples_by_combo[name] = sampler(node_path, name)
-        issues.extend(check_primary_channels(combos, samples_by_combo))
+        issues.extend(check_display_channels(combos, samples_by_combo))
 
     ome = raw_attrs.get("ome")
     ngff_version = str(ome.get("version")) if isinstance(ome, dict) else None

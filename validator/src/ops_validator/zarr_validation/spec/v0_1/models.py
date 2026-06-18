@@ -404,22 +404,35 @@ class OPSChannelComboMetadata(BaseModel):
     """One entry in `channel_combos` at the examples.zarr root group.
 
     Only the array shape is validated by the model. The cross-leaf rule —
-    `primary_channel` must be present in every leaf of its combo — needs to
-    read leaf stores and is checked separately (see
+    each `display_channels` label must be present in every leaf of its combo —
+    needs to read leaf stores and is checked separately (see
     zarr_validation/examples.py).
     """
 
     model_config = ConfigDict(extra="allow")
 
     name: str
-    primary_channel: str
+    display_channels: list[str] | None = None
     priority: int | None = None
 
-    @field_validator("name", "primary_channel")
+    @field_validator("name")
     @classmethod
-    def must_be_non_empty(cls, v: str, info) -> str:
+    def name_non_empty(cls, v: str) -> str:
         if not v or not v.strip():
-            raise ValueError(f"{info.field_name} must be a non-empty string")
+            raise ValueError("name must be a non-empty string")
+        return v
+
+    @field_validator("display_channels")
+    @classmethod
+    def display_channels_non_empty_labels(
+        cls, v: list[str] | None
+    ) -> list[str] | None:
+        if v is not None:
+            for label in v:
+                if not isinstance(label, str) or not label.strip():
+                    raise ValueError(
+                        "display_channels labels must be non-empty strings"
+                    )
         return v
 
     @field_validator("priority")
@@ -520,10 +533,11 @@ def validate_ops_examples_channel_combos_metadata(raw_attrs: dict) -> list[Issue
     """
     Validate the *shape* of `channel_combos` at the examples.zarr root group.
 
-    Checks names are non-empty + unique, `primary_channel` is non-empty, and
-    `priority` (when present) is a non-negative integer. The cross-leaf rule —
-    `primary_channel` present in every leaf of its combo — requires reading
-    leaf stores and is checked in zarr_validation/examples.py.
+    Checks names are non-empty + unique, `display_channels` labels (when
+    present) are non-empty, and `priority` (when present) is a non-negative
+    integer. The cross-leaf rule — each `display_channels` label present in
+    every leaf of its combo — requires reading leaf stores and is checked in
+    zarr_validation/examples.py.
 
     Returns [] when `channel_combos` is absent (the metadata is OPTIONAL).
     """

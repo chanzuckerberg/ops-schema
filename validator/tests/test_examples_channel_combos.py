@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from ops_validator.zarr_validation.examples import (
-    check_primary_channels,
+    check_display_channels,
     default_sample_leaves,
     labels_from_attrs,
     validate_examples_root,
@@ -16,7 +16,6 @@ from ops_validator.zarr_validation.spec.v0_1.models import (
 )
 from ops_validator.zarr_validation.validator import validate_zarr_node
 from ops_validator.zarr_validation.zarr_node import ZarrNodeType
-
 
 # ---------------------------------------------------------------------------
 # Shape validation (validate_ops_examples_channel_combos_metadata)
@@ -30,41 +29,41 @@ class TestShape:
     def test_valid_passes(self):
         attrs = {
             "channel_combos": [
-                {"name": "Phase2D", "primary_channel": "Phase2D_labelfree", "priority": 1},
-                {"name": "5xUPRE", "primary_channel": "5xUPRE_GFP"},
+                {
+                    "name": "Phase2D",
+                    "display_channels": ["Phase2D_labelfree"],
+                    "priority": 1,
+                },
+                {"name": "5xUPRE", "display_channels": ["5xUPRE_GFP", "ER_mCherry"]},
             ]
         }
         assert validate_ops_examples_channel_combos_metadata(attrs) == []
 
     def test_duplicate_names_fail(self):
-        attrs = {
-            "channel_combos": [
-                {"name": "A", "primary_channel": "x"},
-                {"name": "A", "primary_channel": "y"},
-            ]
-        }
+        attrs = {"channel_combos": [{"name": "A"}, {"name": "A"}]}
         issues = validate_ops_examples_channel_combos_metadata(attrs)
         assert any(i.severity == Severity.ERROR for i in issues)
         assert any("unique" in i.message.lower() for i in issues)
 
     def test_negative_priority_fails(self):
-        attrs = {"channel_combos": [{"name": "A", "primary_channel": "x", "priority": -1}]}
+        attrs = {"channel_combos": [{"name": "A", "priority": -1}]}
         issues = validate_ops_examples_channel_combos_metadata(attrs)
         assert any("non-negative" in i.message.lower() for i in issues)
 
     def test_empty_name_fails(self):
-        attrs = {"channel_combos": [{"name": "  ", "primary_channel": "x"}]}
+        attrs = {"channel_combos": [{"name": "  "}]}
         issues = validate_ops_examples_channel_combos_metadata(attrs)
         assert any(i.severity == Severity.ERROR for i in issues)
 
-    def test_missing_primary_fails(self):
+    def test_display_channels_optional(self):
+        # Omitting display_channels (=> show all channels) is valid.
         attrs = {"channel_combos": [{"name": "A"}]}
+        assert validate_ops_examples_channel_combos_metadata(attrs) == []
+
+    def test_empty_display_channel_label_fails(self):
+        attrs = {"channel_combos": [{"name": "A", "display_channels": ["ok", "  "]}]}
         issues = validate_ops_examples_channel_combos_metadata(attrs)
         assert any(i.severity == Severity.ERROR for i in issues)
-
-    def test_priority_optional(self):
-        attrs = {"channel_combos": [{"name": "A", "primary_channel": "x"}]}
-        assert validate_ops_examples_channel_combos_metadata(attrs) == []
 
 
 # ---------------------------------------------------------------------------
@@ -86,45 +85,57 @@ class TestLabelsFromAttrs:
 
 
 # ---------------------------------------------------------------------------
-# check_primary_channels (pure cross-leaf rule)
+# check_display_channels (pure cross-leaf rule)
 # ---------------------------------------------------------------------------
 
 
-class TestCheckPrimaryChannels:
-    def test_present_in_all_screens(self):
-        combos = [{"name": "Phase2D", "primary_channel": "Phase2D_labelfree"}]
+class TestCheckDisplayChannels:
+    def test_all_present_in_all_screens(self):
+        combos = [{"name": "Phase2D", "display_channels": ["Phase2D_labelfree"]}]
         samples = {
             "Phase2D": [
                 ("S1", frozenset({"Phase2D_labelfree", "GFP_a"})),
                 ("S2", frozenset({"Phase2D_labelfree", "GFP_b"})),
             ]
         }
-        assert check_primary_channels(combos, samples) == []
+        assert check_display_channels(combos, samples) == []
+
+    def test_multiple_labels_all_present(self):
+        combos = [{"name": "C", "display_channels": ["a", "b"]}]
+        samples = {"C": [("S1", frozenset({"a", "b", "c"}))]}
+        assert check_display_channels(combos, samples) == []
 
     def test_missing_in_one_screen(self):
-        combos = [{"name": "Phase2D", "primary_channel": "Phase2D_labelfree"}]
+        combos = [{"name": "Phase2D", "display_channels": ["Phase2D_labelfree"]}]
         samples = {
             "Phase2D": [
                 ("S1", frozenset({"Phase2D_labelfree"})),
                 ("S2", frozenset({"only_other"})),
             ]
         }
-        issues = check_primary_channels(combos, samples)
+        issues = check_display_channels(combos, samples)
         assert len(issues) == 1
         assert issues[0].severity == Severity.ERROR
         assert "S2" in issues[0].message
         assert "Phase2D_labelfree" in issues[0].message
 
+    def test_omitted_display_channels_skips_label_check(self):
+        # All-channels combo: only needs a subdirectory (samples present); there
+        # are no specific labels to verify.
+        combos = [{"name": "A"}]
+        samples = {"A": [("S1", frozenset({"whatever"}))]}
+        assert check_display_channels(combos, samples) == []
+
     def test_combo_with_no_samples_errors(self):
-        combos = [{"name": "Ghost", "primary_channel": "x"}]
-        issues = check_primary_channels(combos, {"Ghost": []})
+        combos = [{"name": "Ghost", "display_channels": ["x"]}]
+        issues = check_display_channels(combos, {"Ghost": []})
         assert len(issues) == 1
         assert "no matching subdirectory" in issues[0].message
 
     def test_malformed_entry_skipped(self):
         # Shape validator owns these; cross-leaf must not double-report.
-        combos = [{"name": "", "primary_channel": "x"}, {"name": "A"}]
-        assert check_primary_channels(combos, {}) == []
+        combos = [{"name": ""}, {"display_channels": ["x"]}]
+        assert check_display_channels(combos, {}) == []
 
 
 # ---------------------------------------------------------------------------
@@ -180,7 +191,7 @@ class TestDefaultSampleLeaves:
     def test_dedups_by_source_screen(self, tmp_path):
         root = _build_examples(
             tmp_path,
-            channel_combos=[{"name": "Phase2D", "primary_channel": "Phase2D_labelfree"}],
+            channel_combos=[{"name": "Phase2D", "display_channels": ["Phase2D_labelfree"]}],
             leaves=[
                 ("Phase2D", "GENE1", "bc1", 0, "S1", ["Phase2D_labelfree", "GFP_a"]),
                 ("Phase2D", "GENE1", "bc1", 1, "S1", ["Phase2D_labelfree", "GFP_a"]),
@@ -194,7 +205,7 @@ class TestDefaultSampleLeaves:
     def test_missing_combo_returns_empty(self, tmp_path):
         root = _build_examples(
             tmp_path,
-            channel_combos=[{"name": "Phase2D", "primary_channel": "p"}],
+            channel_combos=[{"name": "Phase2D", "display_channels": ["p"]}],
             leaves=[("Phase2D", "G", "b", 0, "S1", ["p"])],
         )
         assert default_sample_leaves(str(root), "DoesNotExist") == []
@@ -209,7 +220,7 @@ class TestValidateExamplesRoot:
     def test_pass_with_injected_sampler(self):
         raw = {
             "ome": {"version": "0.5"},
-            "channel_combos": [{"name": "A", "primary_channel": "DAPI", "priority": 1}],
+            "channel_combos": [{"name": "A", "display_channels": ["DAPI"], "priority": 1}],
         }
         results = validate_examples_root(
             "mem://examples.zarr",
@@ -221,8 +232,8 @@ class TestValidateExamplesRoot:
         assert results[0].passed
         assert results[0].node_type == ZarrNodeType.EXAMPLES_ROOT
 
-    def test_fail_when_primary_absent(self):
-        raw = {"channel_combos": [{"name": "A", "primary_channel": "DAPI"}]}
+    def test_fail_when_display_channel_absent(self):
+        raw = {"channel_combos": [{"name": "A", "display_channels": ["DAPI"]}]}
         results = validate_examples_root(
             "mem://examples.zarr",
             raw,
@@ -236,8 +247,12 @@ class TestValidateExamplesRoot:
         root = _build_examples(
             tmp_path,
             channel_combos=[
-                {"name": "Phase2D", "primary_channel": "Phase2D_labelfree", "priority": 1},
-                {"name": "5xUPRE", "primary_channel": "5xUPRE_GFP", "priority": 2},
+                {
+                    "name": "Phase2D",
+                    "display_channels": ["Phase2D_labelfree"],
+                    "priority": 1,
+                },
+                {"name": "5xUPRE", "display_channels": ["5xUPRE_GFP"], "priority": 2},
             ],
             leaves=[
                 ("Phase2D", "G1", "b1", 0, "S1", ["Phase2D_labelfree", "x_a"]),
@@ -246,21 +261,25 @@ class TestValidateExamplesRoot:
             ],
         )
         results = validate_examples_root(
-            str(root), json.loads((root / "zarr.json").read_text())["attributes"], "ops-0.1"
+            str(root),
+            json.loads((root / "zarr.json").read_text())["attributes"],
+            "ops-0.1",
         )
         assert results[0].passed, [i.message for i in results[0].issues]
 
-    def test_integration_fail_primary_missing_in_one_screen(self, tmp_path):
+    def test_integration_fail_display_channel_missing_in_one_screen(self, tmp_path):
         root = _build_examples(
             tmp_path,
-            channel_combos=[{"name": "Phase2D", "primary_channel": "Phase2D_labelfree"}],
+            channel_combos=[{"name": "Phase2D", "display_channels": ["Phase2D_labelfree"]}],
             leaves=[
                 ("Phase2D", "G1", "b1", 0, "S1", ["Phase2D_labelfree"]),
                 ("Phase2D", "G2", "b2", 0, "S2", ["something_else"]),
             ],
         )
         results = validate_examples_root(
-            str(root), json.loads((root / "zarr.json").read_text())["attributes"], "ops-0.1"
+            str(root),
+            json.loads((root / "zarr.json").read_text())["attributes"],
+            "ops-0.1",
         )
         assert not results[0].passed
         assert any("S2" in i.message for i in results[0].errors)
@@ -268,7 +287,7 @@ class TestValidateExamplesRoot:
     def test_validate_zarr_node_routes_to_examples(self, tmp_path):
         root = _build_examples(
             tmp_path,
-            channel_combos=[{"name": "Phase2D", "primary_channel": "Phase2D_labelfree"}],
+            channel_combos=[{"name": "Phase2D", "display_channels": ["Phase2D_labelfree"]}],
             leaves=[("Phase2D", "G1", "b1", 0, "S1", ["Phase2D_labelfree", "x"])],
         )
         results = validate_zarr_node(str(root), "ops-0.1")
