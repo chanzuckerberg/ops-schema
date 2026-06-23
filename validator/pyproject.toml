@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ops-schema-validator"
 version = "0.1.0"
 description = "Validator for the OPS Data Standard v0.1.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "pydantic>=2.0",
     "pydantic-zarr>=0.7",

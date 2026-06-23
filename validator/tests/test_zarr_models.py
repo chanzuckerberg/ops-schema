@@ -7,13 +7,13 @@ from pydantic import ValidationError
 
 from ops_validator.zarr_validation.spec.v0_1.models import (
     OPSChannelMetadata,
+    OPSPlateChannelsSpec,
     OPSScaleLevelSpec,
     OPSSegmentationMetadata,
     OPSStoreSpecV0_1,
     validate_ops_label_metadata,
     validate_ops_plate_metadata,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -37,12 +37,17 @@ def _level(path: str, shape: list[int], **overrides) -> dict:
     return base
 
 
-def _store(axes: list[str], shapes: list[list[int]], **overrides) -> dict:
-    """Build a minimal valid OPSStoreSpecV0_1 dict."""
+def _store(axes: list, shapes: list[list[int]], **overrides) -> dict:
+    """Build a minimal valid OPSStoreSpecV0_1 dict.
+
+    `axes` may be bare name strings (wrapped as {"name": ...} with no type/unit)
+    or full axis dicts ({"name", "type", "unit"}).
+    """
+    axis_dicts = [{"name": ax} if isinstance(ax, str) else ax for ax in axes]
     levels = [_level(str(i), s) for i, s in enumerate(shapes)]
     base = {
         "spec_version": "ops-0.1",
-        "axes": axes,
+        "axes": axis_dicts,
         "multiscale_level_count": len(shapes),
         "levels": levels,
     }
@@ -95,6 +100,48 @@ class TestStoreSpecAxes:
             OPSStoreSpecV0_1.model_validate(
                 _store(["T", "C", "X", "Y", "Z"], _five_level_shapes())
             )
+
+
+# Fully-typed TCZYX axes: channel has no unit, space/time carry units.
+_TYPED_AXES = [
+    {"name": "T", "type": "time", "unit": "second"},
+    {"name": "C", "type": "channel", "unit": None},
+    {"name": "Z", "type": "space", "unit": "micrometer"},
+    {"name": "Y", "type": "space", "unit": "micrometer"},
+    {"name": "X", "type": "space", "unit": "micrometer"},
+]
+
+
+class TestStoreSpecAxisUnits:
+    def test_typed_axes_with_correct_units_pass(self):
+        OPSStoreSpecV0_1.model_validate(
+            _store([dict(ax) for ax in _TYPED_AXES], _five_level_shapes())
+        )
+
+    def test_channel_axis_with_unit_fails(self):
+        axes = [dict(ax) for ax in _TYPED_AXES]
+        axes[1]["unit"] = "micrometer"  # channel must not have a unit
+        with pytest.raises(ValidationError, match="must not have a unit"):
+            OPSStoreSpecV0_1.model_validate(_store(axes, _five_level_shapes()))
+
+    def test_space_axis_without_unit_fails(self):
+        axes = [dict(ax) for ax in _TYPED_AXES]
+        axes[3]["unit"] = None  # Y is space → unit required
+        with pytest.raises(ValidationError, match="must have a unit"):
+            OPSStoreSpecV0_1.model_validate(_store(axes, _five_level_shapes()))
+
+    def test_time_axis_without_unit_fails(self):
+        axes = [dict(ax) for ax in _TYPED_AXES]
+        axes[0]["unit"] = None  # T is time → unit required
+        with pytest.raises(ValidationError, match="must have a unit"):
+            OPSStoreSpecV0_1.model_validate(_store(axes, _five_level_shapes()))
+
+    def test_untyped_axes_skip_unit_rules(self):
+        # Bare name strings (type=None) bypass unit rules — preserves the
+        # name-only behaviour used elsewhere in the test suite.
+        OPSStoreSpecV0_1.model_validate(
+            _store(["T", "C", "Z", "Y", "X"], _five_level_shapes())
+        )
 
 
 class TestStoreSpecLevelCount:
@@ -228,6 +275,53 @@ class TestPlateChannelMetadata:
             {"channels_metadata": [self._channel()]}
         )
         assert issues == []
+
+    def test_sequential_indices_pass(self):
+        OPSPlateChannelsSpec.model_validate(
+            {
+                "channels_metadata": [
+                    self._channel(name="DAPI", index=0),
+                    self._channel(name="GFP", index=1),
+                    self._channel(name="RFP", index=2),
+                ]
+            }
+        )
+
+    def test_indices_out_of_order_but_complete_pass(self):
+        # A complete {0,1,2} set listed out of order is accepted: the check
+        # sorts before comparing to range(n), so list order does not matter —
+        # only that the index values form a 0-based gap-free set.
+        OPSPlateChannelsSpec.model_validate(
+            {
+                "channels_metadata": [
+                    self._channel(name="GFP", index=1),
+                    self._channel(name="DAPI", index=0),
+                    self._channel(name="RFP", index=2),
+                ]
+            }
+        )
+
+    def test_duplicate_indices_fail(self):
+        with pytest.raises(ValidationError, match="0-based sequential"):
+            OPSPlateChannelsSpec.model_validate(
+                {
+                    "channels_metadata": [
+                        self._channel(name="DAPI", index=0),
+                        self._channel(name="GFP", index=0),
+                    ]
+                }
+            )
+
+    def test_gap_in_indices_fail(self):
+        with pytest.raises(ValidationError, match="0-based sequential"):
+            OPSPlateChannelsSpec.model_validate(
+                {
+                    "channels_metadata": [
+                        self._channel(name="DAPI", index=0),
+                        self._channel(name="RFP", index=2),
+                    ]
+                }
+            )
 
 
 # ---------------------------------------------------------------------------

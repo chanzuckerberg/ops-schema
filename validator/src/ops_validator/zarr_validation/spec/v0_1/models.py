@@ -51,6 +51,20 @@ from ops_validator.zarr_validation.result import Issue, Severity
 AXES_REQUIRED = ["T", "C", "Z", "Y", "X"]
 INDEX_CODECS_REQUIRED = {"crc32c"}
 
+# OME-NGFF axis types that must carry a physical unit. The 'channel' type must
+# not (it indexes stains/markers, not a measured quantity); see axis_unit_rules.
+_AXIS_TYPES_REQUIRING_UNIT = ("space", "time")
+
+
+class OPSAxis(BaseModel):
+    """One entry in multiscales[].axes (name + OME-NGFF axis type + unit)."""
+
+    model_config = ConfigDict(extra="allow")
+
+    name: str
+    type: str | None = None
+    unit: str | None = None
+
 
 class OPSScaleLevelSpec(BaseModel):
     """
@@ -209,19 +223,35 @@ class OPSStoreSpecV0_1(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     spec_version: Literal["ops-0.1"]
-    axes: list[str]
+    axes: list[OPSAxis]
     multiscale_level_count: int
     levels: list[OPSScaleLevelSpec]
 
     @field_validator("axes")
     @classmethod
-    def axes_must_be_TCZYX(cls, v: list[str]) -> list[str]:
-        if v != AXES_REQUIRED:
+    def axes_must_be_TCZYX(cls, v: list[OPSAxis]) -> list[OPSAxis]:
+        names = [ax.name for ax in v]
+        if names != AXES_REQUIRED:
             raise ValueError(
-                f"Axes must be {AXES_REQUIRED} (uppercase, per OME-NGFF v0.5); got {v}. "
+                f"Axes must be {AXES_REQUIRED} (uppercase, per OME-NGFF v0.5); got {names}. "
                 "All datasets must be 5D with dimensions in T, C, Z, Y, X order."
             )
         return v
+
+    @model_validator(mode="after")
+    def axis_unit_rules(self) -> "OPSStoreSpecV0_1":
+        """Unit is required for space/time axes; must be absent for channel axes."""
+        for ax in self.axes:
+            if ax.type == "channel" and ax.unit is not None:
+                raise ValueError(
+                    f"Channel axis '{ax.name}' must not have a unit (no physical unit). "
+                    f"Got: {ax.unit!r}"
+                )
+            if ax.type in _AXIS_TYPES_REQUIRING_UNIT and ax.unit is None:
+                raise ValueError(
+                    f"Axis '{ax.name}' (type='{ax.type}') must have a unit."
+                )
+        return self
 
     @field_validator("multiscale_level_count")
     @classmethod
@@ -389,9 +419,19 @@ class OPSChannelMetadata(BaseModel):
         return self
 
 
-class _OPSPlateChannelsSpec(BaseModel):
+class OPSPlateChannelsSpec(BaseModel):
     model_config = ConfigDict(extra="allow")
     channels_metadata: list[OPSChannelMetadata]
+
+    @model_validator(mode="after")
+    def check_unique_channel_indices(self) -> OPSPlateChannelsSpec:
+        indices = [c.index for c in self.channels_metadata]
+        if sorted(indices) != list(range(len(indices))):
+            raise ValueError(
+                f"channels_metadata[].index must be 0-based sequential integers. "
+                f"Got: {indices}"
+            )
+        return self
 
 
 # ---------------------------------------------------------------------------
@@ -433,7 +473,7 @@ def validate_ops_plate_metadata(raw_attrs: dict) -> list[Issue]:
             )
         ]
     try:
-        _OPSPlateChannelsSpec.model_validate(
+        OPSPlateChannelsSpec.model_validate(
             {"channels_metadata": raw_attrs["channels_metadata"]}
         )
         return []

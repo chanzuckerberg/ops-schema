@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from ops_validator.zarr_validation.result import Severity
 from ops_validator.zarr_validation.validator import (
     _extract_level,
@@ -200,7 +198,7 @@ class TestNodeTypeStamping:
         monkeypatch.setattr(
             "ops_validator.zarr_validation.validator._build_node_dict",
             lambda *a, **kw: {
-                "axes": ["T", "C", "Z", "Y", "X"],
+                "axes": [{"name": n} for n in ("T", "C", "Z", "Y", "X")],
                 "levels": [],
                 "multiscale_level_count": 0,
                 "array_shapes": [],

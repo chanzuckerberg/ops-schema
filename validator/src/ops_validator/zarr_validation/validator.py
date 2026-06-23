@@ -116,7 +116,7 @@ def _build_node_dict(img: Image) -> dict:
     ome_zarr_models Image (or compatible multiscale group).
     """
     ms = img.ome_attributes.multiscales[0]
-    axes = [ax.name for ax in ms.axes]
+    axes = [{"name": ax.name, "type": ax.type, "unit": ax.unit} for ax in ms.axes]
     levels = []
     shapes = []
     for ds in ms.datasets:
@@ -270,7 +270,7 @@ def _validate_field(
             None,
         )
 
-    axes = tuple(node_dict["axes"])
+    axes = tuple(ax["name"] for ax in node_dict["axes"])
     chunk_shape = (
         tuple(node_dict["levels"][0]["chunk_shape"]) if node_dict["levels"] else None
     )
@@ -603,7 +603,7 @@ def validate_zarr_node(
     # inside _validate_hcs_plate.
     if "plate" in raw_ome_attrs and "multiscales" not in raw_ome_attrs:
         ngff_version = str(raw_ome_attrs.get("version", "0.5"))
-        results = _validate_hcs_plate(
+        results: list[ZarrNodeValidationResult] = _validate_hcs_plate(
             node_path, raw_attrs, ngff_version, spec_version, ModelClass
         )
         for r in results:
