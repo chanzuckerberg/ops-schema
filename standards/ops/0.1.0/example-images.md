@@ -86,7 +86,7 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 
 OPTIONAL. The `examples.zarr` root group's `zarr.json` MAY carry a `channel_combos` array under `attributes`, describing — **per channel combination** — which channels to display for that panel and the order in which panels should be displayed.
 
-This lets a viewer render a chosen subset of channels per panel — e.g. a multi-panel grid with a column per channel combination — and order those panels, without opening a leaf to guess. When a combination omits `display_channels`, **all** of its channels are shown (the default). It is purely presentational and entirely OPTIONAL: when absent, viewers fall back to their own channel selection and ordering (e.g. by reading a leaf's `omero.channels`). Single-panel visualizations typically omit it.
+This lets a viewer render a chosen subset of channels per panel — e.g. a multi-panel grid with a column per channel combination — and order those panels. When a combination omits `display_channels`, **all** of its channels are shown (the default).
 
 ```jsonc
 // examples.zarr/zarr.json
