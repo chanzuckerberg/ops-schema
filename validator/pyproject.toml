@@ -6,12 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "ops-schema-validator"
 version = "0.1.0"
 description = "Validator for the OPS Data Standard v0.1.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "pydantic>=2.0",
     "pydantic-zarr>=0.7",
     "zarr>=3.0",
     "numpy>=2.0",
+    "ome-zarr-models>=1.7",
+    "s3fs",
+    "polars>=1.0",
+    "cloudpathlib[s3]>=0.18",
+    "typer>=0.12",
 ]
 
 [project.optional-dependencies]
@@ -33,7 +38,14 @@ ops-validate = "ops_validator.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["ops_validator", "ops_validator.validators", "ops_validator.models"]
+packages = [
+    "ops_validator",
+    "ops_validator.validators",
+    "ops_validator.models",
+    "ops_validator.zarr_validation",
+    "ops_validator.zarr_validation.spec",
+    "ops_validator.zarr_validation.spec.v0_1",
+]
 
 [tool.ruff]
 line-length = 100

@@ -11,8 +11,9 @@ from pathlib import Path
 
 import anndata as ad
 import pandas as pd
+from cloudpathlib import CloudPath
 
-from ops_validator.validators.base import BaseValidator, ValidationIssue
+from ops_validator.validators.base import BaseValidator
 
 
 class CrossArtifactValidator(BaseValidator):
@@ -28,9 +29,13 @@ class CrossArtifactValidator(BaseValidator):
             visualizations/
                 {viz_id}/
                     aggregated_data.h5ad
+
+    Paths may be local or remote (s3://, ...): cloudpathlib's CloudPath
+    transparently downloads files to a local cache when handed to pandas /
+    anndata, the same way the individual artifact validators load them.
     """
 
-    def __init__(self, experiment_dir: str | Path):
+    def __init__(self, experiment_dir: str | Path | CloudPath):
         super().__init__(experiment_dir)
         self._lib_df: pd.DataFrame | None = None
         self._cell_df: pd.DataFrame | None = None
@@ -46,20 +51,26 @@ class CrossArtifactValidator(BaseValidator):
 
         # Find all aggregated_data.h5ad files under visualizations/
         viz_dir = base / "visualizations"
-        h5ad_paths = list(viz_dir.glob("*/aggregated_data.h5ad")) if viz_dir.exists() else []
+        h5ad_paths = (
+            list(viz_dir.glob("*/aggregated_data.h5ad")) if viz_dir.exists() else []
+        )
 
         # Load files (silently skip if missing — individual validators catch that)
         if lib_path.exists():
             try:
                 self._lib_df = pd.read_csv(lib_path, dtype=str, keep_default_na=False)
             except Exception as e:
-                self._error("LOAD", str(lib_path), f"Could not load perturbation_library.csv: {e}")
+                self._error(
+                    "LOAD", str(lib_path), f"Could not load perturbation_library.csv: {e}"
+                )
 
         if cell_path.exists():
             try:
                 self._cell_df = pd.read_parquet(cell_path)
             except Exception as e:
-                self._error("LOAD", str(cell_path), f"Could not load cell_data.parquet: {e}")
+                self._error(
+                    "LOAD", str(cell_path), f"Could not load cell_data.parquet: {e}"
+                )
 
         if feat_path.exists():
             try:
@@ -67,16 +78,20 @@ class CrossArtifactValidator(BaseValidator):
             except Exception:
                 pass  # optional file; feature_definitions validator handles this
 
-        # Run cross-checks
+        # Cell-data ↔ library cross-checks
         if self._lib_df is not None and self._cell_df is not None:
             self._check_barcode_fk()
             self._check_perturbation_id_fk_cell()
 
+        # Per-aggregated-data cross-checks. Each file is read once and all
+        # applicable checks run against it (gated on which reference tables loaded).
         for h5ad_path in h5ad_paths:
             try:
                 adata = ad.read_h5ad(h5ad_path)
             except Exception as e:
-                self._error("LOAD", str(h5ad_path), f"Could not load aggregated_data.h5ad: {e}")
+                self._error(
+                    "LOAD", str(h5ad_path), f"Could not load aggregated_data.h5ad: {e}"
+                )
                 continue
 
             if self._lib_df is not None:
@@ -86,14 +101,9 @@ class CrossArtifactValidator(BaseValidator):
             if self._feat_df is not None:
                 self._check_var_vs_feature_definitions(adata, h5ad_path)
 
-        if self._lib_df is not None and self._cell_df is not None and h5ad_paths:
-            for h5ad_path in h5ad_paths:
-                try:
-                    adata = ad.read_h5ad(h5ad_path)
-                    self._check_perturbation_id_consistency(adata, h5ad_path)
-                    self._check_v14_n_cells_matches_cell_data(adata, h5ad_path)
-                except Exception:
-                    pass
+            if self._cell_df is not None:
+                self._check_perturbation_id_consistency(adata, h5ad_path)
+                self._check_v14_n_cells_matches_cell_data(adata, h5ad_path)
 
         return self.is_valid
 
@@ -148,9 +158,7 @@ class CrossArtifactValidator(BaseValidator):
                 f"perturbation_library.csv. Sample: {sample}",
             )
 
-    def _check_v12_control_present(
-        self, adata: ad.AnnData, h5ad_path: Path
-    ) -> None:
+    def _check_v12_control_present(self, adata: ad.AnnData, h5ad_path: Path) -> None:
         """V-12: at least one perturbation_id in aggregated obs must map to a control row."""
         if "perturbation_id" not in adata.obs.columns:
             return
@@ -214,6 +222,12 @@ class CrossArtifactValidator(BaseValidator):
         else:
             unit_cols = list(observation_unit)
         if not unit_cols:
+            return
+
+        # observation_unit cols must exist in obs to index them below. The
+        # aggregated_data validator already flags this mismatch, so just skip
+        # here (relevant when CrossArtifactValidator is run standalone).
+        if any(c not in adata.obs.columns for c in unit_cols):
             return
 
         missing = [c for c in unit_cols if c not in self._cell_df.columns]

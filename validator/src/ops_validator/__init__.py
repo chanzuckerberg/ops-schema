@@ -1,36 +1,50 @@
 """OPS Data Standard Validator — v0.1.0
 
-Validators are imported lazily to avoid pulling in heavy optional dependencies.
-Use: ``from ops_validator.validators.zarr_images import ZarrImagesValidator``
+Two complementary validator surfaces:
+
+1. Per-artifact file validators (BaseValidator-based) for YAML/CSV/Parquet/H5AD
+   artifacts:
+
+       from ops_validator import CollectionValidator
+       CollectionValidator(path).validate()
+
+2. Zarr-image validation framework (Pydantic + ome-zarr-models) for OME-Zarr
+   stores and HCS plates:
+
+       from ops_validator import validate
+       run = validate("s3://bucket/plate.ome.zarr")
 """
 
+from ops_validator.validators.aggregated_data import AggregatedDataValidator
+from ops_validator.validators.cell_data import CellDataValidator
+from ops_validator.validators.collection import CollectionValidator
+from ops_validator.validators.experimental import ExperimentalValidator
+from ops_validator.validators.feature_definitions import FeatureDefinitionsValidator
+from ops_validator.validators.perturbation_library import PerturbationLibraryValidator
+from ops_validator.zarr_validation import (
+    Issue,
+    Severity,
+    ValidationRun,
+    ValidationSummary,
+    ZarrNodeValidationResult,
+    validate,
+    validate_zarr_node,
+)
+
 __all__ = [
+    # Per-artifact validators
     "CollectionValidator",
     "ExperimentalValidator",
     "PerturbationLibraryValidator",
     "CellDataValidator",
     "AggregatedDataValidator",
     "FeatureDefinitionsValidator",
-    "ZarrImagesValidator",
-    "CrossArtifactValidator",
+    # Zarr framework
+    "validate",
+    "validate_zarr_node",
+    "ZarrNodeValidationResult",
+    "ValidationSummary",
+    "ValidationRun",
+    "Issue",
+    "Severity",
 ]
-
-
-def __getattr__(name):
-    """Lazy import validators only when accessed."""
-    _VALIDATORS = {
-        "CollectionValidator": "ops_validator.validators.collection",
-        "ExperimentalValidator": "ops_validator.validators.experimental",
-        "PerturbationLibraryValidator": "ops_validator.validators.perturbation_library",
-        "CellDataValidator": "ops_validator.validators.cell_data",
-        "AggregatedDataValidator": "ops_validator.validators.aggregated_data",
-        "FeatureDefinitionsValidator": "ops_validator.validators.feature_definitions",
-        "ZarrImagesValidator": "ops_validator.validators.zarr_images",
-        "CrossArtifactValidator": "ops_validator.cross_artifact",
-    }
-    if name in _VALIDATORS:
-        import importlib
-
-        module = importlib.import_module(_VALIDATORS[name])
-        return getattr(module, name)
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

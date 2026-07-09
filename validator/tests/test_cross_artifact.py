@@ -1,202 +1,187 @@
-"""Tests for CrossArtifactValidator."""
+"""Tests for CrossArtifactValidator — FK integrity and consistency across artifacts."""
 
 from __future__ import annotations
-
-from pathlib import Path
 
 import anndata as ad
 import numpy as np
 import pandas as pd
-import pytest
 
-from ops_validator.cross_artifact import CrossArtifactValidator
+from ops_validator.validators.cross_artifact import CrossArtifactValidator
 
-VALID_FEATURES = [
-    "nucleus_area",
-    "cell_eccentricity",
-    "nucleus_DAPI_mean",
-]
+# ---------------------------------------------------------------------------
+# Fixture builders — a fully consistent experiment that each test mutates.
+# ---------------------------------------------------------------------------
 
 
-def _make_experiment(
-    tmp_path: Path,
-    lib_rows: list[dict],
-    agg_perturbation_ids: list[str],
-) -> Path:
-    """Build a minimal experiment directory with library + one aggregated_data.h5ad."""
-    base = tmp_path / "experiment"
-    meta_dir = base / "metadata"
-    viz_dir = base / "visualizations" / "viz1"
-    meta_dir.mkdir(parents=True)
-    viz_dir.mkdir(parents=True)
-
-    lib_df = pd.DataFrame(lib_rows)
-    lib_df.to_csv(meta_dir / "perturbation_library.csv", index=False)
-
-    n_obs = len(agg_perturbation_ids)
-    n_var = len(VALID_FEATURES)
-    obs = pd.DataFrame(
-        {"perturbation_id": agg_perturbation_ids},
-        index=agg_perturbation_ids,
-    )
-    obs.index.name = "aggregate_id"
-    var = pd.DataFrame(
-        {
-            "feature_name": [f.split("_", 1)[-1] for f in VALID_FEATURES],
-            "feature_type": ["shape", "shape", "intensity"],
-            "compartment": [f.split("_", 1)[0] for f in VALID_FEATURES],
-        },
-        index=VALID_FEATURES,
-    )
-    var.index.name = "feature_id"
-    adata = ad.AnnData(
-        X=np.zeros((n_obs, n_var), dtype=np.float32),
-        obs=obs,
-        var=var,
-        obsm={"X_umap": np.zeros((n_obs, 2), dtype=np.float32)},
-        uns={
-            "observation_unit": ["perturbation_id"],
-            "schema_version": "0.1.0",
-            "default_embedding": "X_umap",
-            "title": "Test",
-        },
-    )
-    adata.write_h5ad(viz_dir / "aggregated_data.h5ad")
-    return base
-
-
-def _lib_row(perturbation_id: str, role: str, control_type: str = "") -> dict:
-    return {
-        "perturbation_id": perturbation_id,
-        "gene_id": "non-targeting" if role == "control" else "ENSG00000000001",
-        "barcode": perturbation_id.replace("_", "").upper().ljust(4, "A")[:8] + "ACGT",
-        "role": role,
-        "control_type": control_type,
-        "protospacer_sequence": "ACGTACGTACGTACGT",
-        "protospacer_adjacent_motif": "3' NGG",
-    }
-
-
-class TestV12ControlPresent:
-    def test_passes_with_control(self, tmp_path):
-        base = _make_experiment(
-            tmp_path,
-            lib_rows=[
-                _lib_row("tgt_1", "targeting"),
-                _lib_row("ctrl_1", "control", "non-targeting"),
-            ],
-            agg_perturbation_ids=["tgt_1", "ctrl_1"],
-        )
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v12_errors = [e for e in v.errors if e.rule_id == "V12_CONTROL_PRESENT"]
-        assert len(v12_errors) == 0
-
-    def test_fails_without_control(self, tmp_path):
-        base = _make_experiment(
-            tmp_path,
-            lib_rows=[
-                _lib_row("tgt_1", "targeting"),
-                _lib_row("tgt_2", "targeting"),
-                _lib_row("ctrl_1", "control", "non-targeting"),
-            ],
-            agg_perturbation_ids=["tgt_1", "tgt_2"],
-        )
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v12_errors = [e for e in v.errors if e.rule_id == "V12_CONTROL_PRESENT"]
-        assert len(v12_errors) == 1
-
-    def test_passes_with_only_controls(self, tmp_path):
-        base = _make_experiment(
-            tmp_path,
-            lib_rows=[
-                _lib_row("ctrl_1", "control", "non-targeting"),
-                _lib_row("ctrl_2", "control", "intergenic"),
-            ],
-            agg_perturbation_ids=["ctrl_1", "ctrl_2"],
-        )
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v12_errors = [e for e in v.errors if e.rule_id == "V12_CONTROL_PRESENT"]
-        assert len(v12_errors) == 0
-
-
-def _make_experiment_with_cell_data(
-    tmp_path: Path,
-    lib_rows: list[dict],
-    agg_perturbation_ids: list[str],
-    n_cells_values: list[int],
-    cell_data_perturbation_ids: list[str],
-) -> Path:
-    """Build an experiment with cell_data.parquet and obs['n_cells']."""
-    base = _make_experiment(tmp_path, lib_rows, agg_perturbation_ids)
-
-    h5ad_path = base / "visualizations" / "viz1" / "aggregated_data.h5ad"
-    adata = ad.read_h5ad(h5ad_path)
-    adata.obs["n_cells"] = np.array(n_cells_values, dtype=np.int64)
-    adata.write_h5ad(h5ad_path)
-
-    cell_df = pd.DataFrame({
-        "perturbation_id": cell_data_perturbation_ids,
-        "barcode": [pid.upper() for pid in cell_data_perturbation_ids],
-        "cell_uid": [f"cell_{i}" for i in range(len(cell_data_perturbation_ids))],
-    })
-    cell_df.to_parquet(base / "cell_data.parquet", index=False)
-    return base
-
-
-class TestV14NCellsCrossCheck:
-    def test_passes_when_counts_match(self, tmp_path):
-        base = _make_experiment_with_cell_data(
-            tmp_path,
-            lib_rows=[
-                _lib_row("tgt_1", "targeting"),
-                _lib_row("ctrl_1", "control", "non-targeting"),
-            ],
-            agg_perturbation_ids=["tgt_1", "ctrl_1"],
-            n_cells_values=[3, 2],
-            cell_data_perturbation_ids=["tgt_1", "tgt_1", "tgt_1", "ctrl_1", "ctrl_1"],
-        )
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v14_errors = [e for e in v.errors if e.rule_id == "V14_N_CELLS"]
-        assert len(v14_errors) == 0
-
-    def test_fails_when_counts_mismatch(self, tmp_path):
-        base = _make_experiment_with_cell_data(
-            tmp_path,
-            lib_rows=[
-                _lib_row("tgt_1", "targeting"),
-                _lib_row("ctrl_1", "control", "non-targeting"),
-            ],
-            agg_perturbation_ids=["tgt_1", "ctrl_1"],
-            n_cells_values=[99, 2],
-            cell_data_perturbation_ids=["tgt_1", "tgt_1", "tgt_1", "ctrl_1", "ctrl_1"],
-        )
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v14_errors = [e for e in v.errors if e.rule_id == "V14_N_CELLS"]
-        assert len(v14_errors) == 1
-
-    def test_skipped_when_n_cells_absent(self, tmp_path):
-        base = _make_experiment(
-            tmp_path,
-            lib_rows=[
-                _lib_row("tgt_1", "targeting"),
-                _lib_row("ctrl_1", "control", "non-targeting"),
-            ],
-            agg_perturbation_ids=["tgt_1", "ctrl_1"],
-        )
-        cell_df = pd.DataFrame({
-            "perturbation_id": ["tgt_1", "ctrl_1"],
-            "barcode": ["TGT1", "CTRL1"],
-            "cell_uid": ["c0", "c1"],
-        })
-        cell_df.to_parquet(base / "cell_data.parquet", index=False)
-        v = CrossArtifactValidator(base)
-        v.validate()
-        v14_issues = [
-            i for i in (*v.errors, *v.warnings) if i.rule_id == "V14_N_CELLS"
+def _default_lib() -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {"perturbation_id": "pert_001", "barcode": "ACGT", "role": "targeting"},
+            {"perturbation_id": "pert_002", "barcode": "TTTT", "role": "targeting"},
+            {"perturbation_id": "ctrl_001", "barcode": "GGGG", "role": "control"},
         ]
-        assert len(v14_issues) == 0
+    )
+
+
+def _default_cell() -> pd.DataFrame:
+    rows = (
+        [{"barcode": "ACGT", "perturbation_id": "pert_001"}] * 3
+        + [{"barcode": "TTTT", "perturbation_id": "pert_002"}] * 2
+        + [{"barcode": "GGGG", "perturbation_id": "ctrl_001"}] * 2
+    )
+    return pd.DataFrame(rows)
+
+
+def _default_feat() -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {"feature_id": "nucleus_area", "feature_name": "area", "feature_type": "shape"},
+            {
+                "feature_id": "cell_DAPI_mean",
+                "feature_name": "DAPI mean",
+                "feature_type": "intensity",
+            },
+            {"feature_id": "cell_unused", "feature_name": "unused", "feature_type": "shape"},
+        ]
+    )
+
+
+def _make_agg(
+    perturbation_ids=("pert_001", "pert_002", "ctrl_001"),
+    n_cells=(3, 2, 2),
+    var_ids=("nucleus_area", "cell_DAPI_mean"),
+    observation_unit=("perturbation_id",),
+) -> ad.AnnData:
+    obs = pd.DataFrame(
+        {"perturbation_id": list(perturbation_ids), "n_cells": list(n_cells)}
+    )
+    obs.index = [f"agg{i}" for i in range(len(perturbation_ids))]
+    obs.index.name = "aggregate_id"
+    var = pd.DataFrame(index=list(var_ids))
+    var.index.name = "feature_id"
+    X = np.zeros((len(obs), len(var)), dtype=np.float32)
+    return ad.AnnData(X=X, obs=obs, var=var, uns={"observation_unit": list(observation_unit)})
+
+
+def _write(base, lib=None, cell=None, feat=None, agg="default"):
+    """Write an experiment layout under `base`. Pass None to omit an artifact."""
+    meta = base / "metadata"
+    meta.mkdir(parents=True, exist_ok=True)
+    if lib is not None:
+        lib.to_csv(meta / "perturbation_library.csv", index=False)
+    if cell is not None:
+        cell.to_parquet(base / "cell_data.parquet", index=False)
+    if feat is not None:
+        feat.to_csv(meta / "feature_definitions.csv", index=False)
+    if agg is not None:
+        adata = _make_agg() if isinstance(agg, str) else agg
+        vdir = base / "visualizations" / "viz1"
+        vdir.mkdir(parents=True, exist_ok=True)
+        adata.write_h5ad(vdir / "aggregated_data.h5ad")
+    return base
+
+
+def _validate(base):
+    v = CrossArtifactValidator(experiment_dir=base)
+    v.validate()
+    return v
+
+
+def _rule_ids(issues):
+    return {i.rule_id for i in issues}
+
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+
+
+class TestCrossArtifactValidator:
+    def test_all_consistent_passes(self, tmp_path):
+        _write(tmp_path, lib=_default_lib(), cell=_default_cell(), feat=_default_feat())
+        v = _validate(tmp_path)
+        assert v.is_valid
+        assert v.errors == []
+        assert v.warnings == []
+
+    def test_orphan_barcode_in_cell_errors(self, tmp_path):
+        cell = pd.concat(
+            [_default_cell(), pd.DataFrame([{"barcode": "CCCC", "perturbation_id": "pert_001"}])],
+            ignore_index=True,
+        )
+        _write(tmp_path, lib=_default_lib(), cell=cell, feat=_default_feat())
+        v = _validate(tmp_path)
+        assert not v.is_valid
+        assert "FK_BARCODE" in _rule_ids(v.errors)
+
+    def test_orphan_perturbation_id_in_cell_errors(self, tmp_path):
+        cell = pd.concat(
+            [_default_cell(), pd.DataFrame([{"barcode": "ACGT", "perturbation_id": "pert_999"}])],
+            ignore_index=True,
+        )
+        _write(tmp_path, lib=_default_lib(), cell=cell, feat=_default_feat())
+        v = _validate(tmp_path)
+        assert "FK_PERTURBATION_ID_CELL" in _rule_ids(v.errors)
+
+    def test_orphan_perturbation_id_in_aggregated_errors(self, tmp_path):
+        agg = _make_agg(
+            perturbation_ids=("pert_001", "pert_002", "ctrl_001", "pert_999"),
+            n_cells=(3, 2, 2, 0),
+        )
+        _write(tmp_path, lib=_default_lib(), cell=_default_cell(), feat=_default_feat(), agg=agg)
+        v = _validate(tmp_path)
+        assert "FK_PERTURBATION_ID_AGG" in _rule_ids(v.errors)
+
+    def test_missing_control_errors(self, tmp_path):
+        lib = _default_lib()
+        lib.loc[lib["perturbation_id"] == "ctrl_001", "role"] = "targeting"
+        _write(tmp_path, lib=lib, cell=_default_cell(), feat=_default_feat())
+        v = _validate(tmp_path)
+        assert "V12_CONTROL_PRESENT" in _rule_ids(v.errors)
+
+    def test_n_cells_mismatch_errors(self, tmp_path):
+        agg = _make_agg(n_cells=(99, 2, 2))  # pert_001 should be 3
+        _write(tmp_path, lib=_default_lib(), cell=_default_cell(), feat=_default_feat(), agg=agg)
+        v = _validate(tmp_path)
+        assert "V14_N_CELLS" in _rule_ids(v.errors)
+
+    def test_undocumented_feature_warns_only(self, tmp_path):
+        agg = _make_agg(var_ids=("nucleus_area", "cell_DAPI_mean", "cell_mystery"))
+        _write(tmp_path, lib=_default_lib(), cell=_default_cell(), feat=_default_feat(), agg=agg)
+        v = _validate(tmp_path)
+        assert v.is_valid  # warning, not error
+        assert "VAR_VS_FEATURES" in _rule_ids(v.warnings)
+
+    def test_perturbation_id_consistency_warns(self, tmp_path):
+        # Library + cell_data carry pert_003, but it's absent from aggregated obs.
+        lib = pd.concat(
+            [
+                _default_lib(),
+                pd.DataFrame(
+                    [{"perturbation_id": "pert_003", "barcode": "AAAA", "role": "targeting"}]
+                ),
+            ],
+            ignore_index=True,
+        )
+        cell = pd.concat(
+            [_default_cell(), pd.DataFrame([{"barcode": "AAAA", "perturbation_id": "pert_003"}])],
+            ignore_index=True,
+        )
+        _write(tmp_path, lib=lib, cell=cell, feat=_default_feat())
+        v = _validate(tmp_path)
+        assert v.is_valid  # consistency mismatch is a warning
+        assert "PERTURBATION_ID_CONSISTENCY" in _rule_ids(v.warnings)
+
+    def test_missing_artifacts_skipped(self, tmp_path):
+        # Only the library present — no cross-checks have both sides, so it passes.
+        _write(tmp_path, lib=_default_lib(), cell=None, feat=None, agg=None)
+        v = _validate(tmp_path)
+        assert v.is_valid
+        assert v.errors == []
+
+    def test_feature_definitions_optional(self, tmp_path):
+        # No feature_definitions.csv → var-vs-features check is skipped, still valid.
+        _write(tmp_path, lib=_default_lib(), cell=_default_cell(), feat=None)
+        v = _validate(tmp_path)
+        assert v.is_valid
+        assert "VAR_VS_FEATURES" not in _rule_ids(v.warnings)

@@ -1,207 +1,214 @@
-"""CLI entry point for the OPS schema validator."""
+"""OPS validator CLI.
 
-from __future__ import annotations
+Usage:
+    ops-validate PATH [--type TYPE]
+"""
 
-import argparse
+import logging
 import sys
-from pathlib import Path
+import warnings
+
+import typer
+from cloudpathlib import AnyPath
+from pydantic import BaseModel
+
+from ops_validator.validators import (
+    aggregated_data,
+    cell_data,
+    collection,
+    cross_artifact,
+    experimental,
+    feature_definitions,
+    perturbation_library,
+)
+from ops_validator.zarr_validation import validate as validate_zarr
+
+# Suppress ResourceWarnings from unclosed aiohttp sessions/connectors emitted
+# on GC by zarr/s3fs internals — not actionable from user code.
+# Two paths: warnings.warn (filtered here) and loop.call_exception_handler
+# (silenced via the asyncio logger).
+warnings.filterwarnings("ignore", category=ResourceWarning, message="Unclosed.*")
+logging.getLogger("asyncio").setLevel(logging.CRITICAL)
+
+app = typer.Typer(add_completion=False)
 
 
-ARTIFACT_TYPES = {
-    "zarr": ("Zarr plate store (.zarr)", "ops_validator.validators.zarr_images", "ZarrImagesValidator"),
-    "aggregated": ("Aggregated data (.h5ad)", "ops_validator.validators.aggregated_data", "AggregatedDataValidator"),
-    "cell-data": ("Cell data (.h5ad)", "ops_validator.validators.cell_data", "CellDataValidator"),
-    "collection": ("Collection metadata (.yaml)", "ops_validator.validators.collection", "CollectionValidator"),
-    "experimental": ("Experimental metadata (.yaml)", "ops_validator.validators.experimental", "ExperimentalValidator"),
-    "features": ("Feature definitions (.csv)", "ops_validator.validators.feature_definitions", "FeatureDefinitionsValidator"),
-    "perturbation": ("Perturbation library (.csv)", "ops_validator.validators.perturbation_library", "PerturbationLibraryValidator"),
-}
+class OPSVisualizations(BaseModel):
+    id: str
+    aggregated_data: AnyPath
+    examples: list[AnyPath]
+
+class OPSSubmissionStructure(BaseModel):
+    # Models one screen's slice of a submission. `validator()` loops and
+    # instantiates this once per {aggregation_name}/ subdirectory. The
+    # collection-level fields (collection_root / collection_metadata) get
+    # repeated per screen — slight redundancy, but keeps the model shape
+    # simple. A proper Collection → list[Screen] reshape is a future task.
+    collection_root: AnyPath
+    collection_metadata: AnyPath
+    screen_name: AnyPath
+    experimental_metadata: AnyPath
+    perturbation_metadata: AnyPath
+    feature_definitions: AnyPath | None
+    cell_data: AnyPath
+    visualizations: list[OPSVisualizations]
+    zarr_files: list[AnyPath]
+
+    def validate_ops(self) -> bool:
+        ok = True
+        ok &= _run("collection", collection.CollectionValidator(path=self.collection_metadata))
+        ok &= _run("experimental", experimental.ExperimentalValidator(path=self.experimental_metadata))
+        ok &= _run("perturbation", perturbation_library.PerturbationLibraryValidator(path=self.perturbation_metadata))
+        if self.feature_definitions is not None:
+            ok &= _run("features", feature_definitions.FeatureDefinitionsValidator(path=self.feature_definitions))
+        ok &= _run("cell_data", cell_data.CellDataValidator(path=self.cell_data, sample_limit=None))
+        for viz in self.visualizations:
+            ok &= _run(f"aggregated/{viz.id}", aggregated_data.AggregatedDataValidator(path=viz.aggregated_data))
+        # Cross-artifact FK/consistency checks are only meaningful once every
+        # individual artifact has validated cleanly; an already-invalid file
+        # would otherwise produce noisy, misleading "orphan" errors here.
+        if ok:
+            ok &= _run("cross_artifact", cross_artifact.CrossArtifactValidator(experiment_dir=self.screen_name))
+        for zarr_path in self.zarr_files:
+            ok &= _run_zarr(f"zarr/{zarr_path.name}", zarr_path)
+        return ok
+
+
+def _run(label: str, validator) -> bool:
+    """Run a per-artifact validator and print PASS/FAIL with any errors."""
+    validator.validate()
+    if validator.is_valid:
+        nw = len(validator.warnings)
+        suffix = f" ({nw} warnings)" if nw else ""
+        print(f"  PASS  {label}{suffix}")
+    else:
+        print(f"  FAIL  {label}  ({len(validator.errors)} errors, {len(validator.warnings)} warnings)")
+        for err in validator.errors:
+            print(f"        {err}")
+    return validator.is_valid
+
+
+def _run_zarr(label: str, path: AnyPath) -> bool:
+    """Run zarr-store validation and print PASS/FAIL per discovered store."""
+    run = validate_zarr(str(path))
+    for r in run:
+        if r.passed:
+            nw = len(r.warnings)
+            suffix = f" ({nw} warnings)" if nw else ""
+            print(f"  PASS  {r.node_path}{suffix}")
+        else:
+            print(f"  FAIL  {r.node_path}  ({len(r.errors)} errors)")
+            for err in r.errors:
+                print(f"        {err.message}")
+    s = run.summary
+    total = s.stores_passed + s.stores_failed
+    print(f"  [{label}] {s.stores_passed} passed, {s.stores_failed} failed of {total}, {s.duration_seconds:.1f}s")
+    return s.stores_failed == 0
+
+
+def validate_structure(required: list[str], root: AnyPath) -> list[str]:
+    """Return entries from `required` (relative paths) that don't exist under `root`."""
+    return [p for p in required if not (root / p).exists()]
+
+
+def validator(path: AnyPath):
+    print(f"Validating structure of: {path}")
+    screens = sorted(c for c in path.iterdir() if c.is_dir())
+    if not screens:
+        print("  STRUCT  no screen directories found")
+        sys.exit(1)
+
+    # Walk each screen once to collect its expected files + viz/zarr discovery.
+    required = ["collection_metadata.yaml"]
+    layouts: list[tuple[AnyPath, list[AnyPath], list[AnyPath]]] = []
+    for s in screens:
+        vis_root = s / "visualizations"
+        vizs = sorted(c for c in vis_root.iterdir() if c.is_dir()) if vis_root.is_dir() else []
+        zarrs = sorted(s.glob("*.zarr"))
+        required += [
+            f"{s.name}/metadata/experimental_metadata.yaml",
+            f"{s.name}/metadata/perturbation_library.csv",
+            f"{s.name}/cell_data.parquet",
+            *(f"{s.name}/visualizations/{v.name}/aggregated_data.h5ad" for v in vizs),
+        ]
+        layouts.append((s, vizs, zarrs))
+
+    # Aggregated structural check across all screens.
+    missing = validate_structure(required, path)
+    for m in missing:
+        print(f"  STRUCT  missing: {m}")
+    no_zarr_screens = [s.name for s, _, zarrs in layouts if not zarrs]
+    for n in no_zarr_screens:
+        print(f"  STRUCT  no *.zarr in {n}")
+    if missing or no_zarr_screens:
+        sys.exit(1)
+
+    # Per-screen validation. Header only when there's more than one so
+    # single-screen output stays the same.
+    multi = len(layouts) > 1
+    for s, vizs, zarrs in layouts:
+        if multi:
+            print(f"\n[{s.name}]")
+        feat = s / "metadata/feature_definitions.csv"
+        OPSSubmissionStructure.model_validate({
+            "collection_root": path,
+            "collection_metadata": path / "collection_metadata.yaml",
+            "screen_name": s,
+            "experimental_metadata": s / "metadata/experimental_metadata.yaml",
+            "perturbation_metadata": s / "metadata/perturbation_library.csv",
+            "feature_definitions": feat if feat.is_file() else None,
+            "cell_data": s / "cell_data.parquet",
+            "visualizations": [
+                {"id": v.name, "aggregated_data": v / "aggregated_data.h5ad", "examples": []}
+                for v in vizs
+            ],
+            "zarr_files": zarrs,
+        }).validate_ops()
+
+
+
+@app.command()
+def _cli(
+    path: str = typer.Argument(..., help="Path to submission or single artifact"),
+    type_: str | None = typer.Option(
+        None,
+        "--type",
+        "-t",
+        help=(
+            "Artifact type. One of: collection, experimental, perturbation, "
+            "features, cell-data, aggregated, zarr. "
+            "If omitted, PATH is treated as a full submission directory."
+        ),
+    ),
+) -> None:
+    p = AnyPath(path)
+    if type_ is None:
+        validator(p)
+        return
+    if type_ == "collection":
+        ok = _run(type_, collection.CollectionValidator(path=p))
+    elif type_ == "experimental":
+        ok = _run(type_, experimental.ExperimentalValidator(path=p))
+    elif type_ == "perturbation":
+        ok = _run(type_, perturbation_library.PerturbationLibraryValidator(path=p))
+    elif type_ == "features":
+        ok = _run(type_, feature_definitions.FeatureDefinitionsValidator(path=p))
+    elif type_ == "cell-data":
+        ok = _run(type_, cell_data.CellDataValidator(path=p))
+    elif type_ == "aggregated":
+        ok = _run(type_, aggregated_data.AggregatedDataValidator(path=p))
+    elif type_ == "zarr":
+        ok = _run_zarr(f"zarr/{p.name}", p)
+    else:
+        typer.echo(f"Unknown --type {type_!r}", err=True)
+        raise typer.Exit(2)
+    raise typer.Exit(0 if ok else 1)
 
 
 def main() -> None:
-    """Run OPS schema validation from the command line."""
-    parser = argparse.ArgumentParser(
-        prog="ops-validate",
-        description="Validate OPS data artifacts against the OPS Data Standard v0.1.0",
-    )
-    parser.add_argument(
-        "path",
-        type=Path,
-        help="Path to the artifact or submission directory to validate",
-    )
-    parser.add_argument(
-        "--type",
-        choices=list(ARTIFACT_TYPES.keys()) + ["submission"],
-        default=None,
-        help="Artifact type to validate. Use 'submission' for a full submission directory. Auto-detected from path if omitted.",
-    )
+    """Entry point — typer parses argv."""
+    app()
 
-    args = parser.parse_args()
-
-    if not args.path.exists():
-        print(f"ERROR: Path does not exist: {args.path}", file=sys.stderr)
-        sys.exit(1)
-
-    # If --type submission or auto-detected as submission directory, validate all
-    artifact_type = args.type
-    if artifact_type == "submission" or (artifact_type is None and _is_submission_dir(args.path)):
-        sys.exit(_validate_submission(args.path))
-
-    # Auto-detect type from file extension/name
-    if artifact_type is None:
-        artifact_type = _detect_type(args.path)
-        if artifact_type is None:
-            print(
-                f"ERROR: Cannot auto-detect artifact type for {args.path}. "
-                f"Use --type with one of: {', '.join(ARTIFACT_TYPES.keys())}, submission",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-        print(f"Auto-detected type: {artifact_type}")
-
-    # Import and run validator
-    desc, module_path, class_name = ARTIFACT_TYPES[artifact_type]
-    import importlib
-    module = importlib.import_module(module_path)
-    validator_class = getattr(module, class_name)
-
-    validator = validator_class(path=args.path)
-    validator.validate()
-    print(validator.report())
-    sys.exit(0 if validator.is_valid else 1)
-
-
-def _is_submission_dir(path: Path) -> bool:
-    """Check if path looks like a submission directory (has collection_metadata.yaml)."""
-    return path.is_dir() and (path / "collection_metadata.yaml").exists()
-
-
-def _validate_submission(submission_dir: Path) -> int:
-    """Validate all artifacts in a submission directory. Returns exit code."""
-    import importlib
-
-    print(f"Validating submission directory: {submission_dir}\n")
-    print("=" * 70)
-
-    collection_yaml = submission_dir / "collection_metadata.yaml"
-
-    # Find screen directories (any subdir that has metadata/)
-    screen_dirs = [
-        d for d in submission_dir.iterdir()
-        if d.is_dir() and (d / "metadata").is_dir()
-    ]
-
-    # Build list of (path, type) pairs to validate
-    artifacts: list[tuple[Path, str]] = []
-
-    if collection_yaml.exists():
-        artifacts.append((collection_yaml, "collection"))
-
-    for screen_dir in sorted(screen_dirs):
-        meta = screen_dir / "metadata"
-        if (meta / "experimental_metadata.yaml").exists():
-            artifacts.append((meta / "experimental_metadata.yaml", "experimental"))
-        if (meta / "perturbation_library.csv").exists():
-            artifacts.append((meta / "perturbation_library.csv", "perturbation"))
-        if (meta / "feature_definitions.csv").exists():
-            artifacts.append((meta / "feature_definitions.csv", "features"))
-
-        # Cell data
-        if (screen_dir / "cell_data.parquet").exists():
-            artifacts.append((screen_dir / "cell_data.parquet", "cell-data"))
-
-        # Zarr stores (plate-level)
-        for zarr_path in sorted(screen_dir.glob("*.zarr")):
-            artifacts.append((zarr_path, "zarr"))
-
-        # Visualizations
-        vis_dir = screen_dir / "visualizations"
-        if vis_dir.is_dir():
-            for vis in sorted(vis_dir.iterdir()):
-                if vis.is_dir():
-                    h5ad = vis / "aggregated_data.h5ad"
-                    if h5ad.exists():
-                        artifacts.append((h5ad, "aggregated"))
-
-    if not artifacts:
-        print("ERROR: No artifacts found in submission directory.", file=sys.stderr)
-        return 1
-
-    # Validate each artifact
-    all_passed = True
-    results: list[tuple[str, str, bool, int, int]] = []
-
-    for artifact_path, artifact_type in artifacts:
-        desc, module_path, class_name = ARTIFACT_TYPES[artifact_type]
-        module = importlib.import_module(module_path)
-        validator_class = getattr(module, class_name)
-
-        validator = validator_class(path=artifact_path)
-        validator.validate()
-        passed = validator.is_valid
-        n_errors = len(validator.errors)
-        n_warnings = len(validator.warnings)
-
-        if not passed:
-            all_passed = False
-
-        # Short relative path for display
-        try:
-            rel = artifact_path.relative_to(submission_dir)
-        except ValueError:
-            rel = artifact_path
-        results.append((str(rel), artifact_type, passed, n_errors, n_warnings))
-
-        # Print details for failures
-        if not passed:
-            print(f"\n{'FAIL':>6}  {rel}")
-            for err in validator.errors:
-                print(f"        [ERROR] {err}")
-        elif n_warnings > 0:
-            print(f"\n{'WARN':>6}  {rel}  ({n_warnings} warnings)")
-        else:
-            print(f"\n{'PASS':>6}  {rel}")
-
-    # Summary table
-    print("\n" + "=" * 70)
-    print(f"\n{'SUMMARY':^70}\n")
-    print(f"  {'Artifact':<50} {'Status':>8}")
-    print(f"  {'-'*50} {'-'*8}")
-    for rel, atype, passed, n_err, n_warn in results:
-        status = "PASS" if passed else "FAIL"
-        extra = f" ({n_warn}w)" if n_warn > 0 and passed else ""
-        print(f"  {rel:<50} {status:>8}{extra}")
-
-    n_pass = sum(1 for _, _, p, _, _ in results if p)
-    n_fail = sum(1 for _, _, p, _, _ in results if not p)
-    print(f"\n  {n_pass} passed, {n_fail} failed out of {len(results)} artifacts")
-    print(f"\n  {'ALL PASSED' if all_passed else 'VALIDATION FAILED'}")
-    print()
-
-    return 0 if all_passed else 1
-
-
-
-    """Attempt to auto-detect artifact type from file path."""
-    name = path.name.lower()
-    suffix = path.suffix.lower()
-
-    if suffix == ".zarr" or path.is_dir() and any(path.glob("*/zarr.json")):
-        return "zarr"
-    if name == "aggregated_data.h5ad":
-        return "aggregated"
-    if name.endswith("singlecell.h5ad") or name == "cell_data.h5ad":
-        return "cell-data"
-    if name == "collection_metadata.yaml":
-        return "collection"
-    if name == "experimental_metadata.yaml":
-        return "experimental"
-    if name == "feature_definitions.csv":
-        return "features"
-    if name == "perturbation_library.csv":
-        return "perturbation"
-
-    return None
 
 
 if __name__ == "__main__":
