@@ -12,7 +12,15 @@ import typer
 from cloudpathlib import AnyPath
 from pydantic import BaseModel
 
-from ops_validator.validators import aggregated_data, cell_data, collection, experimental, feature_definitions, perturbation_library
+from ops_validator.validators import (
+    aggregated_data,
+    cell_data,
+    collection,
+    cross_artifact,
+    experimental,
+    feature_definitions,
+    perturbation_library,
+)
 from ops_validator.zarr_validation import validate as validate_zarr
 
 # Suppress ResourceWarnings from unclosed aiohttp sessions/connectors emitted
@@ -56,6 +64,11 @@ class OPSSubmissionStructure(BaseModel):
         ok &= _run("cell_data", cell_data.CellDataValidator(path=self.cell_data, sample_limit=None))
         for viz in self.visualizations:
             ok &= _run(f"aggregated/{viz.id}", aggregated_data.AggregatedDataValidator(path=viz.aggregated_data))
+        # Cross-artifact FK/consistency checks are only meaningful once every
+        # individual artifact has validated cleanly; an already-invalid file
+        # would otherwise produce noisy, misleading "orphan" errors here.
+        if ok:
+            ok &= _run("cross_artifact", cross_artifact.CrossArtifactValidator(experiment_dir=self.screen_name))
         for zarr_path in self.zarr_files:
             ok &= _run_zarr(f"zarr/{zarr_path.name}", zarr_path)
         return ok
