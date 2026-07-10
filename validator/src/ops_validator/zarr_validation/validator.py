@@ -23,6 +23,7 @@ import zarr
 from ome_zarr_models import open_ome_zarr
 from ome_zarr_models.v05.image import Image
 
+from ops_validator.zarr_validation.examples import validate_examples_root
 from ops_validator.zarr_validation.registry import (
     UnsupportedSpecVersionError,
     get_label_metadata_validator,
@@ -593,6 +594,14 @@ def validate_zarr_node(
                 ],
             )
         ]
+
+    # Step 1.5: examples-images container. A group carrying a top-level
+    # `channel_combos` attribute is the examples.zarr root. Per the OPS spec
+    # (example-images.md) this artifact is NOT an OME-NGFF/HCS store —
+    # validators MUST NOT apply HCS checks — so route it to the channel_combos
+    # validator and skip the NGFF structural + node-type dispatch below.
+    if "channel_combos" in raw_attrs:
+        return validate_examples_root(node_path, raw_attrs, spec_version)
 
     # Step 1a: HCS fast path — bypass open_ome_zarr for plates.
     # open_ome_zarr on an HCS root calls HCS.from_zarr(), which recursively

@@ -435,6 +435,70 @@ class OPSPlateChannelsSpec(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Example-images container — channel_combos panel metadata
+# (standards/ops/0.1.0/example-images.md → Channel Combinations Metadata)
+# ---------------------------------------------------------------------------
+
+
+class OPSChannelComboMetadata(BaseModel):
+    """One entry in `channel_combos` at the examples.zarr root group.
+
+    Only the array shape is validated by the model. The cross-leaf rule —
+    each `display_channels` label must be present in every leaf of its combo —
+    needs to read leaf stores and is checked separately (see
+    zarr_validation/examples.py).
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    name: str
+    display_channels: list[str] | None = None
+    priority: int | None = None
+
+    @field_validator("name")
+    @classmethod
+    def name_non_empty(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("name must be a non-empty string")
+        return v
+
+    @field_validator("display_channels")
+    @classmethod
+    def display_channels_non_empty_labels(
+        cls, v: list[str] | None
+    ) -> list[str] | None:
+        if v is not None:
+            for label in v:
+                if not isinstance(label, str) or not label.strip():
+                    raise ValueError(
+                        "display_channels labels must be non-empty strings"
+                    )
+        return v
+
+    @field_validator("priority")
+    @classmethod
+    def priority_non_negative(cls, v: int | None) -> int | None:
+        if v is not None and v < 0:
+            raise ValueError(f"priority must be a non-negative integer; got {v}")
+        return v
+
+
+class _OPSExamplesChannelCombosSpec(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    channel_combos: list[OPSChannelComboMetadata]
+
+    @model_validator(mode="after")
+    def names_must_be_unique(self) -> "_OPSExamplesChannelCombosSpec":
+        names = [c.name for c in self.channel_combos]
+        dupes = sorted({n for n in names if names.count(n) > 1})
+        if dupes:
+            raise ValueError(
+                f"channel_combos[].name must be unique; duplicate name(s): {dupes}"
+            )
+        return self
+
+
+# ---------------------------------------------------------------------------
 # Public validation functions — called by registry → validator
 # ---------------------------------------------------------------------------
 
@@ -499,6 +563,29 @@ def validate_ops_label_metadata(raw_attrs: dict) -> list[Issue]:
     try:
         _OPSLabelSpec.model_validate(
             {"segmentation_metadata": raw_attrs["segmentation_metadata"]}
+        )
+        return []
+    except pydantic.ValidationError as exc:
+        return _pydantic_to_issues(exc)
+
+
+def validate_ops_examples_channel_combos_metadata(raw_attrs: dict) -> list[Issue]:
+    """
+    Validate the *shape* of `channel_combos` at the examples.zarr root group.
+
+    Checks names are non-empty + unique, `display_channels` labels (when
+    present) are non-empty, and `priority` (when present) is a non-negative
+    integer. The cross-leaf rule — each `display_channels` label present in
+    every leaf of its combo — requires reading leaf stores and is checked in
+    zarr_validation/examples.py.
+
+    Returns [] when `channel_combos` is absent (the metadata is OPTIONAL).
+    """
+    if "channel_combos" not in raw_attrs:
+        return []
+    try:
+        _OPSExamplesChannelCombosSpec.model_validate(
+            {"channel_combos": raw_attrs["channel_combos"]}
         )
         return []
     except pydantic.ValidationError as exc:

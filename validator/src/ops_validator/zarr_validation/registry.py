@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from ops_validator.zarr_validation.result import Issue
 from ops_validator.zarr_validation.spec.v0_1.models import (
     OPSStoreSpecV0_1,
+    validate_ops_examples_channel_combos_metadata,
     validate_ops_label_metadata,
     validate_ops_plate_metadata,
 )
@@ -55,6 +56,12 @@ _LABEL_METADATA_REGISTRY: dict[str, Callable[[dict], list[Issue]]] = {
     "ops-0.1": validate_ops_label_metadata,
 }
 
+# Examples-container metadata validator registry: fn(raw_attrs) -> list[Issue].
+# Validates the shape of channel_combos at the examples.zarr root group.
+_EXAMPLES_METADATA_REGISTRY: dict[str, Callable[[dict], list[Issue]]] = {
+    "ops-0.1": validate_ops_examples_channel_combos_metadata,
+}
+
 
 def get_model(spec_version: str) -> type[BaseModel]:
     """Return the OPSStoreSpec model class for the given spec version string."""
@@ -82,3 +89,10 @@ def get_label_metadata_validator(
 ) -> Callable[[dict], list[Issue]] | None:
     """Return the label-group metadata validator for this spec, or None."""
     return _LABEL_METADATA_REGISTRY.get(spec_version)
+
+
+def get_examples_metadata_validator(
+    spec_version: str,
+) -> Callable[[dict], list[Issue]] | None:
+    """Return the examples-container metadata validator for this spec, or None."""
+    return _EXAMPLES_METADATA_REGISTRY.get(spec_version)
