@@ -55,7 +55,12 @@ Each leaf `{N}.zarr/` MAY include an OME-NGFF `labels/` container to mark **whic
     └── {label_name}/    # e.g. "cell_seg"; label array marking the target cell
 ```
 
-When present, the `labels/` container MUST follow the OME-NGFF labels convention and reuse the `segmentation_metadata` shape defined for the primary plate store in [`zarr-images.md`](zarr-images.md) (Levels 5–7: Labels Container, Label Group, Label Resolution Array). To keep this visualization artifact lightweight, only `segmentation_metadata.label_name`, `annotation_type`, and `is_ome_label` are REQUIRED for example-image leaves; the remaining `segmentation_metadata` fields (source channel, biological annotation, segmentation provenance, statistics) are OPTIONAL here and SHOULD be included when readily available.
+When present, the `labels/` container MUST be a structurally valid OME-NGFF labels container, identical in structure to the primary plate store (see [`zarr-images.md`](zarr-images.md) Levels 5 and 7). This structural conformance is **not** relaxed:
+
+- the `labels/` group's `ome.labels` attribute MUST list every label group name present;
+- each label group MUST contain an integer-typed label array registered to the crop (matching its Y/X extent), with `segmentation_metadata.is_ome_label` set to `true` and a `segmentation_metadata.label_name` matching its `ome.labels` entry.
+
+Only the OPS-specific `segmentation_metadata` *provenance* fields (Level 6) are relaxed for this lightweight artifact: beyond `label_name`, `annotation_type`, and `is_ome_label`, the remaining fields (source channel, biological annotation, segmentation method/version/stitching, statistics) are OPTIONAL here and SHOULD be included when readily available.
 
 ### Constraints
 
@@ -93,7 +98,7 @@ When present, the `labels/` container MUST follow the OME-NGFF labels convention
 </tr>
 <tr>
 <td><strong>Segmentation labels (optional)</strong></td>
-<td>Each leaf <code>{N}.zarr/</code> MAY contain an OME-NGFF <code>labels/</code> container identifying which cell in the crop is the perturbed target. When present it MUST follow the OME-NGFF labels convention and reuse the <code>segmentation_metadata</code> shape defined for the primary plate store in <a href="zarr-images.md">Zarr Images</a> (Levels 5–7). To keep the artifact lightweight, only <code>segmentation_metadata.label_name</code>, <code>annotation_type</code>, and <code>is_ome_label</code> are REQUIRED for example-image leaves; the remaining fields are OPTIONAL here. Viewers MAY use the label array to highlight or crop to the target cell.</td>
+<td>Each leaf <code>{N}.zarr/</code> MAY contain an OME-NGFF <code>labels/</code> container identifying which cell in the crop is the perturbed target. When present it MUST be a structurally valid OME-NGFF labels container: <code>labels/</code> carries an <code>ome.labels</code> list, and each label group is an integer-typed array registered to the crop with <code>is_ome_label</code> = <code>true</code> and a <code>label_name</code> matching its <code>ome.labels</code> entry (see <a href="zarr-images.md">Zarr Images</a> Levels 5 &amp; 7). The OPS <code>segmentation_metadata</code> provenance fields (Level 6 — source channel, biological annotation, segmentation method/version/stitching, statistics) are OPTIONAL for example-image leaves and SHOULD be provided when readily available. Viewers MAY use the label array to highlight or crop to the target cell.</td>
 </tr>
 </tbody>
 </table>
