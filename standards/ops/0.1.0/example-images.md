@@ -24,7 +24,7 @@ examples.zarr/
 └── {channel_combo}/        # One subdirectory per channel combination (e.g., "DAPI_COXIV_CENPA_WGA")
     └── {perturbation_id}/  # One subdirectory per perturbation; MUST match a perturbation_id in perturbation_library.csv
         └── {barcode}/      # One subdirectory per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
-            └── 0.zarr/ ... N.zarr/   # 1–30 OME-Zarr stores; each is one single-cell crop
+            └── 0.zarr/ ... N.zarr/   # 1–30 OME-Zarr stores; each is one single-cell crop (MAY contain an OPTIONAL labels/ group — see Optional segmentation labels)
 ```
 
 > **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one subdirectory at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples.zarr` per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
@@ -43,6 +43,19 @@ examples.zarr/
 `{perturbation_id}` and `{barcode}` are always present in the path as directory anchors. If either appears in `observation_unit` it MUST NOT be re-emitted as an additional nested level — i.e., `observation_unit = ["perturbation_id"]`, `["perturbation_id", "barcode"]`, or `["barcode"]` all produce the same flat layout below `{channel_combo}/{perturbation_id}/{barcode}/`. Only stratification columns *other than* `perturbation_id` and `barcode` add path levels.
 
 This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset-accurate set of crop zarrs — so images shown on dot selection correspond to the specific aggregation row, not just the perturbation overall.
+
+### Optional segmentation labels
+
+Each leaf `{N}.zarr/` MAY include an OME-NGFF `labels/` container to mark **which** cell in the crop is the perturbed target — useful for disambiguating the cell of interest from neighboring cells in a Phase2D field. This is OPTIONAL; leaves without a `labels/` container are fully valid.
+
+```
+0.zarr/                  # leaf OME-Zarr crop store
+├── 0/ ... K/            # image resolution arrays (the crop itself)
+└── labels/              # OPTIONAL OME-NGFF labels container
+    └── {label_name}/    # e.g. "cell_seg"; label array marking the target cell
+```
+
+When present, the `labels/` container MUST follow the OME-NGFF labels convention and reuse the `segmentation_metadata` shape defined for the primary plate store in [`zarr-images.md`](zarr-images.md) (Levels 5–7: Labels Container, Label Group, Label Resolution Array). To keep this visualization artifact lightweight, only `segmentation_metadata.label_name`, `annotation_type`, and `is_ome_label` are REQUIRED for example-image leaves; the remaining `segmentation_metadata` fields (source channel, biological annotation, segmentation provenance, statistics) are OPTIONAL here and SHOULD be included when readily available.
 
 ### Constraints
 
@@ -77,6 +90,10 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <tr>
 <td><strong>Leaf root metadata</strong></td>
 <td>Each leaf's <code>zarr.json</code> attributes MUST include a <code>perturbation_id</code> key. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>.</td>
+</tr>
+<tr>
+<td><strong>Segmentation labels (optional)</strong></td>
+<td>Each leaf <code>{N}.zarr/</code> MAY contain an OME-NGFF <code>labels/</code> container identifying which cell in the crop is the perturbed target. When present it MUST follow the OME-NGFF labels convention and reuse the <code>segmentation_metadata</code> shape defined for the primary plate store in <a href="zarr-images.md">Zarr Images</a> (Levels 5–7). To keep the artifact lightweight, only <code>segmentation_metadata.label_name</code>, <code>annotation_type</code>, and <code>is_ome_label</code> are REQUIRED for example-image leaves; the remaining fields are OPTIONAL here. Viewers MAY use the label array to highlight or crop to the target cell.</td>
 </tr>
 </tbody>
 </table>
