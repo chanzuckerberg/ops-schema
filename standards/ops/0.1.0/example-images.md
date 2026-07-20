@@ -60,7 +60,7 @@ When present, the `labels/` container MUST be a structurally valid OME-NGFF labe
 - the `labels/` group's `ome.labels` attribute MUST list every label group name present;
 - each label group MUST contain an integer-typed label array registered to the crop (matching its Y/X extent), with `segmentation_metadata.is_ome_label` set to `true` and a `segmentation_metadata.label_name` matching its `ome.labels` entry.
 
-The label array marks **only the target cell**: a binary mask with label value `1` for the perturbed cell and `0` for background. Since there is only one non-zero label value, no per-object identifier is needed.
+The label array marks **only the target cell**: a binary mask with label value `1` for the perturbed cell and `0` for background.
 
 Only the OPS-specific `segmentation_metadata` *provenance* fields (Level 6) are relaxed for this lightweight artifact: beyond `label_name`, `annotation_type`, and `is_ome_label`, the remaining fields (source channel, biological annotation, segmentation method/version/stitching, statistics) are OPTIONAL here and SHOULD be included when readily available.
 
