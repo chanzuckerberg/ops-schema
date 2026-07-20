@@ -24,7 +24,7 @@ examples.zarr/
 └── {channel_combo}/        # One subdirectory per channel combination (e.g., "DAPI_COXIV_CENPA_WGA")
     └── {perturbation_id}/  # One subdirectory per perturbation; MUST match a perturbation_id in perturbation_library.csv
         └── {barcode}/      # One subdirectory per barcode; 1–10 barcodes per perturbation; MUST match a barcode in perturbation_library.csv
-            └── 0.zarr/ ... N.zarr/   # 1–30 OME-Zarr stores; each is one single-cell crop (MAY contain an OPTIONAL labels/ group — see Optional segmentation labels)
+            └── 0.zarr/ ... N.zarr/   # 1–30 OME-Zarr stores; each is one single-cell crop
 ```
 
 > **Note — Channel combinations:** Most experiments use a single staining panel, resulting in one subdirectory at this level. In the rare case where a single experiment accumulates data across multiple staining panels (e.g., different rounds of immunofluorescence), each panel produces a distinct channel combination. Since there is one `examples.zarr` per visualization, and a visualization may cluster data from multiple staining panels together, this level allows the viewer to display the appropriate crop channels for each panel. The `{channel_combo}` key uses channel names joined by underscores (e.g., `"DAPI_COXIV_CENPA_WGA"`).
