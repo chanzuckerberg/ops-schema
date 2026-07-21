@@ -73,6 +73,83 @@ This ensures every `aggregate_id` in `aggregated_data.h5ad` resolves to a subset
 <td><strong>Root metadata</strong></td>
 <td>Zarr metadata at the root MUST include a <code>perturbation_id</code> key. MUST match a <code>perturbation_id</code> value in <code>perturbation_library.csv</code>.</td>
 </tr>
+<tr>
+<td><strong>Channel combinations metadata</strong></td>
+<td>OPTIONAL. The root group MAY carry per-panel display metadata under <code>channel_combos</code> (see <a href="#channel-combinations-metadata">Channel Combinations Metadata</a>). When present it MUST satisfy the constraints in that section.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### Channel Combinations Metadata
+
+OPTIONAL. The `examples.zarr` root group's `zarr.json` MAY carry a `channel_combos` array under `attributes`, describing — **per channel combination** — which channels to display for that panel and the order in which panels should be displayed.
+
+This lets a viewer render a chosen subset of channels per panel — e.g. a multi-panel grid with a column per channel combination — and order those panels. When a combination omits `display_channels`, **all** of its channels are shown (the default).
+
+```jsonc
+// examples.zarr/zarr.json
+{
+  "zarr_format": 3,
+  "node_type": "group",
+  "attributes": {
+    "channel_combos": [
+      { "name": "Phase2D",   "display_channels": ["Phase2D_labelfree"], "priority": 1 },
+      { "name": "5xUPRE",    "display_channels": ["5xUPRE_GFP", "ER_SEC61B_mCherry"], "priority": 2 },
+      { "name": "ER_SEC61B" }   // display_channels omitted → all channels; priority omitted → sorts last
+    ]
+  }
+}
+```
+
+Each entry in `channel_combos` has the following fields:
+
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (REQUIRED)</td>
+<td>The channel combination. MUST match exactly one <code>{channel_combo}</code> subdirectory under the container.</td>
+</tr>
+<tr>
+<td><code>display_channels</code> (OPTIONAL)</td>
+<td>Ordered list of channels to display for this panel, each an <code>omero.channels[*].label</code>. Omit (or null) to display <strong>all</strong> of the panel's channels — the default. The order is the display order (a viewer showing a single channel uses the first). Each listed label MUST be present in <strong>every</strong> leaf under the matching <code>{channel_combo}</code> subdirectory: a combination MAY aggregate crops from multiple source screens whose channel sets differ, so a listed channel must be common to all of them, otherwise a consumer filtering crops by it would silently drop those from screens that lack it.</td>
+</tr>
+<tr>
+<td><code>priority</code> (OPTIONAL)</td>
+<td>Non-negative integer giving the panel's display order, ascending (<code>1</code> = first). Combinations without a <code>priority</code> sort after those with one, ordered lexicographically by <code>name</code>. Need not be unique or contiguous.</td>
+</tr>
+</tbody>
+</table>
+
+**Constraints**
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Entries map to subdirectories</strong></td>
+<td>Every entry's <code>name</code> MUST correspond to an existing <code>{channel_combo}</code> subdirectory under the container. Names MUST be unique within <code>channel_combos</code> (at most one entry per combination).</td>
+</tr>
+<tr>
+<td><strong>Coverage is not required</strong></td>
+<td>A <code>{channel_combo}</code> subdirectory need not have a corresponding entry. Combinations without one fall back to viewer defaults; they are not an error.</td>
+</tr>
+<tr>
+<td><strong>Display channels are common to the panel</strong></td>
+<td>Every label in <code>display_channels</code> MUST be present in every leaf of its combination (see the field description above).</td>
+</tr>
 </tbody>
 </table>
 
