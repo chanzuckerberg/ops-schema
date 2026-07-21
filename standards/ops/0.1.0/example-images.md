@@ -62,7 +62,7 @@ When present, the `labels/` container MUST be a structurally valid OME-NGFF labe
 
 The label array marks **only the target cell**: a binary mask with label value `1` for the perturbed cell and `0` for background.
 
-Only the OPS-specific `segmentation_metadata` *provenance* fields (Level 6) are relaxed for this lightweight artifact: beyond `label_name`, `annotation_type`, and `is_ome_label`, the remaining fields (source channel, biological annotation, segmentation method/version/stitching, statistics) are OPTIONAL here and SHOULD be included when readily available.
+Each label group's `segmentation_metadata` MUST include `label_name`, `annotation_type`, and `is_ome_label`; all other Level 6 `segmentation_metadata` fields are OPTIONAL.
 
 ### Constraints
 
@@ -100,7 +100,7 @@ Only the OPS-specific `segmentation_metadata` *provenance* fields (Level 6) are 
 </tr>
 <tr>
 <td><strong>Segmentation labels (optional)</strong></td>
-<td>Each leaf <code>{N}.zarr/</code> MAY contain an OME-NGFF <code>labels/</code> container marking the perturbed target cell in the crop. When present it MUST be a structurally valid OME-NGFF labels container: <code>labels/</code> carries an <code>ome.labels</code> list, and each label group is an integer-typed array registered to the crop with <code>is_ome_label</code> = <code>true</code> and a <code>label_name</code> matching its <code>ome.labels</code> entry (see <a href="zarr-images.md">Zarr Images</a> Levels 5 &amp; 7). The array is a binary mask (label value <code>1</code> = target cell, <code>0</code> = background). The OPS <code>segmentation_metadata</code> provenance fields (Level 6 — source channel, biological annotation, segmentation method/version/stitching, statistics) are OPTIONAL for example-image leaves and SHOULD be provided when readily available. Viewers MAY use the label array to highlight or crop to the target cell.</td>
+<td>Each leaf <code>{N}.zarr/</code> MAY contain an OME-NGFF <code>labels/</code> container marking the perturbed target cell in the crop. When present it MUST be a structurally valid OME-NGFF labels container: <code>labels/</code> carries an <code>ome.labels</code> list, and each label group is an integer-typed array registered to the crop with <code>is_ome_label</code> = <code>true</code> and a <code>label_name</code> matching its <code>ome.labels</code> entry (see <a href="zarr-images.md">Zarr Images</a> Levels 5 &amp; 7). The array is a binary mask (label value <code>1</code> = target cell, <code>0</code> = background). Its <code>segmentation_metadata</code> MUST include <code>label_name</code>, <code>annotation_type</code>, and <code>is_ome_label</code>; all other Level 6 fields are OPTIONAL. Viewers MAY use the label array to highlight or crop to the target cell.</td>
 </tr>
 </tbody>
 </table>
